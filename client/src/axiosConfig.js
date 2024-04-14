@@ -7,9 +7,10 @@ const instance = axios.create({
 
 instance.interceptors.request.use(function (config) {
     // gắn token vào header
-    const token = localStorage.getItem("persist:auth")
- 
-
+    const token = window.localStorage.getItem("persist:auth") != null && JSON.parse(localStorage.getItem("persist:auth"))?.token.slice(1,-1)
+    config.headers = {
+      Authorization: `Baerer ${token}`
+    }
     return config;
   }, function (error) {
     // Do something with request error

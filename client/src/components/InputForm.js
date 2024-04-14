@@ -2,7 +2,7 @@ import React, { memo } from 'react'
 
 const InputForm = ({ label, value, setValue, keyPayload, invalidFields, setInvalidFields, type }) => {
     return (
-        <div>
+        <div className="w-full px-3 mb-6 md:mb-0">
             <label htmlFor={keyPayload} className='text-xs' >{label}</label>
             <input
                 type={type || 'text'}

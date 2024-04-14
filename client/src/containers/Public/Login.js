@@ -4,6 +4,9 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import * as actions from '../../store/actions'
 import { useDispatch, useSelector } from 'react-redux';
 import { ToastContainer, toast } from 'react-toastify';
+import icons from '../../ultils/icons';
+
+const { BsChevronDown } = icons;
 
 const Login = () => {
 
@@ -11,7 +14,7 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate()
 
-  const {isLoggedIn, msg, update} = useSelector(state => state.auth)
+  const { isLoggedIn, msg, update } = useSelector(state => state.auth)
 
   const [isRegister, setIsRegister] = useState(location.state?.flag);
   const [invalidFields, setInvalidFields] = useState([])
@@ -19,10 +22,10 @@ const Login = () => {
     name: "",
     email: "",
     password: "",
-    role: "user"
+    role: "Customer"
   })
 
-  const notify = (msg) => toast(msg, {type: 'error' });
+  const notify = (msg) => toast(msg, { type: 'error' });
 
   useEffect(() => {
     setIsRegister(location.state?.flag)
@@ -42,7 +45,7 @@ const Login = () => {
       password: payload.password
     }
     let invalids = validate(finalPayload);
-    if(invalids === 0)  isRegister ? dispatch(actions.register(payload)) : dispatch(actions.login(payload))
+    if (invalids === 0) isRegister ? dispatch(actions.register(payload)) : dispatch(actions.login(payload))
   }
 
   const validate = (payload) => {
@@ -92,20 +95,20 @@ const Login = () => {
   return (
     <div className='bg-white w-[600px] p-[30px] m-2  pb-[100px] rounded-md shadow-sm'>
       <h3 className='font-semibold text-2xl mb-3'>{!isRegister ? 'Đăng nhập' : 'Đăng ký tài khoản'}</h3>
-      {
-        isRegister &&
-        <InputForm
-          label={"Name"}
-          keyPayload={"name"}
-          value={payload.name}
-          setValue={setPayload}
-          invalidFields={invalidFields}
-          setInvalidFields={setInvalidFields}
-        />
-      }
       <div className='w-full flex flex-col gap-3'>
+        {
+          isRegister &&
+          <InputForm
+            label={"Name"}
+            keyPayload={"name"}
+            value={payload.name}
+            setValue={setPayload}
+            invalidFields={invalidFields}
+            setInvalidFields={setInvalidFields}
+          />
+        }
         <InputForm
-          label={"email"}
+          label={"Email"}
           keyPayload={"email"}
           value={payload.email}
           setValue={setPayload}
@@ -113,7 +116,7 @@ const Login = () => {
           setInvalidFields={setInvalidFields}
         />
         <InputForm
-          label={"password"}
+          label={"Password"}
           keyPayload={"password"}
           value={payload.password}
           setValue={setPayload}
@@ -121,6 +124,26 @@ const Login = () => {
           setInvalidFields={setInvalidFields}
           type={"password"}
         />
+        {
+          isRegister &&
+          <div className="w-full md:w-1/3 px-3 mb-6 md:mb-0">
+            <label htmlFor="role" className='text-xs' >Role</label>
+            <div className="relative">
+              <select
+                id="role"
+                value={payload.role}
+                onChange={(e) => setPayload(prev => ({ ...prev, role: e.target.value }))}
+                className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+              >
+                <option>Customer</option>
+                <option>Garage</option>
+              </select>
+              <div className='pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700'>
+                <BsChevronDown />
+              </div>
+            </div>
+          </div>
+        }
         <Button
           text={isRegister ? "Đăng ký" : "Đăng nhập"}
           bgcolor={'bg-secondary1'}
