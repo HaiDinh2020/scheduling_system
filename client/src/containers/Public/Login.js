@@ -33,6 +33,9 @@ const Login = () => {
 
   useEffect(() => {
     isLoggedIn && navigate("/")
+    isLoggedIn && setTimeout(() => {
+      dispatch(actions.getCurrentProfile())
+    }, [1000])
   }, [isLoggedIn])
 
   useEffect(() => {
@@ -135,8 +138,8 @@ const Login = () => {
                 onChange={(e) => setPayload(prev => ({ ...prev, role: e.target.value }))}
                 className="block appearance-none w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
               >
-                <option>Customer</option>
-                <option>Garage</option>
+                <option value={"customer"}>Customer</option>
+                <option value={"garage"}>Garage</option>
               </select>
               <div className='pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700'>
                 <BsChevronDown />

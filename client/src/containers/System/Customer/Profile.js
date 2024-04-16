@@ -4,7 +4,9 @@ import * as actions from '../../../store/actions'
 import { InputForm } from '../../../components/CustomerComponents'
 import avatardefault from '../../../asests/avatar_default.png'
 import { Button } from '../../../components'
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
+import axios from 'axios'
+import { apiUploadAvatar } from '../../../services/user'
 
 const Profile = () => {
 
@@ -12,10 +14,59 @@ const Profile = () => {
 
   const { userCurentProfile } = useSelector(state => state.user)
   const [useData, setUserData] = useState(userCurentProfile)
+  const [imageSrc, setImageSrc] = useState(useData.avatar);
+  const [imageFile, setImageFile] = useState(null)
+  const [isSubmiting, setIsSubmiting] = useState(false)
 
+
+  // check avatar đã upload xong chưa và đang submit thì call dispatch update profile
   useEffect(() => {
-    dispatch(actions.getCurrentProfile())
-  }, [])
+    if(isSubmiting === true) {
+      dispatch(actions.updateProfile(useData))
+    } 
+    return (
+      setIsSubmiting(false)
+    )
+  }, [useData.avatar])
+
+  const uploadAvatar = async (file) => {
+    if(file) {
+      const formData = new FormData();
+      formData.append("file", file)
+      formData.append("upload_preset", "mdztmacc")
+      const response = await apiUploadAvatar(formData)
+      if (response.status === 200) {
+        setUserData(prev => ({ ...prev, "avatar": response.data.secure_url }))
+      } else {
+        toast("error to upload avatar")
+      }
+    }
+    
+  }
+
+  // hiển thị preview avatar
+  const previewImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        setImageSrc(event.target.result);
+      };
+      setImageFile(file)
+    }
+  }
+
+  // nếu thay đổi avatar thì gọi uploadAvatar, không thì call dispatch luôn
+  const handleSubmit = () => {
+    setIsSubmiting(true)
+    if(imageFile) {
+      uploadAvatar(imageFile)
+    } else {
+      dispatch(actions.updateProfile(useData))
+    }
+    
+  }
 
   return (
     <div className='container flex flex-col items-center'>
@@ -51,15 +102,15 @@ const Profile = () => {
           <label htmlFor="avatar" className='w-1/4 text-s float-start' >Ảnh đại diện</label>
           <div className='w-3/4'>
             <img
-              src={useData.avatar || avatardefault}
+              src={imageSrc || avatardefault}
               alt='avatar'
-              className='w-20 object-cover rounded-full border-2 shadow-md border-gray-800 bg-gray-500 m-2' />
+              className='w-20 h-20 object-cover rounded-full border-2 shadow-md border-gray-800 bg-gray-500 m-2' />
             <input
               id="avatar"
               type='file'
               className=' outline-none border border-gray-400 p-2 rounded-md '
               onChange={(e) => {
-                setUserData(prev => ({ ...prev, avatar: e.target.value }))
+                previewImageChange(e)
               }}
             />
           </div>
@@ -70,12 +121,12 @@ const Profile = () => {
             textcolor={'text-white'}
             bgcolor={'bg-secondary1'}
             onClick={() => {
-              dispatch(actions.updateProfile(useData))
+              handleSubmit()
             }}
           />
         </div>
       </div>
-        <ToastContainer />
+      <ToastContainer />
     </div>
   )
 }

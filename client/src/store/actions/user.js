@@ -6,7 +6,6 @@ export const getCurrentProfile = () => async (dispatch) => {
     try {
         const response = await apiGetCurrentProfile()
         if (response?.data.err === 0) {
-            console.log("update success")
             dispatch({
                 type: actionTypes.GET_CURRENT_PROFILE,
                 data: response.data.response

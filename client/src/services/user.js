@@ -1,4 +1,5 @@
 import axiosConfig from "../axiosConfig";
+import axios from "axios";
 
 export const apiGetCurrentProfile = () => new Promise(async(resolve, reject) => {
     try {
@@ -19,6 +20,19 @@ export const apiUpdateProfile = (payload) => new Promise(async (resolve, reject)
             method:'put',
             url: '/api/v1/user/update-profile',
             data: payload
+        })
+        resolve(response)
+    } catch (error) {
+        reject(error)
+    }
+})
+
+export const apiUploadAvatar = async (formData) => new Promise(async (resolve, reject) => {
+    try {
+        const response = await axios({
+            method: 'post',
+            url: "https://api.cloudinary.com/v1_1/dmrsdkvzl/image/upload", 
+            data: formData
         })
         resolve(response)
     } catch (error) {

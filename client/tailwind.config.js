@@ -20,7 +20,8 @@ module.exports = {
       },
       minWidth: {
         '300': '300px',
-        '200': '200px'
+        '200': '200px',
+        '80': '80px'
       },
       cursor: {
         pointer: 'pointer'
