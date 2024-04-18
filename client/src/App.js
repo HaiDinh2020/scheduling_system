@@ -3,6 +3,7 @@ import { path } from "./ultils/constants";
 import { Home, Login } from "./containers/Public";
 import 'react-toastify/dist/ReactToastify.css';
 import { Customer, Profile } from "./containers/System/Customer";
+import { Garage, Profile as GarageProfile, Infor } from "./containers/System/Garage";
 
 function App() {
   return (
@@ -13,6 +14,10 @@ function App() {
         </Route>
         <Route path={path.CUSTOMER} Component={Customer}>
           <Route path={path.USERPROFILE} Component={Profile} />
+        </Route>
+        <Route path={path.GARAGE} Component={Garage}>
+          <Route path={path.GARAGEPROFILE} Component={GarageProfile} />
+          <Route path={path.GARAGEINFO} Component={Infor} />
         </Route>
       </Routes>
     </div>

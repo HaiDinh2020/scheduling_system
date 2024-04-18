@@ -5,7 +5,6 @@ import { InputForm } from '../../../components/CustomerComponents'
 import avatardefault from '../../../asests/avatar_default.png'
 import { Button } from '../../../components'
 import { ToastContainer, toast } from 'react-toastify';
-import axios from 'axios'
 import { apiUploadAvatar } from '../../../services/user'
 
 const Profile = () => {

@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Navigate, Outlet } from 'react-router-dom'
 import { path } from '../../../ultils/constants'
-import { Header, Navigation } from '../../Public/index'
+import { Header } from '../../Public/index'
 import * as actions from '../../../store/actions'
 import Sidebar from './Sidebar'
 
-const Customer = () => {
+const Garage = () => {
     const { isLoggedIn } = useSelector(state => state.auth)
     const dispatch = useDispatch()
 
@@ -21,7 +21,6 @@ const Customer = () => {
     return (
         <div className='w-full h-screen flex flex-col items-center'>
             <Header />
-            <Navigation />
             <div className='flex w-full flex-auto pt-2'>
                 <div className='w-1/4 '>
                     <Sidebar />
@@ -34,4 +33,4 @@ const Customer = () => {
     )
 }
 
-export default Customer
+export default Garage

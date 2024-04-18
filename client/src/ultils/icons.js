@@ -1,7 +1,7 @@
 import { AiFillFacebook } from "react-icons/ai";
 import { AiOutlinePlusCircle, AiOutlineLogout } from 'react-icons/ai'
 import { GrNext, GrStar, GrLinkNext, GrLinkPrevious } from 'react-icons/gr'
-import { BsChevronRight, BsBookmarkStarFill, BsChevronDown, BsBell, BsListUl, BsClockHistory } from 'react-icons/bs'
+import { BsChevronRight, BsBookmarkStarFill, BsChevronDown, BsBell, BsListUl, BsClockHistory, BsCameraFill } from 'react-icons/bs'
 import { HiOutlineLocationMarker } from 'react-icons/hi'
 import { TbReportMoney } from 'react-icons/tb'
 import { RiCrop2Line, RiHeartFill, RiHeartLine } from 'react-icons/ri'
@@ -11,6 +11,7 @@ import { ImPencil2 } from 'react-icons/im'
 import { BiUserPin } from 'react-icons/bi'
 
 const icons = {
+    BsCameraFill,
     BsClockHistory,
     BsListUl,
     AiFillFacebook,

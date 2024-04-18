@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Button } from '../../components';
 import logo from '../../asests/logowithoutbg.png';
 import icons from '../../ultils/icons';
@@ -16,13 +16,12 @@ const Header = (props) => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
+    const { userCurentProfile } = useSelector(state => state.user)
     const { isLoggedIn } = useSelector(state => state.auth);
     const [isShowMenu, setIsShowMenu] = useState(false)
-
     const goLogin = useCallback((flag) => {
         navigate(path.LOGIN, { state: { flag } })
     }, [navigate])
-
 
     return (
         <div className='w-full p-2 flex items-center justify-between bg-primary'>
@@ -53,7 +52,7 @@ const Header = (props) => {
                             </Link>
                             <div className='flex'>
                                 <img
-                                    src={avatardefault}
+                                    src={userCurentProfile.avatar || avatardefault}
                                     alt='avatar'
                                     className='w-10 object-cover rounded-full h-10 border-2 shadow-md border-white bg-gray-500 cursor-pointer '
                                     onClick={() => setIsShowMenu(!isShowMenu)}

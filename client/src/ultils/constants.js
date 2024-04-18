@@ -5,4 +5,6 @@ export const path = {
     GARAGE: '/garage/*',
     CUSTOMER: '/customer/*',
     USERPROFILE: 'profile',
+    GARAGEPROFILE: 'profile',
+    GARAGEINFO: 'infor'
 }
