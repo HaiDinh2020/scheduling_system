@@ -18,7 +18,8 @@ export const loginService = ({ email, password }) => new Promise(async (resolve,
         resolve({
             err: token ? 0 : 2,
             msg: token ? "Login is successfully!" : response ? "Password is wrong !" : "Account is not registered!",
-            token: token || null
+            token: token || null,
+            role: response ? response.role : "Customer"
         })
 
     } catch (error) {
