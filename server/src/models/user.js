@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      User.hasOne(models.Garage, {foreignKey: 'owner_id', as: 'garage' })
+      User.hasOne(models.Garage, { foreignKey: 'owner_id', as: 'garage' })
     }
   }
   User.init({
@@ -24,6 +24,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'User',
+    charset: 'utf8',
+    collate: 'utf8_unicode_ci'
   });
   return User;
 };

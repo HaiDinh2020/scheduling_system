@@ -27,8 +27,9 @@ export const loginService = ({ email, password }) => new Promise(async (resolve,
     }
 })
 
-export const registerService = ({ name, phone, password, email, role }) => new Promise(async (resolve, reject) => {
+export const registerService = ({ name, phone, password, email, role, garageName, introduce, address, services, businessHours, linkWebsite }) => new Promise(async (resolve, reject) => {
     try {
+        console.log(name, phone, password, garageName, introduce, address, services, businessHours, linkWebsite)
         const response = await db.User.findOrCreate({
             where: { email },
             defaults: {
@@ -42,11 +43,33 @@ export const registerService = ({ name, phone, password, email, role }) => new P
         })
 
         const token = response[1] && jwt.sign({ id: response[0].id, email: response[0].email }, process.env.SECRET_KEY, { expiresIn: '2d' })
-        resolve({
-            err: token ? 0 : 2,
-            msg: token ? "Register is successfully!" : "Email has been already used!",
-            token: token || null
-        })
+
+        if(response[1] && role === 'garage') {
+            const create_garage = await db.Garage.findOrCreate({
+                where: {owner_id: response[0].id},
+                defaults: {
+                    id: v4(),
+                    owner_id: response[0].id,
+                    garage_name: garageName,
+                    address,
+                    introduce,
+                    website: linkWebsite,
+                    business_hours: businessHours,
+                    services ,
+                }
+            })
+            resolve({
+                err: create_garage[1] ? 0 : 2,
+                msg: create_garage[1] ? "Register is successfully!" : "Error whent create garage info",
+                token: token || null
+            })
+        } else {
+            resolve({
+                err: token ? 0 : 2,
+                msg: token ? "Register is successfully!" : "Email has been already used!",
+                token: token || null
+            })
+        }
 
     } catch (error) {
         reject(error)

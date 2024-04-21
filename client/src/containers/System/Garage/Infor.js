@@ -30,7 +30,7 @@ const Infor = () => {
     const dispatch = useDispatch()
 
     const [newGarageInfor, setNewGarageInfor] = useState(parseImages(garageInfor))
-    const [imagePreviews, setImagePreviews] = useState([])
+    const [imagePreviews, setImagePreviews] = useState(newGarageInfor.images || [])
 
     
 

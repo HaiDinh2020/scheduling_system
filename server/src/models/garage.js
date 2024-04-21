@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      Garage.belongsTo(models.User, {foreignKey: 'owner_id', targetKey: 'id', as: 'user'})
+      Garage.belongsTo(models.User, { foreignKey: 'owner_id', targetKey: 'id', as: 'user' })
     }
   }
   Garage.init({
@@ -22,11 +22,13 @@ module.exports = (sequelize, DataTypes) => {
     business_hours: DataTypes.STRING,
     services: DataTypes.STRING,
     star: DataTypes.NUMBER,
-    image: DataTypes.STRING,
+    images: DataTypes.STRING,
     owner_id: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Garage',
+    charset: 'utf8',
+    collate: 'utf8_unicode_ci'
   });
   return Garage;
 };

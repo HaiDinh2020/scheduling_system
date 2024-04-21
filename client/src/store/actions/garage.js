@@ -24,9 +24,9 @@ export const getGarageInfor = () => async (dispatch) => {
     }
 }
 
-export const updateGarageInfor = () => async (dispatch) => {
+export const updateGarageInfor = (payload) => async (dispatch) => {
     try {
-        const response = await apiUpdateGarageInfor()
+        const response = await apiUpdateGarageInfor(payload)
         if (response?.data.err === 0) {
             dispatch({
                 type: actionTypes.GET_GARAGE_INFOR,

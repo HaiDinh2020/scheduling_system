@@ -31,6 +31,8 @@ export const updateProfile = async (req, res) => {
 
 }
 
+
+/// draf
 export const getUsers = async (req, res) => {
     try {
         const { id, name, phone, password, email, avatar } = req.body

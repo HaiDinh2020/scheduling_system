@@ -22,15 +22,24 @@ export const login = async (req, res) => {
 }
 
 export const register = async (req, res) => {
-    const {name, email, password} = req.body
-
-    try {
-        
+    const {name, email, password, role} = req.body
+    console.log(req)
+    try {    
         if(!name || !email || !password) {
             return res.status(400).json({
                 err:1,
                 msg:"Missing input!"
             })
+        }
+
+        if(role === 'garage') {
+            const {garageName, introduce, address, services, businessHours} = req.body
+            if(!garageName || !introduce || !services || !businessHours ) {
+                return res.status(400).json({
+                    err:1,
+                    msg:"Missing input!"
+                })
+            }
         }
 
         const response = await registerService(req.body)
