@@ -8,3 +8,5 @@ export const path = {
     GARAGEPROFILE: 'profile',
     GARAGEINFO: 'infor'
 }
+
+export const servicesOptions = ['Sửa chữa', 'Bảo dưỡng', 'Bán phụ tùng', 'Tư vấn khách hàng', 'Dạy nghề']

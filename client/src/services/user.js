@@ -31,7 +31,7 @@ export const apiUploadAvatar = async (formData) => new Promise(async (resolve, r
     try {
         const response = await axios({
             method: 'post',
-            url: "https://api.cloudinary.com/v1_1/dmrsdkvzl/image/upload", 
+            url:   `https://api.cloudinary.com/v1_1/${process.env.REACT_APP_CLOUD_NAME}/image/upload`, 
             data: formData
         })
         resolve(response)

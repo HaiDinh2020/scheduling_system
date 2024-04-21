@@ -27,14 +27,16 @@ const authReducer = (state = initState, action) => {
                 isLoggedIn: false,
                 msg: action.data,
                 token: null,
-                update: !state.update
+                update: !state.update,
+                role: "customer"
             }
         case actionTypes.LOGOUT:
             return {
                 ...state,
                 isLoggedIn: false,
                 token: null,
-                msg: ""
+                msg: "",
+                role: "customer"
             }
 
         default:

@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Navigate, Outlet } from 'react-router-dom'
+import { Navigate, Outlet, useNavigate } from 'react-router-dom'
 import { path } from '../../../ultils/constants'
 import { Header, Navigation } from '../../Public/index'
 import * as actions from '../../../store/actions'
 import Sidebar from './Sidebar'
 
 const Customer = () => {
-    const { isLoggedIn } = useSelector(state => state.auth)
+    const { isLoggedIn, role } = useSelector(state => state.auth)
     const dispatch = useDispatch()
 
     useEffect(() => {
         if(isLoggedIn) {
             dispatch(actions.getCurrentProfile())
-            console.log("get current")
         }
     }, [])
 
     if (!isLoggedIn) return <Navigate to={`/${path.LOGIN}`} replace={true} />
+    if(role != "customer") return  <Navigate to={`/`}/>
     return (
         <div className='w-full h-screen flex flex-col items-center'>
             <Header />
