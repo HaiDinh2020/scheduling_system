@@ -4,11 +4,24 @@ import cors from 'cors';
 import initRoutes from './src/routes'
 import connectDatabase from "./src/config/connectDatabase";
 const app = express()
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+
+app.use(cookieParser());
+
+// xử lý để body nhận data dạng form
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 app.use(cors({
     origin: process.env.CLIENT_URL,
     methods: ["GET", "POST", "PUT", "DELETE"]
 }))
+
+app.get('/set-cookie', (req, res) => {
+    res.cookie('myCookie', 'cookieValue', { maxAge: 900000, httpOnly: true });
+    res.send('Cookie has been set');
+  });
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))

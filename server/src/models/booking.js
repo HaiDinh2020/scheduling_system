@@ -11,13 +11,22 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Booking.belongsTo(models.User, { foreignKey: 'customer_id', targetKey: 'id', as: 'customer' });
+
+      Booking.belongsTo(models.Garage, { foreignKey: 'garage_id', targetKey: 'id', as: 'garage' });
+      Booking.belongsTo(models.Car, { foreignKey: 'car_id', targetKey: 'id', as: 'car' });
+
     }
   }
   Booking.init({
     customer_id: DataTypes.STRING,
     garage_id: DataTypes.STRING,
+    car_id: DataTypes.STRING,
     status: DataTypes.STRING,
-    booking_date: DataTypes.DATE
+    services: DataTypes.STRING,
+    description: DataTypes.STRING,
+    booking_images: DataTypes.STRING,
+    booking_date: DataTypes.DATE,
   }, {
     sequelize,
     modelName: 'Booking',

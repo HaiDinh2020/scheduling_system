@@ -2,23 +2,26 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Bookings', {
+    await queryInterface.createTable('Cars', {
       id: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.STRING
       },
-      customer_id: {
+      make: {
         type: Sequelize.STRING
       },
-      garage_id: {
+      model: {
         type: Sequelize.STRING
       },
-      status: {
+      number_plate: {
         type: Sequelize.STRING
       },
-      booking_date: {
-        type: Sequelize.DATE
+      owner_id: {
+        type: Sequelize.STRING
+      },
+      car_images: {
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
@@ -31,6 +34,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Bookings');
+    await queryInterface.dropTable('Cars');
   }
 };

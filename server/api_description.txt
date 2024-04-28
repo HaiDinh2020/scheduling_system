@@ -1,0 +1,182 @@
+*******AUTHENTICATION*******
+
+1. Register
+Path: /login
+Method: POST
+Request:
+    Body: 
+        {   
+
+            email:      string  (required),
+            password:   string  (required)
+        }
+Response:
+    {
+        "User registered successfully"
+    }    
+
+2. Sign in
+Path: /sign-in
+Method: POST
+Request:
+    Body: 
+        {
+            email:      string  (required),
+            password:   string  (required)
+        }
+Response:
+    {
+        jwt: string 
+    }    
+    // Decode token ra de lay user_id va role
+
+*******Garage*******
+
+I. Infor_garage
+1. GET infor
+Path: /api/v1/garage/infor
+Method: GET
+Request:
+    Headers:
+        {
+            authorization: jwt
+        }
+Response:
+    {
+        err: 0,
+        msg: "success to get garage infor",
+        response: {
+            id:                 string,
+            garage_name:        string,
+            address:            string,
+            introduce:          string,
+            website:            string,
+            business_hours:     string,
+            services:           string,
+            star:               int,
+            images:             string,
+            owner_id:           string,
+        }
+    }    
+
+2. update garage infor
+Path: /api/v1/garage/infor
+Method: PUT
+Request:
+    Headers:
+        {
+            authorization: jwt
+        }
+    Body: 
+        {
+            garageId:           string,
+            garage_name:        string,
+            address:            string,
+            introduce:          string,
+            website:            string,
+            business_hours:     string,
+            services:           string,
+            star:               string,
+            images:             string,
+        }
+Response:
+    {
+        err: 0,
+        msg: ""success to update garage infor",
+    }
+
+
+*******Customer*******
+I. Car 
+1. create new car
+Path: /api/v1/car
+Method: POST
+Request:
+    Headers:
+        {
+            authorization: jwt
+        }
+    Body: 
+        {
+            make:               string,
+            model:              string,
+            number_plate:       string,
+            car_images:         string,
+        }
+Response:
+    {
+        err: 0,
+        msg: "Create new car successfully",
+    }
+
+
+*******Booking*******
+I. Customer
+1. create Booking
+Path: /api/v1/booking/customer
+Method: POST
+Request:
+    Headers:
+        {
+            authorization: jwt
+        }
+    Body: 
+        {
+            garage_id:              string,
+            car_id:                 string,
+            services:               string,
+            description:            string,
+            booking_images:         string,
+            booking_date:           string,
+        }
+Response:
+    {
+        err: 0,
+        msg: "success to create schedule",
+        response: {
+            id:                     string,
+            garage_id:              string,
+            customer_id:            string,
+            car_id:                 string,
+            status:                 string,
+            services:               string,
+            description:            string,
+            booking_images:         string,
+            booking_date:           string,
+        }
+    }
+
+II. Garage
+1. lấy toàn bộ booking của garage
+Path: /api/v1/booking/garage/:garageId
+Method: GET
+Request:
+    Headers:
+        {
+            authorization: jwt
+        }
+Response:
+    {
+        err: 0,
+        msg: "success to find all schedule",
+        response: [
+            {
+                id:                     string,
+                status:                 string,
+                services:               string,
+                description:            string,
+                booking_images:         string,
+                booking_date:           string,
+                customer: {
+                    name:                   string,
+                    phone:                  int,
+                },
+                car: {
+                    make:                   string,
+                    model:                  string,
+                    number_plate:           string,
+                }
+            }
+        ]
+    }
+    
