@@ -34,7 +34,7 @@ export const getAllBookingServices = (garageId) => new Promise(async (resolve, r
             raw: true,
             nest: true,
             include: [
-                {model: db.User, as:'customer', attributes: ['name', 'phone']},
+                {model: db.User, as:'customer', attributes: ['name', 'phone', 'avatar']},
                 {model: db.Car, as: 'car', attributes: ['make', 'model', 'number_plate'] }
             ],
             attributes: ['id', 'status', 'services', 'description', 'booking_images', 'booking_date']
@@ -42,7 +42,34 @@ export const getAllBookingServices = (garageId) => new Promise(async (resolve, r
         if (!response) {
             reject("Booking not found")
         }
-        console.log(response)
+        resolve({
+            err: 0,
+            msg: "success to find all schedule",
+            response
+        })
+    } catch (error) {
+        reject(error)
+    }
+})
+
+export const getBookingStatusServices = (garageId, status) => new Promise(async (resolve, reject) => {
+    try {
+        const response = await db.Booking.findAll({ 
+            where: { 
+                garage_id: garageId, 
+                status: status 
+            },
+            raw: true,
+            nest: true,
+            include: [
+                {model: db.User, as:'customer', attributes: ['name', 'phone', 'avatar']},
+                {model: db.Car, as: 'car', attributes: ['make', 'model', 'number_plate'] }
+            ],
+            attributes: ['id', 'status', 'services', 'description', 'booking_images', 'booking_date']
+        })
+        if (!response) {
+            reject("Booking not found")
+        }
         resolve({
             err: 0,
             msg: "success to find all schedule",

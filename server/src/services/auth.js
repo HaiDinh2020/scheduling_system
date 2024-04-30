@@ -61,13 +61,15 @@ export const registerService = ({ name, phone, password, email, role, garageName
             resolve({
                 err: create_garage[1] ? 0 : 2,
                 msg: create_garage[1] ? "Register is successfully!" : "Error whent create garage info",
-                token: token || null
+                token: token || null,
+                role:  "garage"
             })
         } else {
             resolve({
                 err: token ? 0 : 2,
                 msg: token ? "Register is successfully!" : "Email has been already used!",
-                token: token || null
+                token: token || null,
+                role: role
             })
         }
 

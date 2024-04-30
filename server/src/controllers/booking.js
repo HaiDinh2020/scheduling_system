@@ -45,10 +45,32 @@ export const getAllBooking = async (req, res) => {
     }
 }
 
+export const getBookingStatus = async (req, res) => {
+    try {
+        const garageId = req.params.garageId
+        const status = req.query.status
+        if(!garageId || !status) {
+            return res.status(401).json({
+                err: 1,
+                msg: "Missing status"
+            })
+        }
+        
+        const response = await BookingServices.getBookingStatusServices(garageId, status)
+        return res.status(200).json(response)
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            err: -1,
+            msg: "Server error"
+        })
+    }
+}
+
 export const updateStatusBooking = async (req, res) => {
     try {
         const bookingId = req.params.bookingId;
-        const newStatus = req.body.status;
+        const newStatus = req.body.newStatus;
         if (!newStatus || !bookingId) {
             res.status(400).json({
                 err: 1,
