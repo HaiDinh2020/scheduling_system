@@ -53,6 +53,9 @@ const Login = () => {
     }
     isLoggedIn && setTimeout(() => {
       dispatch(actions.getCurrentProfile())
+      if (role === 'garage') {
+        dispatch(actions.getGarageInfor())
+      }
     }, [1000])
   }, [isLoggedIn])
 

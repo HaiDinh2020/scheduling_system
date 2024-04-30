@@ -8,7 +8,7 @@ export const register = (payload) => async (dispatch) => {
         if(response?.data.err === 0) {
             dispatch({
                 type: actionTypes.REGISTER_SUCCESS,
-                data: response.data.token
+                data: response.data
             })
         } else {
             dispatch({

@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Checkbox, Form, Input } from 'antd';
+import { Checkbox, Input } from 'antd';
 import TextArea from 'antd/es/input/TextArea'
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import * as actions from '../../../store/actions'
 
-import { Button, InputForm } from '../../../components'
+import { Button } from '../../../components'
 import icons from '../../../ultils/icons'
 import { apiUploadImages } from '../../../services/Garage/garage'
 import { servicesOptions } from '../../../ultils/constants'

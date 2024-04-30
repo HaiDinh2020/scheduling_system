@@ -11,7 +11,7 @@ const Sidebar = () => {
     const { userCurentProfile } = useSelector(state => state.user)
 
     return (
-        <div className='w-full flex justify-center pl-2'>
+        <div className='w-full min-w-60 flex justify-center pl-2'>
             <div className='w-full justify-center rounded-xl border-2 shadow-md bg-white'>
                 <div className='flex flex-col items-center justify-center p-16 border-b-2'>
                     <img src={userCurentProfile.avatar || avatardefault} alt='avatar' className='w-20 aspect-square object-cover rounded-full border-2 shadow-md border-white bg-gray-500 cursor-pointer ' />

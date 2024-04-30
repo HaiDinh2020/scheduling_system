@@ -9,8 +9,21 @@ import { MdOutlineHouseSiding, MdOutlineLibraryBooks } from 'react-icons/md'
 import { FiSearch } from 'react-icons/fi'
 import { ImPencil2, ImBin } from 'react-icons/im'
 import { BiUserPin } from 'react-icons/bi'
+import { FaCheckCircle } from "react-icons/fa";
+import { TbProgressCheck } from "react-icons/tb";
+import { MdCancel } from "react-icons/md";
+import { GrScheduleNew, GrSchedules } from "react-icons/gr";
+import { LuFlagTriangleRight } from "react-icons/lu";
+import { FcOvertime } from "react-icons/fc";
 
 const icons = {
+    FcOvertime,
+    LuFlagTriangleRight,
+    MdCancel,
+    GrSchedules,
+    GrScheduleNew,
+    TbProgressCheck,
+    FaCheckCircle,
     ImBin,
     BsCameraFill,
     BsClockHistory,

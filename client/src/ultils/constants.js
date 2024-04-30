@@ -6,7 +6,9 @@ export const path = {
     CUSTOMER: '/customer/*',
     USERPROFILE: 'profile',
     GARAGEPROFILE: 'profile',
-    GARAGEINFO: 'infor'
+    GARAGEINFO: 'infor',
+    GARAGESCHEDULE: 'schedule',
 }
 
 export const servicesOptions = ['Sửa chữa', 'Bảo dưỡng', 'Bán phụ tùng', 'Tư vấn khách hàng', 'Dạy nghề']
+export const bookingStatus = ["request", "reject", "complete", "in progress"]

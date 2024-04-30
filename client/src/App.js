@@ -3,11 +3,12 @@ import { path } from "./ultils/constants";
 import { Home, Login } from "./containers/Public";
 import 'react-toastify/dist/ReactToastify.css';
 import { Customer } from "./containers/System/Customer";
-import { Garage, Infor } from "./containers/System/Garage";
+import { Garage, Infor, Schedule } from "./containers/System/Garage";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import * as actions from './store/actions'
 import Profile from "./containers/System/Profile";
+import axios from "axios";
 
 
 function App() {
@@ -15,6 +16,15 @@ function App() {
   const { isLoggedIn, role } = useSelector(state => state.auth)
   const dispatch = useDispatch();
   const navigate = useNavigate()
+
+  // const setCookie = async () => {
+  //   try {
+  //     await axios.get('http://localhost:5000/set-cookie');
+  //     console.log('Cookie set successfully');
+  //   } catch (error) {
+  //     console.error('Error setting cookie:', error);
+  //   }
+  // };
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -33,6 +43,7 @@ function App() {
     } else {
       navigate("/login")
     }
+    // setCookie()
   }, [])
 
   return (
@@ -47,6 +58,7 @@ function App() {
         <Route path={path.GARAGE} Component={Garage}>
           <Route path={path.GARAGEPROFILE} Component={Profile} />
           <Route path={path.GARAGEINFO} Component={Infor} />
+          <Route path={path.GARAGESCHEDULE} Component={Schedule} />
         </Route>
       </Routes>
     </div>
