@@ -1,8 +1,8 @@
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { path } from "./ultils/constants";
-import { Home, Login } from "./containers/Public";
+import { Home, HomePage, Login } from "./containers/Public";
 import 'react-toastify/dist/ReactToastify.css';
-import { Customer } from "./containers/System/Customer";
+import { Customer, ListCars } from "./containers/System/Customer";
 import { Garage, Infor, Schedule } from "./containers/System/Garage";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
@@ -27,10 +27,16 @@ function App() {
   // };
 
   useEffect(() => {
+    dispatch(actions.getAllGarage())
+  }, [])
+
+  useEffect(() => {
     if (isLoggedIn) {
       dispatch(actions.getCurrentProfile())
       if (role == 'garage') {
         dispatch(actions.getGarageInfor())
+      } else {
+        dispatch(actions.getAllCar())
       }
     }
   }, [isLoggedIn])
@@ -50,10 +56,12 @@ function App() {
     <div className="h-full w-full bg-primary">
       <Routes>
         <Route path={path.HOME} Component={Home} >
+          <Route path='*' element={<HomePage />} />
           <Route path={path.LOGIN} Component={Login} />
         </Route>
         <Route path={path.CUSTOMER} Component={Customer}>
           <Route path={path.USERPROFILE} Component={Profile} />
+          <Route path={path.List_CARS} Component={ListCars} />
         </Route>
         <Route path={path.GARAGE} Component={Garage}>
           <Route path={path.GARAGEPROFILE} Component={Profile} />

@@ -6,7 +6,7 @@ const router = express.Router()
 
 router.use(verifyToken)
 router.post('/', carController.createCar)
-
-
+router.get('/', carController.getAllCar)
+router.delete('/:carId', carController.deleteCar)
 
 export default router;

@@ -58,7 +58,7 @@ const Header = (props) => {
                                     onClick={() => setIsShowMenu(!isShowMenu)}
                                 ></img>
 
-                                {isShowMenu && <div className='absolute  min-w-200 bg-white top-14 shadow-md rounded-md p-4 right-0 flex flex-col'>
+                                {isShowMenu && <div className='absolute z-10 min-w-200 bg-white top-14 shadow-md rounded-md p-4 right-0 flex flex-col'>
                                     {
                                         menuManage.map((item, _) => {
                                             return (

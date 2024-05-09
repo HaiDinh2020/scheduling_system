@@ -8,19 +8,22 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.STRING
       },
+      owner_id: {
+        type: Sequelize.STRING
+      },
       make: {
         type: Sequelize.STRING
       },
       model: {
         type: Sequelize.STRING
       },
+      year: {
+        type: Sequelize.INTEGER
+      },
       number_plate: {
         type: Sequelize.STRING
       },
-      owner_id: {
-        type: Sequelize.STRING
-      },
-      car_images: {
+      color: {
         type: Sequelize.STRING
       },
       createdAt: {
