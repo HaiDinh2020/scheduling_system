@@ -1,37 +1,12 @@
 
 import axiosConfig from "../../axiosConfig";
 
-export const apiCreateBooking = (payload) => new Promise(async(resolve, reject) => {
-    try {
-        const response = await axiosConfig({
-            method: 'post',
-            url:'/api/v1/booking/customer',
-            data: payload
-        })
-
-        resolve(response)
-    } catch (error) {
-        reject(error)
-    }
-})
-
-export const apiGetAllBookingCustomer = () => new Promise(async(resolve, reject) => {
+export const apiPostLimit = (query) => new Promise(async(resolve, reject) => {
     try {
         const response = await axiosConfig({
             method: 'get',
-            url:`/api/v1/booking/customer`,
-        })
-        resolve(response)
-    } catch (error) {
-        reject(error)
-    }
-})
-
-export const apiGetAllBooking = (garageId) => new Promise(async(resolve, reject) => {
-    try {
-        const response = await axiosConfig({
-            method: 'get',
-            url: `/api/v1/booking/garage/${garageId}`,
+            url: `/api/v1/booking/garage/`,
+            params: query
         })
         resolve(response)
     

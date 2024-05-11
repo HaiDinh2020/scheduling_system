@@ -25,9 +25,9 @@ const ListCars = () => {
   const confirmDelete = (e) => {
     dispatch(actions.deleteCar(e.id))
   };
-  
 
-  
+
+
 
   return (
     <div className='container flex flex-col items-center'>
@@ -47,10 +47,8 @@ const ListCars = () => {
           dataSource={cars}
           pagination={{ pageSize: 5 }}
         >
-
           <Column title="Biển số" dataIndex="number_plate" key="number_plate" />
           <Column title="Màu xe" dataIndex="color" key="color" />
-
           <Column title="Hãng xe" dataIndex="make" key="make" />
           <Column title="Dòng xe" dataIndex="model" key="model" />
           <Column title="Năm sản xuất" dataIndex="year" key="year" />

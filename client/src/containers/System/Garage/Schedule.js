@@ -15,7 +15,7 @@ const Schedule = () => {
     const dispatch = useDispatch();
 
     const garageId = useSelector((state) => state.garage.garageInfor.id);
-    const { bookingData } = useSelector((state) => state.booking);
+    const { garageBookingData } = useSelector((state) => state.booking);
 
     const [displayStatus, setDisplayStatus] = useState(menuScheduleStatus[0].status);
 
@@ -117,7 +117,7 @@ const Schedule = () => {
 
             <div className='bg-white h-full min-h-screen rounded-xl border-2 shadow-md w-[95%] p-4'>
                 {
-                    bookingData && bookingData.map((item, index) => {
+                    garageBookingData && garageBookingData.map((item, index) => {
                         return (
                             <div key={index} className='w-full border-b-8 border-b-slate-550 p-2 mb-5'>
                                 <div className='w-full flex gap-3'>
