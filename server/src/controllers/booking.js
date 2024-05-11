@@ -31,6 +31,19 @@ export const createBooking = async (req, res) => {
     }
 }
 
+export const getAllBookingCustomer = async (req, res) => {
+    try {
+        const customerId = req.user.id
+        const response = await BookingServices.getAllBookingCustomerServices(customerId)
+        return res.status(200).json(response)
+    } catch (error) {
+        return res.status(500).json({
+            err: -1,
+            msg: "Fail to get all booking"
+        })
+    }
+}
+
 export const getAllBooking = async (req, res) => {
     try {
         const garageId = req.params.garageId

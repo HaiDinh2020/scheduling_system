@@ -16,11 +16,51 @@ export const createBookingServices = (customer_id, garage_id, car_id, status, se
             booking_images,
             booking_date
         })
+
+        if (!response) {
+            reject("Failed to create schedule");
+            return;
+        }
+
+        const createdBooking = await db.Booking.findOne({ 
+            where: { id: response.id },
+            raw: true,
+            nest: true,
+            include: [
+                {model: db.Car, as: 'car', attributes: ['make', 'model', 'number_plate'] }
+            ],
+            attributes: ['id', 'status', 'services', 'description', 'booking_images', 'booking_date']
+        });
         resolve({
             err: 0,
             msg: "success to create schedule",
-            response: response
+            response: createdBooking
         });
+    } catch (error) {
+        reject(error)
+    }
+})
+
+export const getAllBookingCustomerServices = (customerId) => new Promise(async (resolve, reject) => {
+    try {
+        const response = await db.Booking.findAll({ 
+            where: { customer_id: customerId },
+            raw: true,
+            nest: true,
+            include: [
+                {model: db.Car, as: 'car', attributes: ['make', 'model', 'number_plate'] }, 
+                {model: db.Garage, as: 'garage', attributes: ['garage_name', 'address']}
+            ],
+            attributes: ['id', 'status', 'services', 'description', 'booking_images', 'booking_date']
+        })
+        if (!response) {
+            reject("Booking not found")
+        }
+        resolve({
+            err: 0,
+            msg: "success to find all schedule",
+            response
+        })
     } catch (error) {
         reject(error)
     }

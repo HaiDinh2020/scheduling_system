@@ -6,6 +6,7 @@ const router = express.Router()
 
 router.use(verifyToken)
 router.post('/customer', bookingController.createBooking)
+router.get('/customer', bookingController.getAllBookingCustomer)
 router.put('/garage/:bookingId', bookingController.updateStatusBooking)
 router.get('/garage/:garageId', (req, res, next) => {
     if (req.query.status && req.query.status != "all") {
