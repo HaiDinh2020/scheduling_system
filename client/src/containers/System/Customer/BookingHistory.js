@@ -18,17 +18,29 @@ const BookingHistory = () => {
         { title: "Garage", dataIndex: 'garage', key: 'garage',
             render: (garage) => {
                 return (
-                    <>{garage.garage_name}</>
+                    <>{garage?.garage_name}</>
                 )
             }
         },
         { title: "Dịch vụ", dataIndex: "services", key: "services" },
         { title: "Mô tả", dataIndex: "description", key: "description" },
-        { title: "Ngày đặt lịch", dataIndex: "booking_date", key: "booking_date" },
-        { title: "Ô tô", dataIndex: "car", key: "car",
+        { 
+            title: "Ngày đặt lịch", 
+            dataIndex: "booking_date", 
+            key: "booking_date",
+            sortDirections: 'ascend',
+            sorter: (a, b) => new Date(a.booking_date).getTime() - new Date(b.booking_date).getTime(),
+            render: (booking_date) => {
+                return (
+                    <>{new Date(booking_date).toLocaleDateString()}</>
+                );
+            }
+        },
+        { 
+            title: "Ô tô", dataIndex: "car", key: "car",
             render: (car) => {
                 return (
-                    <>{car.number_plate}</>
+                    <>{car?.number_plate}</>
                 )
             }
          },
@@ -60,7 +72,7 @@ const BookingHistory = () => {
                 <Space className='items-center' size="large">
                     <Popconfirm
                         title="Delete"
-                        description="Are you sure to delete this car?"
+                        description="Are you sure to delete this schedule?"
                         onConfirm={() => confirmDelete(record)}
                         okText="Yes"
                         cancelText="No"
@@ -73,7 +85,7 @@ const BookingHistory = () => {
     ]
 
     const confirmDelete = () => {
-
+        
     }
 
     return (

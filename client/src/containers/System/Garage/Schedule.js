@@ -120,7 +120,7 @@ const Schedule = () => {
                     garageBookingData && garageBookingData.map((item, index) => {
                         return (
                             <div key={index} className='w-full border-b-8 border-b-slate-550 p-2 mb-5'>
-                                <div className='w-full flex gap-3'>
+                                <div className='w-full flex gap-3 mb-1'>
                                     <div className='w-1/3'>
                                         <div className='flex items-center gap-2 mb-3'>
                                             <img src={item.customer.avatar || avatarDefault} alt='avatar' className='w-16 rounded-full bg-slate-200 p-1'></img>

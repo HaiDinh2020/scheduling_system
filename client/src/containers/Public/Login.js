@@ -55,6 +55,9 @@ const Login = () => {
       dispatch(actions.getCurrentProfile())
       if (role === 'garage') {
         dispatch(actions.getGarageInfor())
+      } else {
+        dispatch(actions.getAllCar())
+        dispatch(actions.getAllBookingCustomer())
       }
     }, [1000])
   }, [isLoggedIn])
