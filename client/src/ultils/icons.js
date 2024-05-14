@@ -17,6 +17,7 @@ import { LuFlagTriangleRight } from "react-icons/lu";
 import { FcOvertime } from "react-icons/fc";
 
 const icons = {
+    GrStar,
     FiTrash2,
     FiPlus,
     FcOvertime,
@@ -40,7 +41,6 @@ const icons = {
     RiCrop2Line,
     MdOutlineHouseSiding,
     FiSearch,
-    GrStar,
     RiHeartFill,
     RiHeartLine,
     BsBookmarkStarFill,

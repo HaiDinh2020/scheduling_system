@@ -1,6 +1,6 @@
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { path } from "./ultils/constants";
-import { Home, HomePage, Login } from "./containers/Public";
+import { DetailGarage, Home, HomePage, Login } from "./containers/Public";
 import 'react-toastify/dist/ReactToastify.css';
 import { BookingHistory, Customer, ListCars } from "./containers/System/Customer";
 import { Garage, Infor, Schedule } from "./containers/System/Garage";
@@ -58,6 +58,7 @@ function App() {
       <Routes>
         <Route path={path.HOME} Component={Home} >
           <Route path='*' element={<HomePage />} />
+          <Route path={path.GARAGE_DETAIL} Component={DetailGarage} />
           <Route path={path.LOGIN} Component={Login} />
         </Route>
         <Route path={path.CUSTOMER} Component={Customer}>

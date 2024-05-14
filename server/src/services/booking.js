@@ -27,7 +27,8 @@ export const createBookingServices = (customer_id, garage_id, car_id, status, se
             raw: true,
             nest: true,
             include: [
-                {model: db.Car, as: 'car', attributes: ['make', 'model', 'number_plate'] }
+                {model: db.Car, as: 'car', attributes: ['make', 'model', 'number_plate'] },
+                {model: db.Garage, as: 'garage', attributes: ['garage_name', 'address']}
             ],
             attributes: ['id', 'status', 'services', 'description', 'booking_images', 'booking_date']
         });

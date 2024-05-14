@@ -1,5 +1,6 @@
 export const path = {
     HOME: '/*',
+    GARAGE_DETAIL: 'garage-detail/:garageId',
     LOGIN: 'login',
     REGISTER: 'register',
     GARAGE: '/garage/*',
