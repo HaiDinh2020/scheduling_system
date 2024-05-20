@@ -7,7 +7,7 @@ const menuManage = [
     {
         id: 1,
         text: 'Thông tin tài khoản',
-        path: 'customer/profile',
+        path: '/customer/profile',
         icon: <BiUserPin />
     },
 ]

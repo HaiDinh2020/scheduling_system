@@ -1,14 +1,19 @@
 import { Button, DatePicker, Form, Input, Modal, Select, Space, TimePicker, Upload, message } from 'antd';
 import TextArea from 'antd/es/input/TextArea';
-import React, { memo, useEffect, useState } from 'react'
+import React, { memo, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { apiUploadImages } from '../../../services/Garage/garage';
 import * as actions from '../../../store/actions'
+// import { socket } from '../../../socket';
+
 
 const { Option } = Select;
 
 
 const BookingModal = ({ isModalOpen, setIsModalOpen, garageBooking }) => {
+
+    // const socketRef = useRef()
+
 
     const dispatch = useDispatch();
 
@@ -16,10 +21,34 @@ const BookingModal = ({ isModalOpen, setIsModalOpen, garageBooking }) => {
 
     const [bookingImages, setBookingImage] = useState([]);
     const [carIndex, setCarIndex] = useState();
+    // const [isConnected, setIsConnected] = useState(socket.connected);
 
-    useEffect(() => {
-        console.log(bookingImages)
-    }, [bookingImages])
+    // useEffect(() => {
+    //     function onConnect() {
+    //         setIsConnected(true);
+    //     }
+
+    //     function onDisconnect() {
+    //         setIsConnected(false);
+    //     }
+
+
+
+    //     socket.on('connect', onConnect);
+    //     socket.on('disconnect', onDisconnect);
+
+
+    //     return () => {
+    //         socket.off('connect', onConnect);
+    //         socket.off('disconnect', onDisconnect);
+
+    //     };
+
+    // }, []);
+
+    // useEffect(() => {
+    //     console.log("is connected: " + isConnected)
+    // }, [isConnected])
 
 
     const uploadImage = async options => {
@@ -53,7 +82,7 @@ const BookingModal = ({ isModalOpen, setIsModalOpen, garageBooking }) => {
 
     const handleOk = (value) => {
         const booking_images = bookingImages.map(pre => pre.url).join(", ");
-        const booking_date = value.booking_day.format("YYYY-MM-DD") + " " +  value.booking_time.format("HH:mm:ss");
+        const booking_date = value.booking_day.format("YYYY-MM-DD") + " " + value.booking_time.format("HH:mm:ss");
         const finalData = {
             garage_id: garageBooking.id,
             services: value.services,

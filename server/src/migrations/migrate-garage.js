@@ -15,7 +15,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       introduce: {
-        type: Sequelize.STRING
+        type: Sequelize.TEXT
       },
       website: {
         type: Sequelize.STRING
@@ -30,7 +30,7 @@ module.exports = {
         type: Sequelize.STRING
       },
       images: {
-        type: Sequelize.STRING
+        type: Sequelize.TEXT
       },
       owner_id: {
         type: Sequelize.STRING
