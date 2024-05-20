@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import * as actions from './store/actions'
 import Profile from "./containers/System/Profile";
 import axios from "axios";
+import Chat from "./containers/System/Chat/Chat";
 
 
 function App() {
@@ -33,7 +34,7 @@ function App() {
   useEffect(() => {
     if (isLoggedIn) {
       dispatch(actions.getCurrentProfile())
-      if (role == 'garage') {
+      if (role === 'garage') {
         dispatch(actions.getGarageInfor())
       } else {
         dispatch(actions.getAllCar())
@@ -44,7 +45,7 @@ function App() {
 
   useEffect(() => {
     if (isLoggedIn) {
-      if (role == 'garage') {
+      if (role === 'garage') {
         navigate("/garage")
       }
     } else {
@@ -71,6 +72,10 @@ function App() {
           <Route path={path.GARAGEINFO} Component={Infor} />
           <Route path={path.GARAGESCHEDULE} Component={Schedule} />
         </Route>
+        <Route path={path.SYSTEM} >
+          <Route path={path.MESSAGE} Component={Chat} />
+        </Route>
+        <Route path="*" element={<>hello otocare</>} />
       </Routes>
     </div>
   );

@@ -11,6 +11,8 @@ export const path = {
     GARAGEPROFILE: 'profile',
     GARAGEINFO: 'infor',
     GARAGESCHEDULE: 'schedule',
+    SYSTEM: 'system',
+    MESSAGE: 'message'
     
 }
 

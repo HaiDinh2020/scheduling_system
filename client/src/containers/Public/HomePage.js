@@ -26,6 +26,13 @@ const HomePage = () => {
     }
   }
 
+  const handleChat = (garage) => {
+    if(isLoggedIn) {
+    
+      navigate('/system/message', {state: {id: garage?.owner_id, name: garage?.user.name, avatar: garage?.user.avatar}})
+    }
+  }
+
   const handleStar = (star) => {
     let stars = []
     for (let i = 1; i <= +star; i++) stars.push(<GrStar className='star-item' size={18} color='yellow' />)
@@ -92,7 +99,7 @@ const HomePage = () => {
                         </div>
                         <div className='flex items-center gap-1'>
 
-                          <Button size='small' type="default" onClick={() => console.log("nhắn tin")} >nhắn tin</Button>
+                          <Button size='small' type="default" onClick={() => handleChat(item)} >nhắn tin</Button>
                           <Button size='small' type="primary" onClick={() => handleBooking(item)} >Đặt lịch</Button>
                         </div>
                       </div>

@@ -9,7 +9,7 @@ import * as actions from '../../store/actions';
 import avatardefault from '../../asests/avatar_default.png';
 import menuManage from '../../ultils/menuManage';
 
-const { BsBell, FiSearch, AiOutlineLogout } = icons;
+const { BsBell, FiSearch, AiOutlineLogout, TbMessageChatbot } = icons;
 
 const Header = (props) => {
 
@@ -45,7 +45,13 @@ const Header = (props) => {
                     <>
                         <div className='flex justify-center items-center gap-5'>
                             <Link
-                                to={'/he-thong/thong-bao'}
+                                to={'/system/message'}
+                                className='cursor-pointer'  
+                            >
+                                <TbMessageChatbot color='#358cd4' size={30} />
+                            </Link>
+                            <Link
+                                to={'/system/thong-bao'}
                                 className='cursor-pointer'  
                             >
                                 <BsBell />
