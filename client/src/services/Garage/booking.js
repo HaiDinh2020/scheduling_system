@@ -64,3 +64,15 @@ export const apiUpdateBookingStatus = (garageId, newStatus) => new Promise(async
         reject(error)
     }
 })
+
+export const apiUpdateBookingGarage = (garageId, bookingId) => new Promise(async(resolve, reject) => {
+    try {
+        const response = await axiosConfig({
+            method: 'put',
+            url: `/api/v1/booking/garage/${garageId}/${bookingId}`,
+        })
+        resolve(response)
+    } catch (error) {
+        reject(error)
+    }
+})

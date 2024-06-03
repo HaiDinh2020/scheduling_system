@@ -31,25 +31,37 @@ const bookingReducer = (state = initState, action) => {
                     ...state,
                 }
             }
-        
-        case actionTypes.CREATE_BOOKING: 
-            if(action.data) {
-                const newCustomerBookingData = [...state.customerBookingData, action.data]
-                return {
-                    ...state,
-                    customerBookingData: newCustomerBookingData
-                }
-            } else {
-                return {
-                    ...state
-                }
-            }
-        case actionTypes.GET_ALL_BOOKING_CUSTOMER: 
+
+        // case actionTypes.CREATE_BOOKING:
+        //     if (action.data) {
+        //         const newCustomerBookingData = [...state.customerBookingData, action.data]
+        //         return {
+        //             ...state,
+        //             customerBookingData: newCustomerBookingData
+        //         }
+        //     } else {
+        //         return {
+        //             ...state
+        //         }
+        //     }
+        case actionTypes.GET_ALL_BOOKING_CUSTOMER:
             return {
                 ...state,
-                customerBookingData: action.data || []
+                customerBookingData: action.data
             }
-        
+
+        case actionTypes.ADD_GARAGE_BOOKING:
+            const newBookingRequest = [...state.garageBookingData, action.data]
+            return {
+                ...state,
+                garageBookingData: newBookingRequest
+            }
+
+        case actionTypes.DELETE_GARAGE_BOOKING:
+            return {
+                ...state,
+                garageBookingData: state.garageBookingData.filter(booking => booking.id !== action.data.bookingId)
+            }
         case actionTypes.LOGOUT:
             return {
                 ...state,

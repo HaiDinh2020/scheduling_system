@@ -4,51 +4,18 @@ import React, { memo, useEffect, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { apiUploadImages } from '../../../services/Garage/garage';
 import * as actions from '../../../store/actions'
-// import { socket } from '../../../socket';
-
 
 const { Option } = Select;
 
 
-const BookingModal = ({ isModalOpen, setIsModalOpen, garageBooking }) => {
-
-    // const socketRef = useRef()
-
+const BookingModal = ({ isModalOpen, setIsModalOpen, garageBooking, socket }) => {
 
     const dispatch = useDispatch();
-
     const { cars } = useSelector(state => state.cars);
+    const userId = useSelector(state => state.user?.userCurentProfile?.id)
 
     const [bookingImages, setBookingImage] = useState([]);
     const [carIndex, setCarIndex] = useState();
-    // const [isConnected, setIsConnected] = useState(socket.connected);
-
-    // useEffect(() => {
-    //     function onConnect() {
-    //         setIsConnected(true);
-    //     }
-
-    //     function onDisconnect() {
-    //         setIsConnected(false);
-    //     }
-
-
-
-    //     socket.on('connect', onConnect);
-    //     socket.on('disconnect', onDisconnect);
-
-
-    //     return () => {
-    //         socket.off('connect', onConnect);
-    //         socket.off('disconnect', onDisconnect);
-
-    //     };
-
-    // }, []);
-
-    // useEffect(() => {
-    //     console.log("is connected: " + isConnected)
-    // }, [isConnected])
 
 
     const uploadImage = async options => {
@@ -80,19 +47,29 @@ const BookingModal = ({ isModalOpen, setIsModalOpen, garageBooking }) => {
         }
     };
 
-    const handleOk = (value) => {
+    const handleOk = async (value) => {
         const booking_images = bookingImages.map(pre => pre.url).join(", ");
         const booking_date = value.booking_day.format("YYYY-MM-DD") + " " + value.booking_time.format("HH:mm:ss");
         const finalData = {
-            garage_id: garageBooking.id,
+            garage_id: garageBooking?.id,
             services: value.services,
             booking_date: booking_date,
             booking_images: booking_images,
             car_id: cars[carIndex]?.id,
             description: value.description
         }
-        console.log(finalData)
-        dispatch(actions.createBooking(finalData))
+        // console.log(finalData)
+
+        const booking = await dispatch(actions.createBooking(finalData))
+        console.log(booking)
+
+        // gửi socket vs senderId, receiverId
+        if(booking) {
+            const socketBookingData = booking;
+            socketBookingData.senderId = userId;
+            socketBookingData.receiverId = garageBooking?.owner_id;
+            socket?.emit("booking",socketBookingData)
+        }
         setIsModalOpen(false)
     };
 
@@ -123,8 +100,13 @@ const BookingModal = ({ isModalOpen, setIsModalOpen, garageBooking }) => {
                         rules={[{ required: true, message: 'Please select services!' }]}
                     >
                         <Select placeholder="Please select a services">
-                            <Option value="sua_chua">Sửa chữa</Option>
-                            <Option value="bao_duong">Bảo dưỡng</Option>
+                            {garageBooking?.services?.split(", ").map((item, index) => {
+                                return (
+                                    <Option key={index} value={item}>{item}</Option>
+                                )
+                            })}
+                            {/* <Option value="sua_chua">Sửa chữa</Option>
+                            <Option value="bao_duong">Bảo dưỡng</Option> */}
                         </Select>
                     </Form.Item>
 

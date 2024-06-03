@@ -8,28 +8,6 @@ import Message from './Message'
 import { apigetChatPartners } from '../../../services/message'
 import { ToastContainer, toast } from 'react-toastify'
 
-const chatUsers = [
-  { name: "nguyen van a", avatar: "https://res.cloudinary.com/dmrsdkvzl/image/upload/v1713670240/datn/avatar/twa7biidowz8syuimo3s.jpg", recent_mes: { isYou: true, content: "Hello my mane is hello too   " } },
-  { name: "nguyen van b", avatar: "https://res.cloudinary.com/dmrsdkvzl/image/upload/v1714177518/datn/avatar/ruy9m3bssyfckkimfhps.jpg", recent_mes: { isYou: false, content: "Hi there" } },
-  { name: "nguyen van c", avatar: "https://res.cloudinary.com/dmrsdkvzl/image/upload/v1715608910/datn/avatar/jc7pys8dbhlmu0loyesy.png", recent_mes: { isYou: true, content: "How are you?" } },
-  { name: "nguyen van d", avatar: "https://example.com/avatar4.jpg", recent_mes: { isYou: false, content: "I'm doing well, thanks!" } },
-  { name: "nguyen van e", avatar: "https://example.com/avatar5.jpg", recent_mes: { isYou: true, content: "Nice to meet you! ice to meet you!    " } },
-  { name: "nguyen van a", avatar: "https://res.cloudinary.com/dmrsdkvzl/image/upload/v1713670240/datn/avatar/twa7biidowz8syuimo3s.jpg", recent_mes: { isYou: true, content: "Hello my mane is hello too   " } },
-  { name: "nguyen van b", avatar: "https://res.cloudinary.com/dmrsdkvzl/image/upload/v1714177518/datn/avatar/ruy9m3bssyfckkimfhps.jpg", recent_mes: { isYou: false, content: "Hi there" } },
-  { name: "nguyen van c", avatar: "https://res.cloudinary.com/dmrsdkvzl/image/upload/v1715608910/datn/avatar/jc7pys8dbhlmu0loyesy.png", recent_mes: { isYou: true, content: "How are you?" } },
-  { name: "nguyen van d", avatar: "https://example.com/avatar4.jpg", recent_mes: { isYou: false, content: "I'm doing well, thanks!" } },
-  { name: "nguyen van e", avatar: "https://example.com/avatar5.jpg", recent_mes: { isYou: true, content: "Nice to meet you! ice to meet you!    " } },
-  { name: "nguyen van a", avatar: "https://res.cloudinary.com/dmrsdkvzl/image/upload/v1713670240/datn/avatar/twa7biidowz8syuimo3s.jpg", recent_mes: { isYou: true, content: "Hello my mane is hello too   " } },
-  { name: "nguyen van b", avatar: "https://res.cloudinary.com/dmrsdkvzl/image/upload/v1714177518/datn/avatar/ruy9m3bssyfckkimfhps.jpg", recent_mes: { isYou: false, content: "Hi there" } },
-  { name: "nguyen van c", avatar: "https://res.cloudinary.com/dmrsdkvzl/image/upload/v1715608910/datn/avatar/jc7pys8dbhlmu0loyesy.png", recent_mes: { isYou: true, content: "How are you?" } },
-  { name: "nguyen van d", avatar: "https://example.com/avatar4.jpg", recent_mes: { isYou: false, content: "I'm doing well, thanks!" } },
-  { name: "nguyen van e", avatar: "https://example.com/avatar5.jpg", recent_mes: { isYou: true, content: "Nice to meet you! ice to meet you!    " } },
-  { name: "nguyen van a", avatar: "https://res.cloudinary.com/dmrsdkvzl/image/upload/v1713670240/datn/avatar/twa7biidowz8syuimo3s.jpg", recent_mes: { isYou: true, content: "Hello my mane is hello too   " } },
-  { name: "nguyen van b", avatar: "https://res.cloudinary.com/dmrsdkvzl/image/upload/v1714177518/datn/avatar/ruy9m3bssyfckkimfhps.jpg", recent_mes: { isYou: false, content: "Hi there" } },
-  { name: "nguyen van c", avatar: "https://res.cloudinary.com/dmrsdkvzl/image/upload/v1715608910/datn/avatar/jc7pys8dbhlmu0loyesy.png", recent_mes: { isYou: true, content: "How are you?" } },
-  { name: "nguyen van d", avatar: "https://example.com/avatar4.jpg", recent_mes: { isYou: false, content: "I'm doing well, thanks!" } },
-  { name: "nguyen van e", avatar: "https://example.com/avatar5.jpg", recent_mes: { isYou: true, content: "Nice to meet you! ice to meet you!    " } }
-]
 
 const Chat = () => {
 

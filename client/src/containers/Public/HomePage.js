@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button } from 'antd'
 import { Link, useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
@@ -8,7 +8,7 @@ import icons from '../../ultils/icons'
 
 const { GrStar } = icons
 
-const HomePage = () => {
+const HomePage = ({socket}) => {
 
   const navigate = useNavigate()
   const { isLoggedIn } = useSelector(state => state.auth)
@@ -28,8 +28,9 @@ const HomePage = () => {
 
   const handleChat = (garage) => {
     if(isLoggedIn) {
-    
       navigate('/system/message', {state: {id: garage?.owner_id, name: garage?.user.name, avatar: garage?.user.avatar}})
+    } else {
+      navigate("/login")
     }
   }
 
@@ -48,7 +49,7 @@ const HomePage = () => {
       <div className='w-full flex gap-3 mt-4'>
         <div className='w-2/3 min-w-[500px] bg-white rounded-xl border-2 shadow-md'>
 
-          <BookingModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} garageBooking={garageBooking} />
+          <BookingModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} garageBooking={garageBooking} socket={socket} />
           {
             post?.length > 0 && post?.map((item, index) => {
               const numImage = item.images?.split(", ").length

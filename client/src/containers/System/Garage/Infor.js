@@ -15,6 +15,7 @@ const { BsCameraFill, ImBin } = icons
 const Infor = () => {
 
     const { garageInfor } = useSelector(state => state.garage)
+    const owner_infor = useSelector(state=> state.user.userCurentProfile)
 
     const parseImages = (garageInfor) => {
         if(garageInfor && garageInfor.images && typeof garageInfor.images === 'string') {
@@ -130,21 +131,21 @@ const Infor = () => {
 
                 <div className='w-full mb-6'>
                     <h2 className='font-semibold text-xl py-4'>Địa chỉ Garage  <span className='text-red-500'>*</span></h2>
-                    <Input placeholder="Nhập địa chỉ" required />
+                    <Input placeholder="Nhập địa chỉ" value={newGarageInfor.garageAddress} required />
                 </div>
 
                 <div className='w-full mb-6'>
                     <h2 className='font-semibold text-xl py-4'>Thông tin liên hệ</h2>
 
                     <h3 fo className='font-medium py-4'>Chủ sở hữu</h3>
-                    <Input readOnly value={"hai dinh"} disabled />
+                    <Input readOnly value={`${owner_infor?.name}`} disabled />
                     <h3 fo className='font-medium py-4'>Điện thoại</h3>
-                    <Input type='number' value={"02020220202"} disabled />
+                    <Input type='number' value={`${owner_infor?.phone}`} disabled />
                 </div>
 
                 <div className='w-full mb-6'>
                     <h2 className='font-semibold text-xl py-4'>Hình ảnh</h2>
-                    <small>Cập nhật hình ảnh rõ ràng sẽ cho thuê nhanh hơn</small>
+                    <small>Cập nhật hình ảnh rõ ràng sẽ ấn tượng hơn</small>
                     <div className='w-full'>
                         <label className='w-full border-2 h-[200px] my-4 gap-4 flex flex-col items-center justify-center border-gray-400 border-dashed rounded-md' htmlFor="file">
 

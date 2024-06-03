@@ -5,12 +5,15 @@ export const path = {
     REGISTER: 'register',
     GARAGE: '/garage/*',
     CUSTOMER: '/customer/*',
+    BOOKING: 'booking',
     List_CARS: 'list-cars',
     BOOKING_HISTORY: 'booking-history',
+    PAYMENTRESULT: 'vnpay_return',
     USERPROFILE: 'profile',
     GARAGEPROFILE: 'profile',
     GARAGEINFO: 'infor',
     GARAGESCHEDULE: 'schedule',
+    GARAGEWORKSCHEDULE: 'work-schedule',
     SYSTEM: 'system',
     MESSAGE: 'message'
     
@@ -18,3 +21,6 @@ export const path = {
 
 export const servicesOptions = ['Sửa chữa', 'Bảo dưỡng', 'Bán phụ tùng', 'Tư vấn khách hàng', 'Dạy nghề']
 export const bookingStatus = ["request", "reject", "complete", "in progress"]
+export const services = [
+    
+]

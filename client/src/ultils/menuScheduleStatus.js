@@ -4,12 +4,6 @@ const { GrSchedules, FaCheckCircle, GrScheduleNew, TbProgressCheck, MdCancel } =
 
 const menuScheduleStatus = [
     {
-        id: 1,
-        text: 'Tất cả',
-        status: 'all',
-        icon: <GrSchedules />
-    },
-    {
         id: 2,
         text: 'Yêu cầu',
         status: 'request',

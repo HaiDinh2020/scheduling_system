@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import BookingModal from '../System/Customer/BookingModal';
 import { ToastContainer } from 'react-toastify';
 
-const DetailGarage = () => {
+const DetailGarage = ({socket}) => {
     const navigate = useNavigate()
     const { garageId } = useParams();
     const { isLoggedIn } = useSelector(state => state.auth)
@@ -58,7 +58,7 @@ const DetailGarage = () => {
                 <Swiper
                     loop={true}
                     slidesPerView={1}
-                    pagination={{type: 'fraction',}}
+                    pagination={{ type: 'fraction', }}
                     navigation={{
                         nextEl: '.swiper-button-next',
                         prevEl: '.swiper-button-prev',
@@ -83,12 +83,18 @@ const DetailGarage = () => {
 
     const handleBooking = (garage) => {
         if (isLoggedIn) {
-          setGarageBooking(garage)
-          setIsModalOpen(true);
+            setGarageBooking(garage)
+            setIsModalOpen(true);
         } else {
-          navigate("/login")
+            navigate("/login")
         }
-      }
+    }
+
+    const handleChat = (garage) => {
+        if (isLoggedIn) {
+            navigate('/system/message', { state: { id: garage?.owner_id, name: garage?.user.name, avatar: garage?.user.avatar } })
+        }
+    }
 
     return (
         <div className='h-auto w-full mt-2'>
@@ -105,13 +111,13 @@ const DetailGarage = () => {
                 </div>
                 <div className='w-1/3 bg-white rounded-xl border-2 shadow-md mr-6 flex flex-col items-center justify-center'>
                     <div className='flex flex-col items-center justify-center'>
-                        <Avatar src={postData.user?.avatar} shape='circle' size={80}/>
+                        <Avatar src={postData.user?.avatar} shape='circle' size={80} />
                         <div className='mt-2 font-bold text-xl'>{postData.user.name}</div>
                     </div>
-                    <BookingModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} garageBooking={garageBooking} />
+                    <BookingModal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} garageBooking={garageBooking} socket={socket} />
                     <div className='flex items-center gap-1 mt-3'>
-                        <Button size='large' type="default" onClick={() => console.log("nhắn tin")} >nhắn tin</Button>
-                        <Button size='large' type="primary" onClick={() =>  handleBooking(postData)} >Đặt lịch</Button>
+                        <Button size='large' type="default" onClick={() => handleChat(postData)} >nhắn tin</Button>
+                        <Button size='large' type="primary" onClick={() => handleBooking(postData)} >Đặt lịch</Button>
                     </div>
                 </div>
             </div>
@@ -120,7 +126,7 @@ const DetailGarage = () => {
                     <div className='text-xl font-bold'>
                         Danh mục dịch vụ
                     </div>
-                    <div>
+                    <div >
 
                     </div>
                 </div>

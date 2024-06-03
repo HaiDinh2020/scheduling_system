@@ -27,6 +27,7 @@ export const getGarageInfor = () => async (dispatch) => {
 export const updateGarageInfor = (payload) => async (dispatch) => {
     try {
         const response = await apiUpdateGarageInfor(payload)
+        console.log(response)
         if (response?.data.err === 0) {
             dispatch({
                 type: actionTypes.GET_GARAGE_INFOR,
@@ -45,7 +46,7 @@ export const updateGarageInfor = (payload) => async (dispatch) => {
             type: actionTypes.GET_GARAGE_INFOR,
             data: {}
         })
-        toast(error)
+        toast("Update fail", {type: "error"})
         console.log(error)
     }
 }

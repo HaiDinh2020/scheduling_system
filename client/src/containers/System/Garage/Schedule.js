@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { ToastContainer, toast } from 'react-toastify';
-import { Popconfirm } from "antd";
+import { Form, Input, InputNumber, Modal, Popconfirm, Select } from "antd";
 import menuScheduleStatus from '../../../ultils/menuScheduleStatus';
 import icons from '../../../ultils/icons';
 import avatarDefault from '../../../asests/avatar_default.png'
 import logo from '../../../asests/logo.jpg'
 import Button from '../../../components/Button'
 import * as actions from '../../../store/actions'
+import { Option } from 'antd/es/mentions';
+import InvoiceModal from './InvoiceModal';
 
-const { LuFlagTriangleRight, FcOvertime } = icons
-const Schedule = () => {
+const { LuFlagTriangleRight, FcOvertime, MdOutlinePhone } = icons
+const Schedule = ({ socket }) => {
 
     const dispatch = useDispatch();
 
@@ -18,6 +20,26 @@ const Schedule = () => {
     const { garageBookingData } = useSelector((state) => state.booking);
 
     const [displayStatus, setDisplayStatus] = useState(menuScheduleStatus[0].status);
+    const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false)
+    const [booking, setBooking] = useState({})                              // booking sẽ hiển thị trên hóa đơn
+    const [listBooking, setListBooking] = useState([])
+
+    useEffect(() => {
+        if (socket) {
+            socket.on("booking_request", (bookingDetail) => {
+                console.log(111111);
+                console.log(bookingDetail);
+            });
+
+            return () => {
+                socket.off("booking_request"); // Ngừng lắng nghe sự kiện khi component unmount
+            };
+        }
+        else {
+            console.log("no")
+        }
+    }, [socket]);
+
 
     useEffect(() => {
         dispatch(actions.getAllBooking(garageId))
@@ -27,14 +49,41 @@ const Schedule = () => {
         dispatch(actions.getBookingStatus(garageId, displayStatus))
     }, [displayStatus])
 
-
+    useEffect(() => {
+        if (displayStatus !== "all") {
+            const updateList = garageBookingData.filter((item) => item.status === displayStatus)
+            setListBooking(updateList)
+        } else {
+            setListBooking(garageBookingData)
+        }
+    }, [displayStatus, garageBookingData])
 
     const handleChangeStatus = (bookingId, newStatus) => {
         dispatch(actions.updateBookingStatus(bookingId, newStatus))
     }
 
+    const handleAcceptRequest = (bookingId) => {
+        dispatch(actions.updateBookingGarage(garageId, bookingId))
+    }
+
+    const handleRejectRequest = (bookingId) => {
+        dispatch(actions.updateBookingGarage(garageId, bookingId))
+    }
+
     const showConfirm = () => {
-        
+
+    }
+    const onFinish = (values) => {
+        console.log('Success:', values);
+        // Gửi dữ liệu đến backend
+    };
+
+    const onFinishFailed = (errorInfo) => {
+        console.log('Failed:', errorInfo);
+    };
+    const handleComplete = (bookingDetail) => {
+        setBooking(bookingDetail)
+        setIsInvoiceModalOpen(true)
     }
 
     const renderBookingTime = (booking_date) => {
@@ -48,18 +97,18 @@ const Schedule = () => {
         )
     }
 
-    const renderButton = (status, bookingId) => {
+    const renderButton = (status, bookingId, booking) => {
         if (status === 'request') {
             return (
                 <div className='flex justify-end gap-2'>
-                    <Button text={"Chấp nhận"} bgcolor={"bg-green-400"} textcolor={'text-white'} onClick={(e) => handleChangeStatus(bookingId, "in-progress")} />
+                    <Button text={"Chấp nhận"} bgcolor={"bg-green-400"} textcolor={'text-white'} onClick={(e) => handleAcceptRequest(bookingId)} />
                     <Button text={"Từ chối"} bgcolor={"bg-red-400"} textcolor={'text-white'} onClick={(e) => handleChangeStatus(bookingId, "reject")} />
                 </div>
             )
         } else if (status === "in-progress") {
             return (
                 <div className='flex justify-end gap-2'>
-                    <Button text={"Hoàn thành"} bgcolor={"bg-green-400"} textcolor={'text-white'} onClick={(e) => handleChangeStatus(bookingId, "complete")} />
+                    <Button text={"Hoàn thành"} bgcolor={"bg-green-400"} textcolor={'text-white'} onClick={(e) => handleComplete(booking)} />
                     <Button
                         text={"Hủy bỏ"}
                         bgcolor={"bg-red-400"}
@@ -88,7 +137,7 @@ const Schedule = () => {
         } else {
             return (
                 <div className='flex justify-end gap-2'>
-                    <Button text={"Xóa"} bgcolor={"bg-red-400"} textcolor={'text-white'} onClick={showConfirm}/>
+                    <Button text={"Xóa"} bgcolor={"bg-red-400"} textcolor={'text-white'} onClick={showConfirm} />
                 </div>
             )
         }
@@ -112,12 +161,12 @@ const Schedule = () => {
                         })
                     }
                 </div>
-
+                <InvoiceModal isModalOpen={isInvoiceModalOpen} setIsModalOpen={setIsInvoiceModalOpen} booking={booking} socket={socket} />
             </div>
-
+            
             <div className='bg-white h-full min-h-screen rounded-xl border-2 shadow-md w-[95%] p-4'>
                 {
-                    garageBookingData && garageBookingData.map((item, index) => {
+                    listBooking && listBooking.map((item, index) => {
                         return (
                             <div key={index} className='w-full border-b-8 border-b-slate-550 p-2 mb-5'>
                                 <div className='w-full flex gap-3 mb-1'>
@@ -128,8 +177,8 @@ const Schedule = () => {
                                                 <div className='text-xl font-bold'>
                                                     {item.customer.name}
                                                 </div>
-                                                <div>
-                                                    +84{item.phone}
+                                                <div className='flex gap-1 items-center'>
+                                                    <MdOutlinePhone /> {item.customer?.phone}
                                                 </div>
                                             </div>
                                         </div>
@@ -167,7 +216,7 @@ const Schedule = () => {
                                 </div>
 
 
-                                {renderButton(item.status, item.id)}
+                                {renderButton(item.status, item.id, item)}
                             </div>
                         )
                     })

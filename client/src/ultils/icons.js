@@ -6,18 +6,26 @@ import { HiOutlineLocationMarker } from 'react-icons/hi'
 import { TbReportMoney } from 'react-icons/tb'
 import { RiCrop2Line, RiHeartFill, RiHeartLine } from 'react-icons/ri'
 import { MdOutlineHouseSiding, MdOutlineLibraryBooks } from 'react-icons/md'
-import { FiSearch, FiPlus, FiTrash2, FiSend } from 'react-icons/fi'
+import { FiSearch, FiPlus, FiTrash2, FiSend, FiDownload, FiZoomOut, FiZoomIn } from 'react-icons/fi'
 import { ImPencil2, ImBin } from 'react-icons/im'
 import { BiUserPin } from 'react-icons/bi'
-import { FaCheckCircle } from "react-icons/fa";
+import { FaCheckCircle, FaCalendarAlt, FaMapMarkerAlt, FaMinus } from "react-icons/fa";
 import { TbProgressCheck, TbMessageChatbot } from "react-icons/tb";
-import { MdCancel } from "react-icons/md";
+import { MdCancel, MdOutlinePhone } from "react-icons/md";
 import { GrScheduleNew, GrSchedules } from "react-icons/gr";
 import { LuFlagTriangleRight } from "react-icons/lu";
 import { FcOvertime } from "react-icons/fc";
-import { PiInfoDuotone } from "react-icons/pi";
+import { PiInfoDuotone, PiGarageBold } from "react-icons/pi";
 
 const icons = {
+    FiZoomIn,
+    FiZoomOut,
+    FiDownload,
+    FaMinus,
+    FaMapMarkerAlt,
+    PiGarageBold,
+    FaCalendarAlt,
+    MdOutlinePhone,
     PiInfoDuotone,
     FiSend,
     TbMessageChatbot,

@@ -20,7 +20,7 @@ const Garage = () => {
     }, [])
 
     if (!isLoggedIn) return <Navigate to={`/${path.LOGIN}`} replace={true} />
-    if(role != "garage") return <Navigate to={`/`}/>
+    if(role !== "garage") return <Navigate to={`/`}/>
     return (
         <div className='w-full h-fit flex flex-col items-center'>
             <Header />

@@ -4,8 +4,8 @@ import { NavLink } from 'react-router-dom';
 
 const nav = [
   { name: "home", path: '/' },
-  { name: "Đặt lịch", path: '/dat-lich' },
-  { name: "xem lịch", path: '/xem-lich' },
+  { name: "Đặt lịch", path: '/booking' },
+  { name: "xem lịch", path: '/customer/booking-history' },
 ]
 const Navigation = () => {
   return (

@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Avatar, Button, Form, Input, Layout, List } from 'antd';
+import { Avatar, Button, Form, Input, Layout } from 'antd';
 import icons from '../../../ultils/icons';
 import { apiCreateMessage, apiGetMessagesBetweenUsers } from '../../../services/message';
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import socketIOClient from "socket.io-client";
 
-const URL = process.env.NODE_ENV === 'production' ? undefined : 'http://localhost:5000/';
+const URL = process.env.NODE_ENV === 'production' ? undefined : 'http://localhost:5000/chat';
 
 const { Content } = Layout
 
@@ -74,11 +74,13 @@ const Message = ({ currentContent }) => {
         toast(response.data?.msg)
       }
     }
-    console.log(currentContent)
+    // console.log(currentContent)
     setCurrrentChat(currentContent)
     getMessagesBetweenUsers()
   }, [currentContent])
 
+
+  // socket event
   useEffect(() => {
     socketRef.current = socketIOClient.connect(URL)
 
@@ -87,6 +89,7 @@ const Message = ({ currentContent }) => {
     socketRef.current.emit("addNewUser", userId)
 
     socketRef.current.on("chat", data => {
+      console.log(data)
       setMessageReceive(data)
     })
     return () => {
