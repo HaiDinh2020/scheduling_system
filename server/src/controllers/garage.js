@@ -49,10 +49,10 @@ export const getAllGarage = async (req, res) => {
 export const updateGarageInfor = async (req, res) => {
     try {
         const { id } = req.user
-        const { garage_name, address, introduce, website, business_hours, services, star, images} = req.body
+        const { garage_name, garageAddress, introduce, website, business_hours, services, score, images} = req.body
         const garageId = req.body.id
        
-        const response = await garageServices.updateGarageInforServices(garageId, garage_name, address, introduce, website, business_hours, services, star, images)
+        const response = await garageServices.updateGarageInforServices(garageId, garage_name, garageAddress, introduce, website, business_hours, services, score, images)
         return res.status(200).json(response)
     } catch (error) {
         console.log(error)

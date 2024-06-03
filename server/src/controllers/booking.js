@@ -1,26 +1,37 @@
 import * as BookingServices from '../services/booking';
+import { validateExactAdrress } from "../validators/Validator"
 
 export const createBooking = async (req, res) => {
     try {
 
         const customer_id = req.user.id
-        const garage_id = req.body.garage_id
+        // const garage_id = req.body.garage_id // sẽ update khi garage accept
         const car_id = req.body.car_id
         const status = "request"
-        const services = req.body.services
+        const services = req.body.services      // sua_chưa/ bao_duong
         const description = req.body.description
         const booking_images = req.body.booking_images
         const booking_date = req.body.booking_date
+        const address = req.body.address
+        const exactAddress = req.body.exactAddress
+        const pickupOption = req.body.pickupOption || "0"
 
         // check body miss
-        if (!customer_id || !garage_id || !car_id || !services || !booking_date) {
+        if (!customer_id || !car_id || !services || !booking_date) {
             res.status(400).json({
                 err: 1,
                 msg: "Missing input!"
             })
         }
 
-        const response = await BookingServices.createBookingServices(customer_id, garage_id, car_id, status, services, description, booking_images, booking_date)
+        if(!validateExactAdrress(exactAddress)) {
+            return res.status(400).json({
+                err: 1,
+                msg: "Invalid exactAddress"
+            });
+        }
+
+        const response = await BookingServices.createBookingServices(customer_id, car_id, status, services, description, booking_images, booking_date, address, exactAddress, pickupOption)
         res.status(200).json(response)
     } catch (error) {
         console.log(error)
@@ -37,9 +48,10 @@ export const getAllBookingCustomer = async (req, res) => {
         const response = await BookingServices.getAllBookingCustomerServices(customerId)
         return res.status(200).json(response)
     } catch (error) {
+        console.log(error)
         return res.status(500).json({
             err: -1,
-            msg: "Fail to get all booking"
+            msg: "Fail to get all booking: " + error
         })
     }
 }
@@ -92,6 +104,28 @@ export const updateStatusBooking = async (req, res) => {
         }
 
         const response = await BookingServices.updateStatusBookingServices(bookingId, newStatus)
+        res.status(200).json(response)
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            err: -1,
+            msg: "Fail to update status: " + error
+        })
+    }
+}
+
+export const updateBookingGarage = async (req, res) => {
+    try {
+        const bookingId = req.params.bookingId;
+        const garageId = req.params.garageId;
+        if (!garageId ) {
+            res.status(400).json({
+                err: 1,
+                msg: "Missing garageId!"
+            })
+        }
+
+        const response = await BookingServices.updateBookingGarageServices(garageId, bookingId)
         res.status(200).json(response)
     } catch (error) {
         console.log(error)

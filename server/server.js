@@ -11,6 +11,10 @@ const http = require('http');
 const server = http.createServer(app)
 const { Server } = require('socket.io');
 
+const admin = require('./src/config/configFirebaseAdmin')
+
+const allowedOrigins = ["http://localhost:3000", "https://zv440rvb-3000.asse.devtunnels.ms"];
+
 
 const io = new Server(server, {
     cors: {
@@ -18,7 +22,6 @@ const io = new Server(server, {
     }
 });
 
-global._io = io;
 
 app.use(cookieParser());
 
@@ -28,14 +31,22 @@ app.use(bodyParser.json());
 
 app.use(cors({
     origin: process.env.CLIENT_URL,
+    // origin: (origin, callback) => {
+    //     if (allowedOrigins.includes(origin)) {
+    //         callback(null, true);
+    //     } else {
+    //         callback(new Error('Not allowed by CORS'));
+    //     }
+    // },
+
     methods: ["GET", "POST", "PUT", "DELETE"]
 }))
 
 
-app.get('/set-cookie', (req, res) => {
-    res.cookie('myCookie', 'cookieValue', { maxAge: 900000, httpOnly: true });
-    res.send('Cookie has been set');
-});
+// app.get('/set-cookie', (req, res) => {
+//     res.cookie('myCookie', 'cookieValue', { maxAge: 900000, httpOnly: true });
+//     res.send('Cookie has been set');
+// });
 
 
 app.use(express.json())
@@ -44,28 +55,32 @@ app.use(express.urlencoded({ extended: true }))
 initRoutes(app)
 connectDatabase()
 
-// global._io.on("connection", socketServices.connection)
 
+// xử lý kết nói từ namespace '\chat'
+const chatNamespace = io.of('/chat');
 var onlineUsers = []
-io.on('connection', (socket) => {
-    console.log('a user connected');
+chatNamespace.on('connection', (socket) => {
+    console.log('a user chat connected');
     socket.on("addNewUser", (userId) => {
-        !onlineUsers.some((user) => user.userId === userId) && 
-        onlineUsers.push({
-            userId: userId,
-            socketId: socket.id
-        })
+        !onlineUsers.some((user) => user.userId === userId) &&
+            onlineUsers.push({
+                userId: userId,
+                socketId: socket.id
+            })
         console.log(onlineUsers)
     })
 
-    socket.emit("socketId", socket.id);
+    chatNamespace.emit("socketId", socket.id);
 
     socket.on("chat", (message) => {
         const userReceiver = onlineUsers.find((user) => user.userId === message.receiver_id)
         console.log(message)
         console.log(userReceiver)
-        if( userReceiver) {
-            io.to(message.socketId).to(userReceiver.socketId ).emit("chat", message);
+        if (userReceiver) {
+            chatNamespace.to(message.socketId).to(userReceiver?.socketId).emit("chat", message);
+        } else {
+            console.log("send to sender")
+            chatNamespace.to(message.socketId).emit("chat", message);
         }
     })
 
@@ -76,6 +91,73 @@ io.on('connection', (socket) => {
 });
 
 
+// xử lý kết nói từ namespace '\booking'
+const bookingNamespace = io.of('/booking');
+global.bookingNamespace = bookingNamespace;
+
+// online user là danh sách user đang online có dạng {userId, socketId}
+global.onlineUsers2 = []
+
+// xác nhận đã có garage nhận lịch
+let firstBookingConfirmed = false;
+
+global.bookingNamespace.on('connection', (socket) => {
+    console.log('a user connected');
+    socket.on("addUser", (userId) => {
+        !global.onlineUsers2.some((user) => user.userId === userId) &&
+            global.onlineUsers2.push({
+                userId: userId,
+                socketId: socket.id
+            })
+        console.log(global.onlineUsers2)
+    })
+
+
+    // socket.on("booking", (bookingDetail) => {
+    //     const receiver = onlineUsers2.find((user) => user.userId === bookingDetail.receiverId)
+    //     console.log(bookingDetail)
+    //     console.log(receiver)
+    //     if( receiver) {
+    //         bookingNamespace.to(receiver.socketId ).emit("booking", bookingDetail);
+    //     }
+    // })
+
+    socket.on("confirmBooking", () => {
+        const garageConfirm = global.onlineUsers2.find(user => user.socketId === socket.id)
+        if (!firstBookingConfirmed && garageConfirm) {
+            firstBookingConfirmed = true;
+            // gửi socket tới customer (ko cần đâu chỉ cần gửi thông báo là đc r)
+            // gửi thông báo
+            admin.messaging().send({
+                notification: {
+                    title: "Infor",
+                    body: `garage ${garageConfirm.userId} have to confirm your booking, please reload page to get address`
+                },
+                apns: {
+                    payload: {
+                        aps: {
+                            sound: 'default',
+                        },
+                    },
+                },
+                token: 'customer token fcm'
+            })
+                .then(res => console.log(JSON.stringify(res)))
+                .catch(err => console.log(JSON.stringify(err)))
+        }
+    })
+
+    socket.on("disconnect", () => {
+        console.log("Client disconnected");
+        global.onlineUsers2 = global.onlineUsers2.filter(user => user.socketId !== socket.id)
+    });
+});
+
+
+
+const sendToDevices = () => {
+
+}
 
 const port = process.env.PORT || 8888;
 const listen = server.listen(port, () => {

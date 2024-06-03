@@ -14,7 +14,7 @@ export const loginService = ({ email, password }) => new Promise(async (resolve,
         })
         const isCorrectPassword = response && bcrypt.compareSync(password, response.password)
 
-        const token = isCorrectPassword && jwt.sign({ id: response.id, email: response.email }, process.env.SECRET_KEY, { expiresIn: '2d' })
+        const token = isCorrectPassword && jwt.sign({ id: response.id, email: response.email, role: response.role  }, process.env.SECRET_KEY, { expiresIn: '2d' })
         resolve({
             err: token ? 0 : 2,
             msg: token ? "Login is successfully!" : response ? "Password is wrong !" : "Account is not registered!",
@@ -27,9 +27,9 @@ export const loginService = ({ email, password }) => new Promise(async (resolve,
     }
 })
 
-export const registerService = ({ name, phone, password, email, role, garageName, introduce, address, services, businessHours, linkWebsite }) => new Promise(async (resolve, reject) => {
+export const registerService = ({ name, phone, password, email, role, garageName, introduce, garageAddress, services, businessHours, linkWebsite, exactAddress }) => new Promise(async (resolve, reject) => {
     try {
-        console.log(name, phone, password, garageName, introduce, address, services, businessHours, linkWebsite)
+        // console.log(name, phone, password, garageName, introduce, garageAddress, services, businessHours, linkWebsite, exactAddress)
         const response = await db.User.findOrCreate({
             where: { email },
             defaults: {
@@ -51,14 +51,29 @@ export const registerService = ({ name, phone, password, email, role, garageName
                     id: v4(),
                     owner_id: response[0].id,
                     garage_name: garageName,
-                    address,
+                    garageAddress,
+                    exactAddress,
                     introduce,
                     website: linkWebsite,
                     business_hours: businessHours,
                     services ,
                 }
             })
-            resolve({
+
+            console.log(12)
+            console.log(create_garage[1])
+            if (!create_garage[1]) {
+                // Xử lý trường hợp tạo garage không thành công
+                await db.User.destroy({ where: { id: response[0].id } }); // Xóa user đã tạo
+                return resolve({
+                    err: 2,
+                    msg: "Error when creating garage info",
+                    token: null,
+                    role: null
+                });
+            }
+
+            return resolve({
                 err: create_garage[1] ? 0 : 2,
                 msg: create_garage[1] ? "Register is successfully!" : "Error whent create garage info",
                 token: token || null,

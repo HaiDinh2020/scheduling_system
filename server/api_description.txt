@@ -180,3 +180,29 @@ Response:
         ]
     }
     
+
+III: Message
+1. lấy danh sách chat vs user
+Path: /api/v1/chat/
+Method: GET
+Request:
+    Headers:
+        {
+            authorization: jwt
+        }
+Response:
+    {
+        err: 0,
+        msg: "success to get all chatUsers",
+        response: [
+            {
+                name:           string,
+                avatar:         string,
+                
+            }
+        ]
+    }
+    
+IV. Firebase token
+1. gắn liền vs thiết bị
+2. 

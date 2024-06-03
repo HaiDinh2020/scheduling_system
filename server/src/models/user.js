@@ -12,6 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       User.hasOne(models.Garage, { foreignKey: 'owner_id', as: 'garage' })
+      User.hasOne(models.FirebaseToken, { foreignKey: 'user_id', as: 'firebasetoken' })
       User.hasMany(models.Car, { foreignKey: 'owner_id', as: 'cars' });
       User.hasMany(models.Booking, { foreignKey: 'customer_id', as: 'bookings' });
       User.hasMany(models.Message, { foreignKey: 'sender_id', as: 'senders'})

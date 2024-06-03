@@ -14,16 +14,25 @@ module.exports = (sequelize, DataTypes) => {
       Garage.belongsTo(models.User, { foreignKey: 'owner_id', targetKey: 'id', as: 'user' })
 
       Garage.hasMany(models.Booking, { foreignKey: 'garage_id', as: 'bookings' });
+      Garage.hasOne(models.GaragePaymentConfig, { foreignKey: 'garage_id', as: 'garage_payment' })
+      Garage.hasMany(models.Appointment, { foreignKey: 'garage_id', as: 'appointments'})
     }
   }
   Garage.init({
     garage_name: DataTypes.STRING,
-    address: DataTypes.STRING,
+    garageAddress: DataTypes.STRING,
+    exactAddress: {
+      type: DataTypes.STRING,
+      allowNull: false
+    },
     introduce: DataTypes.STRING,
     website: DataTypes.STRING,
     business_hours: DataTypes.STRING,
     services: DataTypes.STRING,
-    star: DataTypes.NUMBER,
+    score: {
+      type: DataTypes.INTEGER,
+      defaultValue: 10
+    },
     images: DataTypes.STRING,
     owner_id: DataTypes.STRING
   }, {

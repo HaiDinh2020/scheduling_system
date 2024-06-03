@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       Booking.belongsTo(models.Garage, { foreignKey: 'garage_id', targetKey: 'id', as: 'garage' });
       Booking.belongsTo(models.Car, { foreignKey: 'car_id', targetKey: 'id', as: 'car' });
 
+      Booking.hasOne(models.Invoice, { foreignKey: 'booking_id', as: 'invoice'})
     }
   }
   Booking.init({
@@ -27,6 +28,9 @@ module.exports = (sequelize, DataTypes) => {
     description: DataTypes.STRING,
     booking_images: DataTypes.STRING,
     booking_date: DataTypes.DATE,
+    address: DataTypes.STRING,
+    exactAddress: DataTypes.STRING,
+    pickupOption: DataTypes.STRING,   // 1: khách hàng đưa đếm      0: Garage đến lấy
   }, {
     sequelize,
     modelName: 'Booking',

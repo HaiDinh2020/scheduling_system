@@ -11,7 +11,10 @@ module.exports = {
       garage_name: {
         type: Sequelize.STRING
       },
-      address: {
+      garageAddress: {
+        type: Sequelize.STRING
+      },
+      exactAddress: {
         type: Sequelize.STRING
       },
       introduce: {
@@ -26,7 +29,7 @@ module.exports = {
       services: {
         type: Sequelize.STRING
       },
-      star: {
+      score: {
         type: Sequelize.STRING
       },
       images: {

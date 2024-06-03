@@ -32,6 +32,15 @@ module.exports = {
       booking_date: {
         type: Sequelize.DATE
       },
+      address: {
+        type: Sequelize.STRING
+      },
+      exactAddress: {
+        type: Sequelize.STRING
+      },
+      pickupOption: {
+        type: Sequelize.STRING
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

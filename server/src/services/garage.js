@@ -5,7 +5,7 @@ import pool from '../config/connectDB'
 
 export const getGarageInforServices = (userId) => new Promise(async (resolve, reject) => {
   try {
-    const sql = `select garages.id, garage_name, address, introduce, website, business_hours, services, star, images, owner_id from garages, users  where garages.owner_id = users.id and users.id = '${userId}'`;
+    const sql = `select garages.id, garage_name, garageAddress, introduce, website, business_hours, services, score, images, owner_id from garages, users  where garages.owner_id = users.id and users.id = '${userId}'`;
     pool.execute(sql, (err, result) => {
       if (err) {
         reject(err);
@@ -24,7 +24,7 @@ export const getGarageInforServices = (userId) => new Promise(async (resolve, re
 
 export const getGarageInforServicesV2 = (garageId) => new Promise(async (resolve, reject) => {
   try {
-    const sql = `select id, garage_name, address, introduce, website, business_hours, services, star, images, owner_id from garages where id = '${garageId}'`;
+    const sql = `select id, garage_name, garageAddress, introduce, website, business_hours, services, score, images, owner_id from garages where id = '${garageId}'`;
     pool.execute(sql, (err, result) => {
       if (err) {
         reject(err);
@@ -65,9 +65,9 @@ export const getAllGarageServices = () => new Promise(async (resolve, reject) =>
   }
 })
 
-export const updateGarageInforServices = (garageId, garage_name, address, introduce, website, business_hours, services, star, images) => new Promise(async (resolve, reject) => {
+export const updateGarageInforServices = (garageId, garage_name, garageAddress, introduce, website, business_hours, services, score, images) => new Promise(async (resolve, reject) => {
   try {
-    const sql = `UPDATE garages SET garage_name = '${garage_name}', address = '${address}', introduce = '${introduce}', website = '${website}', business_hours = '${business_hours}', services = '${services}', star = '${star}', images = '${images}'
+    const sql = `UPDATE garages SET garage_name = '${garage_name}', garageAddress = '${garageAddress}', introduce = '${introduce}', website = '${website}', business_hours = '${business_hours}', services = '${services}', score = '${score}', images = '${images}'
                 WHERE id = '${garageId}'`
     pool.execute(sql, (err, result) => {
       if (err) {
