@@ -2,11 +2,15 @@ import React, { useEffect, useState } from 'react'
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { Button, Form, Input, Modal, notification } from 'antd';
+import { Button, Form, Input, Modal, message, notification } from 'antd';
+import { useSelector } from 'react-redux';
+import { apiCreateAppointment, apiGetAppointment } from '../../../services/Engineer/appointment';
 
 const localizer = momentLocalizer(moment)
 
 const WorkSchedule = () => {
+
+    const { userCurentProfile } = useSelector(state => state.user)
 
     const [events, setEvents] = useState([]);
     const [selectedEvent, setSelectedEvent] = useState(null);
@@ -14,8 +18,17 @@ const WorkSchedule = () => {
     const [form] = Form.useForm();
 
     useEffect(() => {
-        console.log(events)
-    }, [events])
+        const getAppointment = async (engineer_id) => {
+            if (engineer_id) {
+                const response = await apiGetAppointment(engineer_id);
+                console.log(response)
+                if (response?.data.err === 0) {
+                    setEvents(response.data?.response)
+                }
+            }
+        }
+        getAppointment(userCurentProfile.engineer?.id)
+    }, [])
 
     const handleSelectSlot = ({ start, end }) => {
         const now = new Date();
@@ -28,10 +41,10 @@ const WorkSchedule = () => {
             return;
         }
 
-        const isOverlap = events.some(event =>
-            (start < event.end && end > event.start)
+        const isOverlap = events.some(event => 
+            (new Date(start) < event.endTime && new Date(end) > event.startTime)
         );
-
+        
         if (isOverlap) {
             notification.error({
                 message: 'Error',
@@ -62,8 +75,16 @@ const WorkSchedule = () => {
         setIsModalVisible(false);
     };
 
-    const handleAddEvent = (values) => {
-        setEvents([...events, { ...values, ...selectedEvent }]);
+    const handleAddEvent = async (values) => {
+        const dataAppointment = { ...values, startTime: new Date(selectedEvent.start), endTime: new Date(selectedEvent.end), engineer_id: userCurentProfile.engineer.id }
+        console.log(dataAppointment)
+        const response = await apiCreateAppointment(dataAppointment)
+        console.log(response)
+        if (response.data.err === 0) {
+            setEvents([...events, response?.data?.response]);
+        } else {
+            message.error(response.data.msg, 2)
+        }
         setIsModalVisible(false);
     };
 
@@ -75,8 +96,8 @@ const WorkSchedule = () => {
                     <Calendar
                         localizer={localizer}
                         events={events}
-                        startAccessor="start"
-                        endAccessor="end"
+                        startAccessor={(event) => { return new Date(event.startTime) }}
+                        endAccessor={(event) => { return new Date(event.endTime) }}
                         style={{ height: 500 }}
                         selectable
                         onSelectSlot={handleSelectSlot}
@@ -125,7 +146,7 @@ const WorkSchedule = () => {
                             <Form.Item
                                 name="description"
                                 label="Description"
-                                rules={[{ required: true, message: 'Please input the description of the event!'}]}
+                                rules={[{ required: true, message: 'Please input the description of the event!' }]}
                             >
                                 <Input.TextArea />
                             </Form.Item>

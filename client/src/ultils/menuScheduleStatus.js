@@ -10,6 +10,12 @@ const menuScheduleStatus = [
         icon: <GrScheduleNew />
     },
     {
+        id: 2,
+        text: 'Đặt trước',
+        status: 'schedule',
+        icon: <GrScheduleNew />
+    },
+    {
         id: 3,
         text: 'Đang xử lý',
         status: 'in-progress',

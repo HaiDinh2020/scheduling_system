@@ -10,6 +10,7 @@ import Button from '../../../components/Button'
 import * as actions from '../../../store/actions'
 import { Option } from 'antd/es/mentions';
 import InvoiceModal from './InvoiceModal';
+import AssignModal from './assignModal';
 
 const { LuFlagTriangleRight, FcOvertime, MdOutlinePhone } = icons
 const Schedule = ({ socket }) => {
@@ -21,6 +22,9 @@ const Schedule = ({ socket }) => {
 
     const [displayStatus, setDisplayStatus] = useState(menuScheduleStatus[0].status);
     const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false)
+    const [isAssignModalOpen, setIsAssignModalOpen] = useState(false)
+
+    const [bookingRequest, setBookingRequest] = useState({})
     const [booking, setBooking] = useState({})                              // booking sẽ hiển thị trên hóa đơn
     const [listBooking, setListBooking] = useState([])
 
@@ -63,7 +67,9 @@ const Schedule = ({ socket }) => {
     }
 
     const handleAcceptRequest = (bookingId) => {
-        dispatch(actions.updateBookingGarage(garageId, bookingId))
+        setBookingRequest(bookingId)
+        setIsAssignModalOpen(true)
+        // dispatch(actions.updateBookingGarage(garageId, bookingId))
     }
 
     const handleRejectRequest = (bookingId) => {
@@ -86,6 +92,10 @@ const Schedule = ({ socket }) => {
         setIsInvoiceModalOpen(true)
     }
 
+    const handleScheduleMaintenance = (booking) => {
+        
+    }
+
     const renderBookingTime = (booking_date) => {
         const time = booking_date.split("T")[1].slice(0, 5)
         const day = booking_date.split("T")[0]
@@ -105,6 +115,20 @@ const Schedule = ({ socket }) => {
                     <Button text={"Từ chối"} bgcolor={"bg-red-400"} textcolor={'text-white'} onClick={(e) => handleChangeStatus(bookingId, "reject")} />
                 </div>
             )
+        } else if (status === "schedule") {
+            return (
+                <div className='flex justify-end gap-2'>
+                    <Button text={"Sửa chữa"} bgcolor={"bg-green-400"} textcolor={'text-white'} onClick={(e) => handleChangeStatus(bookingId, "in-progress")} />
+                    <Button
+                        text={"Hủy bỏ"}
+                        bgcolor={"bg-red-400"}
+                        textcolor={'text-white'}
+                        onClick={(e) => {
+
+                            handleChangeStatus(bookingId, "reject")
+                        }} />
+                </div>
+            )
         } else if (status === "in-progress") {
             return (
                 <div className='flex justify-end gap-2'>
@@ -122,6 +146,7 @@ const Schedule = ({ socket }) => {
         } else if (status === "complete") {
             return (
                 <div className='flex justify-end gap-2'>
+                    <Button text={"Lên lịch bảo dưỡng"} bgcolor={"bg-green-400"} textcolor={'text-white'} onClick={(e) => handleScheduleMaintenance(booking)} />
                     <Popconfirm
                         placement="topLeft"
                         title={"Xác nhận hủy bỏ lịch hẹn"}
@@ -162,8 +187,9 @@ const Schedule = ({ socket }) => {
                     }
                 </div>
                 <InvoiceModal isModalOpen={isInvoiceModalOpen} setIsModalOpen={setIsInvoiceModalOpen} booking={booking} socket={socket} />
+                <AssignModal isModalOpen={isAssignModalOpen} setIsModalOpen={setIsAssignModalOpen} bookingId={bookingRequest} socket={socket} />
             </div>
-            
+
             <div className='bg-white h-full min-h-screen rounded-xl border-2 shadow-md w-[95%] p-4'>
                 {
                     listBooking && listBooking.map((item, index) => {
@@ -204,7 +230,6 @@ const Schedule = ({ socket }) => {
                                             <div className='font-bold mb-1'>Loại xe</div>
                                             <div  >{item.car.make}-{item.car.model} {item.car.number_plate}</div>
                                         </div>
-
                                     </div>
                                     <div className='w-1/3'>
                                         <div className='font-bold mb-1'>Hình ảnh</div>
@@ -215,8 +240,15 @@ const Schedule = ({ socket }) => {
                                     </div>
                                 </div>
 
-
-                                {renderButton(item.status, item.id, item)}
+                                <div className='w-full flex align-middle'>
+                                    <div className='flex'>
+                                        <div className='font-bold mb-1 mr-1'>Người phụ trách: </div>
+                                        <div>{item.appointment?.engineer?.user?.name}</div>
+                                    </div>
+                                    <div className='flex-1'>
+                                        {renderButton(item.status, item.id, item)}
+                                    </div>
+                                </div>
                             </div>
                         )
                     })

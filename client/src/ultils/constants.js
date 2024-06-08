@@ -13,9 +13,15 @@ export const path = {
     GARAGEPROFILE: 'profile',
     GARAGEINFO: 'infor',
     GARAGESCHEDULE: 'schedule',
-    GARAGEWORKSCHEDULE: 'work-schedule',
+    GARAGEBOOKING: 'booking',
+    
     SYSTEM: 'system',
-    MESSAGE: 'message'
+    MESSAGE: 'message',
+
+    ENGINEER: '/engineer/',
+    ENGINEERPROFILE: 'profile',
+    ENGINEERWORKSCHEDULE: 'work-schedule',
+
     
 }
 

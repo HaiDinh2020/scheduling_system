@@ -17,14 +17,14 @@ const memuSidebarGarage = [
     },
     {
         id: 3,
-        text: 'Lịch hẹn',
+        text: 'Quản lý công việc',
         path: '/garage/schedule',
         icon: <BsListUl />
     },
     {
         id: 4,
-        text: 'Lịch làm việc',
-        path: '/garage/work-schedule',
+        text: 'Lịch đặt trước',
+        path: '/garage/booking',
         icon: <FaCalendarAlt />
     },
     

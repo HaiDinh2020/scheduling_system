@@ -3,7 +3,8 @@ import { path } from "./ultils/constants";
 import { DetailGarage, Home, HomePage, Login } from "./containers/Public";
 import 'react-toastify/dist/ReactToastify.css';
 import { Booking, BookingHistory, Customer, ListCars, PaymentResult } from "./containers/System/Customer";
-import { Garage, Infor, Schedule, WorkSchedule } from "./containers/System/Garage";
+import { Garage, Infor, Schedule } from "./containers/System/Garage";
+import { Engineer, WorkSchedule } from "./containers/System/Engineer"
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import * as actions from './store/actions'
@@ -102,7 +103,10 @@ function App() {
           <Route path={path.GARAGEPROFILE} Component={Profile} />
           <Route path={path.GARAGEINFO} Component={Infor} />
           <Route path={path.GARAGESCHEDULE} element={<Schedule socket={socket} />} />
-          <Route path={path.GARAGEWORKSCHEDULE} element={<WorkSchedule />} />
+        </Route>
+        <Route path={path.ENGINEER} Component={Engineer}>
+          <Route path={path.ENGINEERPROFILE} Component={Profile} />
+          <Route path={path.ENGINEERWORKSCHEDULE} element={<WorkSchedule />} />
         </Route>
         <Route path={path.SYSTEM} >
           <Route path={path.MESSAGE} Component={Chat} />

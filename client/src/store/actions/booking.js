@@ -1,3 +1,5 @@
+import { message } from "antd";
+import { apiCreateBookingMaintenance } from "../../services/Customer/booking";
 import { apiCreateBooking, apiGetAllBooking, apiGetAllBookingCustomer, apiGetBookingStatus, apiUpdateBookingGarage, apiUpdateBookingStatus } from "../../services/Garage/booking";
 import { actionTypes } from "./actionTypes";
 import { toast } from 'react-toastify';
@@ -27,6 +29,34 @@ export const createBooking = (payload) => async (dispatch) => {
             msg: "Create booking fail!"
         })
         toast("Server Error!")
+    }
+}
+
+export const createBookingMaintenance = (payload) => async (dispatch) => {
+    try {
+        const response = await apiCreateBookingMaintenance(payload);
+        if (response?.data.err === 0) {
+            dispatch({
+                type: actionTypes.CREATE_BOOKING,
+                data: response?.data.response
+            })
+            message.success(response?.data.msg || "Create successfully")
+            return response?.data.response
+        } else {
+            dispatch({
+                type: actionTypes.CREATE_BOOKING,
+                data: [],
+                msg: response?.data.msg
+            })
+            message.error(response?.data.msg || "Create booking fail")
+        }
+    } catch (error) {
+        console.log(error)
+        dispatch({
+            type: actionTypes.CREATE_BOOKING,
+            msg: "Create booking fail!"
+        })
+        message.error("Server Error!")
     }
 }
 
@@ -132,9 +162,9 @@ export const updateBookingStatus = (bookingId, newStatus) => async (dispatch) =>
     }
 }
 
-export const updateBookingGarage =  (garageId, bookingId) => async (dispatch) => {
+export const updateBookingGarage =  (garageId, bookingId, engineerId) => async (dispatch) => {
     try {
-        const response = await apiUpdateBookingGarage(garageId, bookingId)
+        const response = await apiUpdateBookingGarage(garageId, bookingId, engineerId)
         if (response?.data.err === 0) {
             dispatch({
                 type: actionTypes.DELETE_GARAGE_BOOKING,

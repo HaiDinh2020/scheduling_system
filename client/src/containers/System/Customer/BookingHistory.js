@@ -234,7 +234,7 @@ const BookingHistory = () => {
 
     return (
         <div>
-            <div className='container flex flex-col items-center'>
+            {/* <div className='container flex flex-col items-center'>
                 <div className='bg-white  rounded-xl border-2 shadow-md w-[95%] px-4 mb-2'>
                     <div className='font-bold text-lg'>Lịch đặt hiện tại</div>
                     <div className=' w-full pt-2'>
@@ -245,8 +245,8 @@ const BookingHistory = () => {
                         />
                     </div>
                 </div>
-                <PaymentModal isModalOpen={isPaymentModalOpen} setIsModalOpen={setIsPaymentModalOpen} invoice={invoiceSelect} />
-            </div>
+            </div> */}
+            <PaymentModal isModalOpen={isPaymentModalOpen} setIsModalOpen={setIsPaymentModalOpen} invoice={invoiceSelect} />
             <div className='container flex flex-col items-center'>
                 <div className='bg-white  rounded-xl border-2 shadow-md w-[95%] px-4 mb-2'>
                     <div className=' w-full pt-2'>

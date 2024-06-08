@@ -3,21 +3,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Navigate, Outlet } from 'react-router-dom'
 import { path } from '../../../ultils/constants'
 import { Header } from '../../Public/index'
-import * as actions from '../../../store/actions'
 import Sidebar from './Sidebar'
 
-const Garage = () => {
+const Engineer = () => {
     const { isLoggedIn, role } = useSelector(state => state.auth)
-    // const role = useSelector(state => state.user.userCurentProfile.role)
-    const dispatch = useDispatch()
-    
 
-    useEffect(() => {
-        // if(isLoggedIn) {
-        //     dispatch(actions.getCurrentProfile())
-        //     dispatch(actions.getGarageInfor())
-        // }
-    }, [])
+   
 
     if (!isLoggedIn) return <Navigate to={`/${path.LOGIN}`} replace={true} />
     if(role === "customer") return <Navigate to={`/`}/>
@@ -36,4 +27,4 @@ const Garage = () => {
     )
 }
 
-export default Garage
+export default Engineer
