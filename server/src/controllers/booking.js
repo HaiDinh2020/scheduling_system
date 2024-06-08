@@ -42,6 +42,51 @@ export const createBooking = async (req, res) => {
     }
 }
 
+export const createBookingMaintenance = async (req, res) => {
+    try {
+
+        const customer_id = req.user.id
+        const garage_id = req.body.garage_id 
+        const car_id = req.body.car_id
+        const status = "schedule"
+        const services = "bao_duong"      // sua_chưa/ bao_duong
+        
+        const address = req.body.address
+        const exactAddress = req.body.exactAddress
+        const pickupOption = req.body.pickupOption || "0"
+        const createBy = req.user.role
+        const { engineer_id, title, description, startTime, endTime } = req.body;
+
+        // check body miss
+        if (!customer_id || !car_id  || !garage_id || !exactAddress || !engineer_id || !startTime ) {
+            res.status(400).json({
+                err: 1,
+                msg: "Missing input!"
+            })
+        }
+
+        if(!validateExactAdrress(exactAddress)) {
+            return res.status(400).json({
+                err: 1,
+                msg: "Invalid exactAddress"
+            });
+        }
+
+        const response = await BookingServices.createBookingMaintenanceServices(
+            customer_id, garage_id, car_id, status, services, address, exactAddress, pickupOption,
+            engineer_id, title, description, startTime, endTime, createBy
+        )
+        res.status(200).json(response)
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            err: -1,
+            msg: 'Fail to create schedule' + error,
+        })
+    }
+}
+
+
 export const getAllBookingCustomer = async (req, res) => {
     try {
         const customerId = req.user.id
@@ -118,6 +163,8 @@ export const updateBookingGarage = async (req, res) => {
     try {
         const bookingId = req.params.bookingId;
         const garageId = req.params.garageId;
+        console.log(req.body)
+        const engineerId = req.body.engineerId
         if (!garageId ) {
             res.status(400).json({
                 err: 1,
@@ -125,7 +172,15 @@ export const updateBookingGarage = async (req, res) => {
             })
         }
 
-        const response = await BookingServices.updateBookingGarageServices(garageId, bookingId)
+        if (!engineerId ) {
+            res.status(400).json({
+                err: 1,
+                msg: "You have to assign this booking to engineer!"
+            })
+        }
+
+
+        const response = await BookingServices.updateBookingGarageServices(garageId, bookingId, engineerId)
         res.status(200).json(response)
     } catch (error) {
         console.log(error)
@@ -135,3 +190,7 @@ export const updateBookingGarage = async (req, res) => {
         })
     }
 }
+
+// booking maintenance
+
+

@@ -1,6 +1,7 @@
 import { Op } from "sequelize"
-import db, { sequelize } from "../models"
+import db, { Sequelize, sequelize } from "../models"
 import { v4 } from "uuid"
+import { createAppointmentServices } from "./appointment"
 require('dotenv').config()
 
 // done
@@ -42,13 +43,13 @@ export const createBookingServices = (customer_id, car_id, status, services, des
 
         // Extract latitude and longitude from exactAddress
         const [latitude, longitude] = exactAddress.split(", ").map(coord => parseFloat(coord));
-        let radius = 5; // Bán kính ban đầu
+        let radius = 10; // Bán kính ban đầu
         const limit = 2;
         let garages = [];
 
         while (garages.length === 0) {
             garages = await findNearestGarages(latitude, longitude, limit, radius);
-    
+
             if (garages.length === 0) {
                 radius += 5; // Tăng bán kính tìm kiếm nếu không tìm thấy garage
             }
@@ -69,6 +70,62 @@ export const createBookingServices = (customer_id, car_id, status, services, des
             msg: "success to create schedule",
             response: bookingCreated
         });
+    } catch (error) {
+        reject(error)
+    }
+})
+
+export const createBookingMaintenanceServices = (
+    customer_id, garage_id, car_id, status, services, address, exactAddress, pickupOption,
+    engineer_id, title, description, startTime, endTime, createBy
+) => new Promise(async (resolve, reject) => {
+    try {
+        // tạo booking
+        const booking = await db.Booking.create({
+            id: v4(),
+            customer_id,
+            garage_id,
+            car_id,
+            status,
+            services,
+            description,
+            booking_date: startTime,
+            address,
+            exactAddress,
+            pickupOption
+        })
+
+        if (!booking) {
+            reject("Failed to create schedule");
+            return;
+        }
+
+        // thêm vào appointment của engineer
+        const appointment = await createAppointmentServices(engineer_id, booking.id, title, description, startTime, endTime, createBy)
+
+        if (appointment?.err !== 0) {
+            return resolve(appointment)
+        }
+
+        // trả về data để customer hiển thị ui đặt lịch
+        const bookingCreated = await db.Booking.findOne({
+            where: { id: booking.id },
+            raw: true,
+            nest: true,
+            include: [
+                { model: db.Car, as: 'car', attributes: ['make', 'model', 'number_plate'] },
+                { model: db.Garage, as: 'garage', attributes: ['garage_name', 'garageAddress', 'exactAddress'] },
+                { model: db.User, as: 'customer', attributes: ['name', 'phone', 'avatar'] }
+            ],
+            attributes: ['id', 'status', 'services', 'description', 'booking_images', 'booking_date']
+        });
+
+        resolve({
+            err: 0,
+            msg: "success to create schedule",
+            response: bookingCreated
+        });
+
     } catch (error) {
         reject(error)
     }
@@ -129,7 +186,7 @@ export const getAllBookingCustomerServices = (customerId) => new Promise(async (
             include: [
                 { model: db.Car, as: 'car', attributes: ['make', 'model', 'number_plate'] },
                 { model: db.Garage, as: 'garage', attributes: ['garage_name', 'garageAddress', 'exactAddress'] },
-                { model: db.Invoice, as: 'invoice', attributes: ['id', 'amount', 'status', 'invoice_image']}
+                { model: db.Invoice, as: 'invoice', attributes: ['id', 'amount', 'status', 'invoice_image'] }
             ],
             attributes: ['id', 'status', 'services', 'description', 'booking_images', 'booking_date']
         })
@@ -183,7 +240,19 @@ export const getBookingStatusServices = (garageId, status) => new Promise(async 
             nest: true,
             include: [
                 { model: db.User, as: 'customer', attributes: ['name', 'phone', 'avatar'] },
-                { model: db.Car, as: 'car', attributes: ['make', 'model', 'number_plate'] }
+                { model: db.Car, as: 'car', attributes: ['make', 'model', 'number_plate'] },
+                {
+                    model: db.Appointment, as: 'appointment',
+                    attributes: ['title'],
+                    include: [
+                        {
+                            model: db.Engineer, as: 'engineer', attributes: ['major'],
+                            include: [
+                                { model: db.User, as: 'user', attributes: ['name'] }
+                            ]
+                        }
+                    ]
+                }
             ],
             attributes: ['id', 'status', 'services', 'description', 'booking_images', 'booking_date']
         })
@@ -221,7 +290,7 @@ export const updateStatusBookingServices = (bookingId, newStatus) => new Promise
     }
 })
 
-export const updateBookingGarageServices = (garageId, bookingId) => new Promise(async (resolve, reject) => {
+export const updateBookingGarageServices = (garageId, bookingId, engineerId) => new Promise(async (resolve, reject) => {
     try {
         const booking = await db.Booking.findOne({ where: { id: bookingId } });
 
@@ -230,11 +299,17 @@ export const updateBookingGarageServices = (garageId, bookingId) => new Promise(
         } else {
             if (booking.garage_id === null) {
                 const response = await booking.update({ garage_id: garageId, status: "in-progress" })
-                console.log(response)
+
+                // add booking to appointment of engineer
+                const startTime = new Date();
+                const endTime = new Date(startTime.getTime() + 60 * 60 * 1000);
+
+                await createAppointmentServices(engineerId, booking.id, "Sua chua", "Sua chua theo phan cong", startTime, endTime, "garage")
+                // console.log(response)
                 resolve({
                     err: 0,
                     msg: "update garage booking success",
-                    response
+                    response: response
                 })
             } else {
                 resolve({
@@ -247,6 +322,28 @@ export const updateBookingGarageServices = (garageId, bookingId) => new Promise(
         reject(error)
     }
 })
+
+
+const findAvailableEngineer = async (garageId) => {
+    const currentTime = new Date();
+
+    console.log("currentTime")
+    console.log(currentTime)
+
+    const engineer = await db.Engineer.findOne({
+        where: {
+            garage_id: garageId,
+            id: {
+                [Op.notIn]: Sequelize.literal(
+                    `(SELECT engineer_id FROM appointments WHERE startTime <= NOW() AND endTime >= NOW())`
+                )
+            }
+        },
+
+    });
+
+    return engineer;
+};
 
 // sẽ gọi lại 2 garage khác khi cả 2 garage kia đều từ chối
 export const handleRejectRequestBookingServices = (garageId, bookingId) => new Promise(async (resolve, reject) => {

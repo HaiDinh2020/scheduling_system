@@ -57,3 +57,18 @@ export const getUsers = async (req, res) => {
         })
     }
 }
+
+export const getAllGarageHaveBeenRepair = async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        const response = await services.getAllGarageHaveBeenRepairServices(userId)
+        res.status(200).json(response)
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            err: -1,
+            msg: "Fail to update status: " + error
+        })
+    }
+}

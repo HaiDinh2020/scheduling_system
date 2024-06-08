@@ -14,7 +14,7 @@ export const loginService = ({ email, password }) => new Promise(async (resolve,
         })
         const isCorrectPassword = response && bcrypt.compareSync(password, response.password)
 
-        const token = isCorrectPassword && jwt.sign({ id: response.id, email: response.email, role: response.role  }, process.env.SECRET_KEY, { expiresIn: '2d' })
+        const token = isCorrectPassword && jwt.sign({ id: response.id, email: response.email, role: response.role }, process.env.SECRET_KEY, { expiresIn: '2d' })
         resolve({
             err: token ? 0 : 2,
             msg: token ? "Login is successfully!" : response ? "Password is wrong !" : "Account is not registered!",
@@ -27,7 +27,7 @@ export const loginService = ({ email, password }) => new Promise(async (resolve,
     }
 })
 
-export const registerService = ({ name, phone, password, email, role, garageName, introduce, garageAddress, services, businessHours, linkWebsite, exactAddress }) => new Promise(async (resolve, reject) => {
+export const registerService = ({ name, phone, password, email, role, garageName, introduce, garageAddress, services, businessHours, linkWebsite, exactAddress, garage_id, major }) => new Promise(async (resolve, reject) => {
     try {
         // console.log(name, phone, password, garageName, introduce, garageAddress, services, businessHours, linkWebsite, exactAddress)
         const response = await db.User.findOrCreate({
@@ -44,9 +44,9 @@ export const registerService = ({ name, phone, password, email, role, garageName
 
         const token = response[1] && jwt.sign({ id: response[0].id, email: response[0].email }, process.env.SECRET_KEY, { expiresIn: '2d' })
 
-        if(response[1] && role === 'garage') {
+        if (response[1] && role === 'garage') {
             const create_garage = await db.Garage.findOrCreate({
-                where: {owner_id: response[0].id},
+                where: { owner_id: response[0].id },
                 defaults: {
                     id: v4(),
                     owner_id: response[0].id,
@@ -56,7 +56,7 @@ export const registerService = ({ name, phone, password, email, role, garageName
                     introduce,
                     website: linkWebsite,
                     business_hours: businessHours,
-                    services ,
+                    services,
                 }
             })
 
@@ -77,8 +77,41 @@ export const registerService = ({ name, phone, password, email, role, garageName
                 err: create_garage[1] ? 0 : 2,
                 msg: create_garage[1] ? "Register is successfully!" : "Error whent create garage info",
                 token: token || null,
-                role:  "garage"
+                role: "garage"
             })
+        } else if (response[1] && role === 'engineer') {
+            console.log("create_engineer")
+            const create_engineer = await db.Engineer.findOrCreate({
+                where: { user_id: response[0].id },
+                defaults: {
+                    id: v4(),
+                    user_id: response[0].id,
+                    garage_id: garage_id,
+                    major: major
+                }
+            })
+
+            
+            console.log(create_engineer)
+
+            if (!create_engineer[1]) {
+                // Xử lý trường hợp tạo garage không thành công
+                await db.User.destroy({ where: { id: response[0].id } }); // Xóa user đã tạo
+                return resolve({
+                    err: 2,
+                    msg: "Error when creating engineer info",
+                    token: null,
+                    role: null
+                });
+            }
+
+            return resolve({
+                err: create_engineer[1] ? 0 : 2,
+                msg: create_engineer[1] ? "Register is successfully!" : "Error whent create engineer",
+                token: token || null,
+                role: "engineer"
+            })
+
         } else {
             resolve({
                 err: token ? 0 : 2,

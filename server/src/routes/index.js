@@ -8,6 +8,8 @@ import notiRouter from "./notification";
 import fcmTokenRouter from "./firebaseToken"
 import invoiceRouter from "./invoice"
 import vnpayRouter from "./vnpay"
+import appointmentRouter from "./appointment"
+import engineerRouter from "./engineer"
 
 const initRoutes = (app) => {
     app.use('/api/v1/user', userRouter)
@@ -20,6 +22,8 @@ const initRoutes = (app) => {
     app.use('/api/v1/fcmtoken', fcmTokenRouter)
     app.use('/api/v1/invoice', invoiceRouter)
     app.use('/api/v1/vnpay', vnpayRouter)
+    app.use('/api/v1/appointment', appointmentRouter )
+    app.use('/api/v1/engineer', engineerRouter )
     
     return app.use('/', (req, res) => { 
         

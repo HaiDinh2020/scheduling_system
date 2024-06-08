@@ -7,6 +7,7 @@ const router = express.Router()
 
 router.use(verifyToken)
 router.post('/customer', checkIsGarage,  bookingController.createBooking)
+router.post('/customer/maintenance', bookingController.createBookingMaintenance)
 router.get('/customer', bookingController.getAllBookingCustomer)
 
 router.put("/garage/:garageId/:bookingId", bookingController.updateBookingGarage)

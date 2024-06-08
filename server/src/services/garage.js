@@ -85,3 +85,30 @@ export const updateGarageInforServices = (garageId, garage_name, garageAddress, 
     reject(error)
   }
 })
+
+// new
+
+export const getAllEngineerServices = (garage_id) => new Promise(async (resolve, reject) => {
+  try {
+    const engineers = await db.Garage.findAll({
+      where: {id: garage_id},
+      include: [
+        {
+          model: db.Engineer,  
+          as: 'engineers',
+          attributes: ['id', 'major'],
+          include: [
+            {model: db.User, as: 'user', attributes: ['name', 'phone']}
+          ]
+        }
+      ]
+    })
+    resolve({
+      err: 0,
+      msg: "Get engineer of garage success",
+      response: engineers
+    })
+  } catch (error) {
+    reject(error)
+  }
+})

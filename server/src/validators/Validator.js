@@ -15,3 +15,10 @@ export const validateExactAdrress = (exactAddress) => {
     const addressRegex = /^-?\d+(\.\d+)?,\s*-?\d+(\.\d+)?$/;
     return addressRegex.test(exactAddress);
 };
+
+// Hàm kiểm tra lịch đặt endtime > startTime
+export const validateStartTimeEndTime = (startTime, endTime) => {
+    const startTimeDate = new Date(startTime);
+    const endTimeDate = new Date(endTime);
+    return endTimeDate > startTimeDate
+}

@@ -8,5 +8,6 @@ router.post('/users', userController.getUsers)
 router.use(verifyToken)
 router.get('/get-current-profile', userController.getCurrentProfile)
 router.put('/update-profile', userController.updateProfile)
+router.get('/get-garage', userController.getAllGarageHaveBeenRepair)
 
 export default router;

@@ -9,9 +9,13 @@ export const getCurrentProfileServices = (id) => new Promise(async (resolve, rej
     const response = await db.User.findOne({
       where: { id },
       raw: true,
+      nest: true,
       attributes: {
         exclude: ['password']
-      }
+      },
+      include: [
+        { model: db.Engineer, as: 'engineer', attributes: ['id', 'garage_id', 'major'] },
+      ]
     })
 
     resolve({
@@ -45,3 +49,29 @@ export const updateProfileServices = async (id, name, phone, email, avatar) => {
     }
   });
 };
+
+export const getAllGarageHaveBeenRepairServices = async (userId) => new Promise(async (resolve, reject) => {
+  try {
+    
+    const sql = `SELECT DISTINCT g.id, g.garage_name, g.garageAddress
+                FROM users u
+                JOIN bookings b ON u.id = b.customer_id
+                JOIN invoices i ON b.id = i.booking_id
+                JOIN garages g ON i.garage_id = g.id
+                WHERE u.id ='${userId}'
+                `;
+    pool.execute(sql, (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve({
+          err: 0,
+          msg: "get garages have been repair success",
+          response: result
+        });
+      }
+    });
+  } catch (error) {
+    reject(error)
+  }
+});

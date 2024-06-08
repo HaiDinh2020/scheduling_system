@@ -9,6 +9,7 @@ router.get('/', garageController.getAllGarage)
 router.use(verifyToken)
 router.get('/infor', garageController.getInfor)
 router.put('/infor', garageController.updateGarageInfor)
+router.get('/:garageId/engineers', garageController.getAllEngineer)
 
 
 export default router;
