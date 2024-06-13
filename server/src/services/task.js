@@ -1,0 +1,72 @@
+import { Op } from "sequelize"
+import db, { sequelize } from "../models"
+import { v4 } from "uuid"
+require('dotenv').config()
+
+export const createTaskServices = (task_name, garage_id, assign_to, level, task_status, allocation_date, estimated_time, start_date, start_time, end_date, end_time) => new Promise(async (resolve, reject) => {
+    try {
+
+        const newTask = await db.Task.create({
+            id: v4(),
+            task_name,
+            garage_id,
+            assign_to,
+            level,
+            task_status,
+            allocation_date,
+            estimated_time,
+            start_date,
+            start_time,
+            end_date,
+            end_time
+        })
+        const tasks = await db.Task.findAll({ where: {garage_id: garage_id}})
+        resolve({
+            err: 0,
+            msg: "success to create new task",
+            response: newTask,
+            tasks
+        });
+    } catch (error) {
+        reject(error)
+    }
+})
+
+export const getTaskServices = (garage_id) => new Promise(async (resolve, reject) => {
+    try {
+
+        const tasks = await db.Task.findAll({
+            where: { garage_id: garage_id }
+        })
+
+        resolve({
+            err: 0,
+            msg: "success to get task of garage",
+            response: tasks
+        });
+    } catch (error) {
+        reject(error)
+    }
+})
+
+export const updateTaskServices = (task_id, level, task_status, estimated_time, assign_to, allocation_date, start_date, start_time, end_date, end_time) => new Promise(async (resolve, reject) => {
+    try {
+        const task = await db.Task.findOne({ where: { id: task_id } });
+
+        if (!task) {
+            reject("task not found")
+        } else {
+            const response = await task.update({ level, task_status, estimated_time, assign_to, allocation_date, start_date, start_time, end_date, end_time })
+            const tasks = await db.Task.findAll({ where: {garage_id: task.garage_id}})
+            resolve({
+                err: 0,
+                msg: "update status task success",
+                response,
+                tasks
+            })
+        }
+
+    } catch (error) {
+        reject(error)
+    }
+})
