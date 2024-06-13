@@ -3,8 +3,8 @@ import { path } from "./ultils/constants";
 import { DetailGarage, Home, HomePage, Login } from "./containers/Public";
 import 'react-toastify/dist/ReactToastify.css';
 import { Booking, BookingHistory, Customer, ListCars, PaymentResult } from "./containers/System/Customer";
-import { Garage, Infor, Schedule } from "./containers/System/Garage";
-import { Engineer, WorkSchedule } from "./containers/System/Engineer"
+import { Dashboard, Garage, Infor, Schedule, Task } from "./containers/System/Garage";
+import { Engineer, WorkSchedule, ViewTask } from "./containers/System/Engineer"
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import * as actions from './store/actions'
@@ -20,6 +20,7 @@ function App() {
 
   const { isLoggedIn, role } = useSelector(state => state.auth)
   const userId = useSelector(state => state.user?.userCurentProfile?.id)
+  const garageId = useSelector((state) => state.garage.garageInfor.id);
   const dispatch = useDispatch();
   const navigate = useNavigate()
 
@@ -75,7 +76,15 @@ function App() {
   useEffect(() => {
     if (isLoggedIn) {
       if (role === 'garage') {
-        navigate("/garage")
+        dispatch(actions.getAllEngineer(garageId))
+      } 
+    }
+  }, [garageId, isLoggedIn, role])
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      if (role === 'garage') {
+        // navigate("/garage")
       }
     } else {
       navigate("/login")
@@ -103,10 +112,14 @@ function App() {
           <Route path={path.GARAGEPROFILE} Component={Profile} />
           <Route path={path.GARAGEINFO} Component={Infor} />
           <Route path={path.GARAGESCHEDULE} element={<Schedule socket={socket} />} />
+          <Route path={path.GARAGETASK} element= {<Task />}/>
         </Route>
+        <Route path={path.GARAGE_DASHBOARD} Component={Dashboard} />
+
         <Route path={path.ENGINEER} Component={Engineer}>
           <Route path={path.ENGINEERPROFILE} Component={Profile} />
           <Route path={path.ENGINEERWORKSCHEDULE} element={<WorkSchedule />} />
+          <Route path={path.ENGINEERTASK} element={<ViewTask />} />
         </Route>
         <Route path={path.SYSTEM} >
           <Route path={path.MESSAGE} Component={Chat} />

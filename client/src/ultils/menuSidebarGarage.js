@@ -1,6 +1,6 @@
 import icons from './icons'
 
-const { ImPencil2, FaCalendarAlt, BsListUl, PiGarageBold } = icons
+const { ImPencil2, FaCalendarAlt, BsListUl, PiGarageBold, IoBarChartOutline } = icons
 
 const memuSidebarGarage = [
     {
@@ -17,17 +17,24 @@ const memuSidebarGarage = [
     },
     {
         id: 3,
-        text: 'Quản lý công việc',
+        text: 'Quản lý lịch hẹn',
         path: '/garage/schedule',
         icon: <BsListUl />
     },
     {
         id: 4,
-        text: 'Lịch đặt trước',
-        path: '/garage/booking',
+        text: 'Công việc',
+        path: '/garage/task',
         icon: <FaCalendarAlt />
     },
-    
+   
+    {
+        id: 5,
+        text: 'Thống kê',
+        path: '/garage/monthly-statistics',
+        icon: <IoBarChartOutline />
+    },
 ]
+
 
 export default memuSidebarGarage

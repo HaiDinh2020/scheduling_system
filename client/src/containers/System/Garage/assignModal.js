@@ -61,8 +61,8 @@ const AssignModal = ({ isModalOpen, setIsModalOpen, bookingId, socket }) => {
                             <Radio.Group defaultValue="" name="engineerId">
                                 {
                                     engineers && engineers.length > 0 &&
-                                    engineers.map((engineer) => (
-                                        <div>
+                                    engineers.map((engineer, index) => (
+                                        <div key={index}>
                                             <Radio value={engineer.id}>
                                                 {engineer.user?.name} -
                                                 {availableEngineer.some(available => available.id === engineer.id) ? ' (free)' : ' (busy)'}

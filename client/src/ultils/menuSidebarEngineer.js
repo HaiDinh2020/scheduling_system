@@ -1,6 +1,6 @@
 import icons from './icons'
 
-const { ImPencil2, FaCalendarAlt, BsListUl } = icons
+const { ImPencil2, FaCalendarAlt, BsListTask } = icons
 
 const memuSidebarGarage = [
     {
@@ -8,6 +8,12 @@ const memuSidebarGarage = [
         text: 'Thông tin cá nhân',
         path: '/engineer/profile',
         icon: <ImPencil2 />
+    },
+    {
+        id: 2,
+        text: 'Công việc',
+        path: '/engineer/view-task',
+        icon: <BsListTask />
     },
     {
         id: 3,

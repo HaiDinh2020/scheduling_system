@@ -21,6 +21,8 @@ export const actionTypes = {
     GET_NEW_POST: 'GET_NEW_POST',
     GET_CARS: 'GET_CARS',
     CREATE_CAR: 'CREATE_CAR',
-    DELETE_CAR: 'DELETE_CAR'
+    DELETE_CAR: 'DELETE_CAR',
+
+    GET_ENGINEERS: 'GET_ENGINEERS',
 
 }
