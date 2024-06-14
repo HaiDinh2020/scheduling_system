@@ -39,7 +39,8 @@ module.exports = {
                 defaultValue: "pending"
             },
             allocation_date: {
-                type: Sequelize.DATEONLY
+                type: Sequelize.DATEONLY,
+                allowNull: false
             },
             estimated_time: {
                 type: Sequelize.INTEGER,

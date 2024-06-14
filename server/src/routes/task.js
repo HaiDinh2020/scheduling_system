@@ -7,7 +7,10 @@ const router = express.Router()
 router.use(verifyToken)
 
 router.post('/',  taskController.createTask)
-router.get('/:garageId', taskController.getTask)
+router.get('/garage/:garageId', taskController.getTask)
 router.put('/:taskId', taskController.updateTaskStatus)
+
+router.get('/engineer/:engineerId', taskController.getTaskEngineer)
+router.put('/engineer/:taskId', taskController.updateTaskEngineer)
 
 export default router;

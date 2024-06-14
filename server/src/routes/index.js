@@ -11,6 +11,7 @@ import vnpayRouter from "./vnpay"
 import appointmentRouter from "./appointment"
 import engineerRouter from "./engineer"
 import taskRouter from "./task"
+import statRouter from "./statistics"
 
 const initRoutes = (app) => {
     app.use('/api/v1/user', userRouter)
@@ -26,6 +27,7 @@ const initRoutes = (app) => {
     app.use('/api/v1/appointment', appointmentRouter )
     app.use('/api/v1/engineer', engineerRouter )
     app.use('/api/v1/task', taskRouter)
+    app.use('/api/v1/stat', statRouter)
     
     return app.use('/', (req, res) => { 
         

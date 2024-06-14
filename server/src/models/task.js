@@ -31,7 +31,12 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Task',
     charset: 'utf8',
-    collate: 'utf8_unicode_ci'
+    collate: 'utf8_unicode_ci',
+    hooks: {
+      beforeCreate: (instance, options) => {
+        instance.createdAt = new Date(); // hoặc instance.createdAt = new Date().toLocaleString("vi-VN", {timeZone: "Asia/Ho_Chi_Minh"});
+      }
+    }
   });
   return Task;
 };
