@@ -31,7 +31,7 @@ const memuSidebarGarage = [
     {
         id: 5,
         text: 'Thống kê',
-        path: '/garage/monthly-statistics',
+        path: '/garage/statistics',
         icon: <IoBarChartOutline />
     },
 ]

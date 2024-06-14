@@ -18,7 +18,7 @@ export const apiGetTasksOfGarage = (garageId) => new Promise(async (resolve, rej
     try {
         const response = await axiosConfig({
             method: 'get',
-            url: `/api/v1/task/${garageId}`
+            url: `/api/v1/task/garage/${garageId}`
         })
 
         resolve(response)

@@ -3,7 +3,7 @@ import { path } from "./ultils/constants";
 import { DetailGarage, Home, HomePage, Login } from "./containers/Public";
 import 'react-toastify/dist/ReactToastify.css';
 import { Booking, BookingHistory, Customer, ListCars, PaymentResult } from "./containers/System/Customer";
-import { Dashboard, Garage, Infor, Schedule, Task } from "./containers/System/Garage";
+import { Dashboard, Garage, Infor, Schedule, Statistics, Task } from "./containers/System/Garage";
 import { Engineer, WorkSchedule, ViewTask } from "./containers/System/Engineer"
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
@@ -113,6 +113,7 @@ function App() {
           <Route path={path.GARAGEINFO} Component={Infor} />
           <Route path={path.GARAGESCHEDULE} element={<Schedule socket={socket} />} />
           <Route path={path.GARAGETASK} element= {<Task />}/>
+          <Route path={path.GARAGESTAT} element= {<Statistics />} />
         </Route>
         <Route path={path.GARAGE_DASHBOARD} Component={Dashboard} />
 

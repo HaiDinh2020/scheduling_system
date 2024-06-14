@@ -9,7 +9,7 @@ import { MdOutlineHouseSiding, MdOutlineLibraryBooks, MdOutlinePlaylistAddCheck 
 import { FiSearch, FiPlus, FiTrash2, FiSend, FiDownload, FiZoomOut, FiZoomIn } from 'react-icons/fi'
 import { ImPencil2, ImBin } from 'react-icons/im'
 import { BiUserPin } from 'react-icons/bi'
-import { FaCheckCircle, FaCalendarAlt, FaMapMarkerAlt, FaMinus, FaStopwatch, FaSpinner, FaExclamation, FaRegClock } from "react-icons/fa";
+import { FaCheckCircle, FaCalendarAlt, FaMapMarkerAlt, FaMinus, FaStopwatch, FaSpinner, FaExclamation, FaRegClock, FaRegStar } from "react-icons/fa";
 import { FaCircleCheck } from "react-icons/fa6";
 import { TbProgressCheck, TbMessageChatbot } from "react-icons/tb";
 import { MdCancel, MdOutlinePhone } from "react-icons/md";
@@ -20,6 +20,7 @@ import { PiInfoDuotone, PiGarageBold } from "react-icons/pi";
 import { IoBarChartOutline } from "react-icons/io5";
 
 const icons = {
+    FaRegStar,
     IoBarChartOutline,
     FaRegClock, 
     MdOutlinePlaylistAddCheck, 

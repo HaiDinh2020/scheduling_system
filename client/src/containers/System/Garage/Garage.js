@@ -25,10 +25,10 @@ const Garage = () => {
         <div className='w-full h-fit flex flex-col items-center'>
             <Header />
             <div className='flex w-full flex-auto pt-2'>
-                <div className='w-1/6 '>
+                <div className='w-1/6'>
                     <Sidebar />
                 </div>
-                <div className='w-5/6'>
+                <div className='w-5/6 '>
                     <Outlet />
                 </div>
             </div>

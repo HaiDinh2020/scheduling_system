@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import { Badge, Button, Card, Menu, Table, Tag, message } from 'antd';
+import moment from 'moment';
 import icons from '../../../ultils/icons';
 import AddTaskModal from '../../../components/Garage/AddTaskModal';
 import { apiCountTasksOfStatus, apiGetTasksOfGarage } from '../../../services/Garage/task';
 import { useSelector } from 'react-redux';
 import UpdateTaskModal from '../../../components/Garage/UpdateTaskModal';
-import moment from 'moment';
+import './Task.css';
 
 const { FaStopwatch, FaSpinner, FaCircleCheck, FiPlus, FaRegClock, MdOutlinePlaylistAddCheck, FaExclamation } = icons
 
 const Task = () => {
-    const result = [];
+
 
     const garageId = useSelector((state) => state.garage.garageInfor.id);
     const { engineers } = useSelector((state) => state.engineers);
@@ -129,16 +130,23 @@ const Task = () => {
                                 <Button onClick={() => setCurrentDate(moment())}>Today</Button>
                                 <Button onClick={() => setCurrentDate(currentDate.clone().subtract(1, 'day'))}>Back</Button>
                                 <Button onClick={() => setCurrentDate(currentDate.clone().add(1, 'day'))}>Next</Button>
-                                <Table dataSource={filteredTasks} pagination={{ current: 1, pageSize: 10 }} >
+                                <Table
+                                    className="custom-table"
+                                    dataSource={filteredTasks} pagination={{ current: 1, pageSize: 10 }}
+                                >
                                     <Table.Column title="Sr.no." dataIndex="id" key="id" render={(text, record, index) => index + 1} />
 
-                                    <Table.Column title="Task Name" dataIndex="task_name" key="task_name" width={300} />
                                     <Table.Column title="Assignt to" dataIndex={"assign_to"} key={"assign_to"} render={(assign_to) => (
                                         <>{
                                             engineers.find((engineer) => engineer.id === assign_to)?.user?.name
                                         }</>
                                     )} />
-                                    <Table.Column title="Allocation Date" dataIndex="allocation_date" key="allocation_date" />
+                                    <Table.Column title="Task Name" dataIndex="task_name" key="task_name" width={300} />
+                                    <Table.Column title="Level" dataIndex="level" key="level"
+                                        render={(text) => (
+                                            <Tag color={text === "easy" ? "green" : text === "medium" ? "blue" : "red"}>{text.toUpperCase()}</Tag>
+                                        )}
+                                    />
                                     <Table.Column title="Start Date" dataIndex="start_date" key="start_date" />
                                     <Table.Column title="Start Time" dataIndex="start_time" key="start_time" />
                                     <Table.Column title="End Date" dataIndex="end_date" key="end_date" />

@@ -1,59 +1,77 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { Button, DatePicker, Form, Image, Input, InputNumber, Modal, Radio, Select, Space, TimePicker, message } from "antd";
 import icons from '../../ultils/icons';
 import { Option } from 'antd/es/mentions';
 import { useSelector } from 'react-redux';
-import { apiGetAllEngineer } from '../../services/Engineer/engineer';
-import { apiCreateTask } from '../../services/Garage/task';
+import { apiUpdateTask } from '../../services/Garage/task';
 import moment from 'moment/moment';
+import { apiEngineerUpdateTask } from '../../services/Engineer/task';
 
-const AddTaskModal = ({ isModalOpen, setIsModalOpen, socket, setTasks }) => {
-
-    const garageId = useSelector((state) => state.garage.garageInfor.id);
-    const { engineers } = useSelector((state) => state.engineers);
-    const [taskStatus, setTaskStatus] = useState("");
+const UpdateTaskModal = ({ isModalOpen, setIsModalOpen, socket, taskData, setTasks }) => {
 
     const [form] = Form.useForm();
 
+    const [taskStatus, setTaskStatus] = useState("");
+    const [initialValues, setInitialValues] = useState({})
+  
+
+    useEffect(() => {
+        if (taskData) {
+            setTaskStatus(taskData.task_status);
+            setInitialValues({
+                task_name: taskData.task_name,
+                allocation_date: moment(taskData.allocation_date),
+                estimated_time: taskData.estimated_time,
+                task_status: taskData.task_status,
+                start_date: taskData.start_date ? moment(taskData.start_date) : null,
+                start_time: taskData.start_time ? moment(taskData.start_time, 'HH:mm:ss') : null,
+                end_date: taskData.end_date ? moment(taskData.end_date) : null,
+                end_time: taskData.end_time ? moment(taskData.end_time, 'HH:mm:ss') : null,
+            })
+        }
+    }, [taskData]);
 
     const onFinish = async (values) => {
         try {
-
-            const taskData = {
-                task_name: values.task_name,
-                garage_id: garageId,
-                level: values.level,
+            const taskDataUpdate = {
                 task_status: values.task_status,
-                estimated_time: values.estimated_time,
-                assign_to: values.assign_to ? values.assign_to : null,
-                allocation_date: values.allocation_date ? values.allocation_date.format('YYYY-MM-DD') : null,
-                start_date: values.start_date ? values.start_date.format('YYYY-MM-DD') : null,
-                start_time: values.start_time ? values.start_time.format('HH:mm:ss') : null,
                 end_date: values.end_date ? values.end_date.format('YYYY-MM-DD') : null,
                 end_time: values.end_time ? values.end_time.format('HH:mm:ss') : null,
             };
 
-            console.log(taskData)
-            const response = await apiCreateTask(taskData)
-            console.log(response)
-            if (response.status === 200) {
-                message.success(response?.data.msg)
-                setTasks(response?.data?.tasks)
-            } else {
-                message.error('Failed to create task');
+            if (taskData?.id) {
+                const response = await apiEngineerUpdateTask(taskData.id, taskDataUpdate);
+                console.log(response);
+                if (response.status === 200) {
+                    message.success(response?.data.msg);
+                    
+                    setTasks(prevTasks => {
+                        
+                        const updatedTasks = prevTasks.map(task => {
+                            if (task.id === taskData.id) {
+                                return response?.data?.response;
+                            }
+                            return task;
+                        });
+                        return updatedTasks; // Trả về mảng tasks đã được cập nhật
+                    });
+                } else {
+                    message.error('Failed to update task');
+                }
             }
         } catch (error) {
-            message.error('Failed to create task');
+            message.error('Failed to update task');
             console.error('Error:', error);
         }
-        setIsModalOpen(false)
-    }
+        setIsModalOpen(false);
+    };
 
     const onFinishFailed = async (value) => {
 
-    }
+    };
 
     const handleCancel = () => {
+        form.resetFields();
         setIsModalOpen(false);
     };
 
@@ -64,10 +82,11 @@ const AddTaskModal = ({ isModalOpen, setIsModalOpen, socket, setTasks }) => {
     return (
         <Modal title={``} centered open={isModalOpen} width={400} onCancel={handleCancel} footer>
             <div className='flex flex-col justify-center items-center '>
-                <h2 className="text-2xl font-medium mb-6">Thêm công việc</h2>
+                <h2 className="text-2xl font-medium mb-6">Cập nhật công việc</h2>
                 <Form
                     form={form}
                     layout="vertical"
+                    initialValues={initialValues}
                     onFinish={onFinish}
                     onFinishFailed={onFinishFailed}
                 >
@@ -77,41 +96,14 @@ const AddTaskModal = ({ isModalOpen, setIsModalOpen, socket, setTasks }) => {
                         name="task_name"
                         rules={[{ required: true, message: 'Vui lòng nhập tên công việc!' }]}
                     >
-                        <Input />
+                        <Input readOnly />
                     </Form.Item>
-                    <Form.Item
-                        label="Độ khó"
-                        name={"level"}
-                    >
-                        <Radio.Group defaultValue={"easy"} >
-                            <Radio value={"easy"}>easy</Radio>
-                            <Radio value={"medium"}>medium</Radio>
-                            <Radio value={"hard"}>hard</Radio>
-                        </Radio.Group>
-                    </Form.Item>
-                    <Form.Item
-                        label="Trạng thái"
-                        name="task_status"
-                        rules={[{ required: true, message: 'Vui lòng nhập tên công việc!' }]}
-                    >
-                        <Select defaultValue={"select"} onChange={handleStatusChange}>
-                            <Option value='pending'>Pending</Option>
-                            <Option value='in_progress'>In progress</Option>
-                            <Option value='completed'>Completed</Option>
-                        </Select>
-                    </Form.Item>
+
                     <div className='flex justify-between gap-2'>
-                        <Form.Item
-                            label="Thời gian dự kiến"
-                            name="estimated_time"
-                            rules={[{ required: true, message: 'Vui lòng nhập thời gian dự kiến hoàn thành!' }]}
-                        >
-                            <Input type="number" addonAfter="phút" />
-                        </Form.Item>
+
                         <Form.Item
                             name={"allocation_date"}
                             label="Ngày giao việc"
-                            initialValue={moment()}
                             rules={[
                                 ({ getFieldValue }) => ({
                                     validator(_, value) {
@@ -128,24 +120,30 @@ const AddTaskModal = ({ isModalOpen, setIsModalOpen, socket, setTasks }) => {
                                 width: 'calc(50% - 8px)',
                             }}
                         >
-                            <DatePicker />
+                            <DatePicker value={moment(taskData?.allocation_date)} readOnly />
+                        </Form.Item>
+                        <Form.Item
+                            label="Thời gian dự kiến "
+                            name="estimated_time"
+                            rules={[{ required: true, message: 'Vui lòng nhập thời gian dự kiến hoàn thành!' }]}
+                        >
+                            <Input type="number" addonAfter="phút" readOnly />
                         </Form.Item>
                     </div>
+
+                    <Form.Item
+                        label="Trạng thái"
+                        name="task_status"
+                        rules={[{ required: true, message: 'Vui lòng đặt trạng thái!' }]}
+                    >
+                        <Select defaultValue={"select"} onChange={handleStatusChange}>
+                            <Select.Option value='pending'>Pending</Select.Option>
+                            <Select.Option value='in_progress'>In progress</Select.Option>
+                            <Select.Option value='completed'>Completed</Select.Option>
+                        </Select>
+                    </Form.Item>
                     {(taskStatus === "in_progress" || taskStatus === "completed") && (
                         <div>
-
-
-                            <Form.Item
-                                label="Giao cho"
-                                name="assign_to"
-                                rules={[{ required: true, message: 'Vui lòng chọn thợ sửa chữa!' }]}
-                            >
-                                <Select placeholder="Chọn thợ">
-                                    {engineers.map(engineer => (
-                                        <Option key={engineer.id} value={engineer.id}>{engineer.user.name}</Option>
-                                    ))}
-                                </Select>
-                            </Form.Item>
 
 
                             <Form.Item
@@ -156,7 +154,6 @@ const AddTaskModal = ({ isModalOpen, setIsModalOpen, socket, setTasks }) => {
                             >
                                 <Form.Item
                                     name={"start_date"}
-                                    initialValue={moment()}
                                     rules={[
                                         ({ getFieldValue }) => ({
                                             validator(_, value) {
@@ -173,7 +170,7 @@ const AddTaskModal = ({ isModalOpen, setIsModalOpen, socket, setTasks }) => {
                                         width: 'calc(50% - 8px)',
                                     }}
                                 >
-                                    <DatePicker />
+                                    <DatePicker defaultValue={moment(taskData.start_date, 'YYYY-MM-DD')} />
                                 </Form.Item>
 
                                 <Form.Item
@@ -189,7 +186,7 @@ const AddTaskModal = ({ isModalOpen, setIsModalOpen, socket, setTasks }) => {
                                         margin: '0 8px',
                                     }}
                                 >
-                                    <TimePicker />
+                                    <TimePicker defaultValue={moment(taskData.start_time, 'HH:mm:ss')} />
                                 </Form.Item>
                             </Form.Item>
 
@@ -203,7 +200,6 @@ const AddTaskModal = ({ isModalOpen, setIsModalOpen, socket, setTasks }) => {
                                     >
                                         <Form.Item
                                             name={"end_date"}
-                                            initialValue={moment()}
                                             rules={[
                                                 ({ getFieldValue }) => ({
                                                     validator(_, value) {
@@ -245,7 +241,7 @@ const AddTaskModal = ({ isModalOpen, setIsModalOpen, socket, setTasks }) => {
                     )}
                     <Form.Item>
                         <Button type="primary" htmlType="submit">
-                            Gửi
+                            Cập nhật
                         </Button>
 
                     </Form.Item>
@@ -255,4 +251,4 @@ const AddTaskModal = ({ isModalOpen, setIsModalOpen, socket, setTasks }) => {
     )
 }
 
-export default AddTaskModal
+export default UpdateTaskModal;

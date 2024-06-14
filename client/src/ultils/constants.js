@@ -15,6 +15,7 @@ export const path = {
     GARAGESCHEDULE: 'schedule',
     GARAGEBOOKING: 'booking',
     GARAGETASK: 'task',
+    GARAGESTAT: 'statistics',
 
     GARAGE_DASHBOARD: 'garage/dashboard',
     

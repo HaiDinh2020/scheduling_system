@@ -122,7 +122,7 @@ const UpdateTaskModal = ({ isModalOpen, setIsModalOpen, socket, taskData, setTas
                     <Form.Item
                         label="Trạng thái"
                         name="task_status"
-                        rules={[{ required: true, message: 'Vui lòng nhập tên công việc!' }]}
+                        rules={[{ required: true, message: 'Vui lòng đặt trạng thái!' }]}
                     >
                         <Select defaultValue={"select"} onChange={handleStatusChange}>
                             <Select.Option value='pending'>Pending</Select.Option>

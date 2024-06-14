@@ -1,0 +1,7 @@
+.custom-table .ant-table-thead .ant-table-cell {
+    background-color: rgb(139, 170, 243);
+}
+
+.custom-table {
+    margin-top: 5px;
+}
