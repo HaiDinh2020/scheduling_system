@@ -96,6 +96,7 @@ const AddTaskModal = ({ isModalOpen, setIsModalOpen, socket, setTasks }) => {
                     >
                         <Select defaultValue={"select"} onChange={handleStatusChange}>
                             <Option value='pending'>Pending</Option>
+                            <Option value='assigned'>Assigned</Option>
                             <Option value='in_progress'>In progress</Option>
                             <Option value='completed'>Completed</Option>
                         </Select>
@@ -108,60 +109,32 @@ const AddTaskModal = ({ isModalOpen, setIsModalOpen, socket, setTasks }) => {
                         >
                             <Input type="number" addonAfter="phút" />
                         </Form.Item>
-                        <Form.Item
-                            name={"allocation_date"}
-                            label="Ngày giao việc"
-                            initialValue={moment()}
-                            rules={[
-                                ({ getFieldValue }) => ({
-                                    validator(_, value) {
-                                        if (!value) {
-                                            return Promise.reject('Vui lòng chọn ngày giao việc');
-                                        } else {
-                                            return Promise.resolve();
-                                        }
-                                    },
-                                }),
-                            ]}
-                            style={{
-                                display: 'inline-block',
-                                width: 'calc(50% - 8px)',
-                            }}
-                        >
-                            <DatePicker />
-                        </Form.Item>
+
                     </div>
-                    {(taskStatus === "in_progress" || taskStatus === "completed") && (
+                    {(taskStatus === "assigned" || taskStatus === "in_progress" || taskStatus === "completed") && (
                         <div>
 
-
-                            <Form.Item
-                                label="Giao cho"
-                                name="assign_to"
-                                rules={[{ required: true, message: 'Vui lòng chọn thợ sửa chữa!' }]}
-                            >
-                                <Select placeholder="Chọn thợ">
-                                    {engineers.map(engineer => (
-                                        <Option key={engineer.id} value={engineer.id}>{engineer.user.name}</Option>
-                                    ))}
-                                </Select>
-                            </Form.Item>
-
-
-                            <Form.Item
-                                label="Ngày bắt đầu"
-                                style={{
-                                    marginBottom: 0,
-                                }}
-                            >
+                            <div className='flex justify-between gap-2'>
                                 <Form.Item
-                                    name={"start_date"}
+                                    label="Giao cho"
+                                    name="assign_to"
+                                    rules={[{ required: true, message: 'Vui lòng chọn thợ sửa chữa!' }]}
+                                >
+                                    <Select placeholder="Chọn thợ">
+                                        {engineers.map(engineer => (
+                                            <Option key={engineer.id} value={engineer.id}>{engineer.user.name}</Option>
+                                        ))}
+                                    </Select>
+                                </Form.Item>
+                                <Form.Item
+                                    name={"allocation_date"}
+                                    label="Ngày giao việc"
                                     initialValue={moment()}
                                     rules={[
                                         ({ getFieldValue }) => ({
                                             validator(_, value) {
                                                 if (!value) {
-                                                    return Promise.reject('Vui lòng chọn ngày bắt đầu');
+                                                    return Promise.reject('Vui lòng chọn ngày giao việc');
                                                 } else {
                                                     return Promise.resolve();
                                                 }
@@ -175,70 +148,104 @@ const AddTaskModal = ({ isModalOpen, setIsModalOpen, socket, setTasks }) => {
                                 >
                                     <DatePicker />
                                 </Form.Item>
-
-                                <Form.Item
-                                    name={"start_time"}
-                                    rules={[
-                                        {
-                                            required: true,
-                                        },
-                                    ]}
-                                    style={{
-                                        display: 'inline-block',
-                                        width: 'calc(50% - 8px)',
-                                        margin: '0 8px',
-                                    }}
-                                >
-                                    <TimePicker />
-                                </Form.Item>
-                            </Form.Item>
-
+                            </div>
                             {
-                                taskStatus === "completed" && (
-                                    <Form.Item
-                                        label="Ngày hoàn thành"
-                                        style={{
-                                            marginBottom: 0,
-                                        }}
-                                    >
+                                (taskStatus === "in_progress" || taskStatus === "completed") && (
+                                    <div>
                                         <Form.Item
-                                            name={"end_date"}
-                                            initialValue={moment()}
-                                            rules={[
-                                                ({ getFieldValue }) => ({
-                                                    validator(_, value) {
-                                                        if (!value) {
-                                                            return Promise.reject('Vui lòng chọn ngày bắt đầu');
-                                                        } else {
-                                                            return Promise.resolve();
-                                                        }
-                                                    },
-                                                }),
-                                            ]}
+                                            label="Ngày bắt đầu"
                                             style={{
-                                                display: 'inline-block',
-                                                width: 'calc(50% - 8px)',
+                                                marginBottom: 0,
                                             }}
                                         >
-                                            <DatePicker />
+                                            <Form.Item
+                                                name={"start_date"}
+                                                initialValue={moment()}
+                                                rules={[
+                                                    ({ getFieldValue }) => ({
+                                                        validator(_, value) {
+                                                            if (!value) {
+                                                                return Promise.reject('Vui lòng chọn ngày bắt đầu');
+                                                            } else {
+                                                                return Promise.resolve();
+                                                            }
+                                                        },
+                                                    }),
+                                                ]}
+                                                style={{
+                                                    display: 'inline-block',
+                                                    width: 'calc(50% - 8px)',
+                                                }}
+                                            >
+                                                <DatePicker />
+                                            </Form.Item>
+
+                                            <Form.Item
+                                                name={"start_time"}
+                                                rules={[
+                                                    {
+                                                        required: true,
+                                                    },
+                                                ]}
+                                                style={{
+                                                    display: 'inline-block',
+                                                    width: 'calc(50% - 8px)',
+                                                    margin: '0 8px',
+                                                }}
+                                            >
+                                                <TimePicker />
+                                            </Form.Item>
                                         </Form.Item>
 
-                                        <Form.Item
-                                            name={"end_time"}
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                },
-                                            ]}
-                                            style={{
-                                                display: 'inline-block',
-                                                width: 'calc(50% - 8px)',
-                                                margin: '0 8px',
-                                            }}
-                                        >
-                                            <TimePicker />
-                                        </Form.Item>
-                                    </Form.Item>
+                                        {
+                                            taskStatus === "completed" && (
+                                                <Form.Item
+                                                    label="Ngày hoàn thành"
+                                                    style={{
+                                                        marginBottom: 0,
+                                                    }}
+                                                >
+                                                    <Form.Item
+                                                        name={"end_date"}
+                                                        initialValue={moment()}
+                                                        rules={[
+                                                            ({ getFieldValue }) => ({
+                                                                validator(_, value) {
+                                                                    if (!value) {
+                                                                        return Promise.reject('Vui lòng chọn ngày bắt đầu');
+                                                                    } else {
+                                                                        return Promise.resolve();
+                                                                    }
+                                                                },
+                                                            }),
+                                                        ]}
+                                                        style={{
+                                                            display: 'inline-block',
+                                                            width: 'calc(50% - 8px)',
+                                                        }}
+                                                    >
+                                                        <DatePicker />
+                                                    </Form.Item>
+
+                                                    <Form.Item
+                                                        name={"end_time"}
+                                                        rules={[
+                                                            {
+                                                                required: true,
+                                                            },
+                                                        ]}
+                                                        style={{
+                                                            display: 'inline-block',
+                                                            width: 'calc(50% - 8px)',
+                                                            margin: '0 8px',
+                                                        }}
+                                                    >
+                                                        <TimePicker />
+                                                    </Form.Item>
+                                                </Form.Item>
+                                            )
+                                        }
+                                    </div>
                                 )
                             }
                         </div>

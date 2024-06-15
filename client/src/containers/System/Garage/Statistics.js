@@ -5,6 +5,7 @@ import { Bar } from 'react-chartjs-2';
 import Chart from 'chart.js/auto';      // can't delete
 import { apiStatTask, apiGetRankingEngineer } from '../../../services/Garage/statistics';
 import icons from '../../../ultils/icons'
+import { taskStatusColors } from '../../../ultils/constants';
 
 const { RangePicker } = DatePicker
 const { FaRegStar } = icons
@@ -26,19 +27,26 @@ const Statistics = () => {
 
     useEffect(() => {
         const getStatTask = async (garageId) => {
-            const optionsFilter = {}
-            if (filterEngineer) optionsFilter.engineerId = filterEngineer
-            if (dateRange) {
-                const startDate = dateRange[0].startOf('day').format('YYYY-MM-DD');
-                const endDate = dateRange[1].endOf('day').format('YYYY-MM-DD');
-                optionsFilter.startTime = startDate;
-                optionsFilter.endTime = endDate;
-            }
-            const statTask = await apiStatTask(garageId, optionsFilter)
+            try {
 
-            if (statTask?.data?.err === 0) {
-                setTasks(statTask?.data?.response)
-            } else {
+                const optionsFilter = {}
+                if (filterEngineer) optionsFilter.engineerId = filterEngineer
+                if (dateRange) {
+                    const startDate = dateRange[0].startOf('day').format('YYYY-MM-DD');
+                    const endDate = dateRange[1].endOf('day').format('YYYY-MM-DD');
+                    optionsFilter.startTime = startDate;
+                    optionsFilter.endTime = endDate;
+                }
+
+
+                const statTask = await apiStatTask(garageId, optionsFilter)
+
+                if (statTask?.data?.err === 0) {
+                    setTasks(statTask?.data?.response)
+                } else {
+                    message.error("Server Error", 2)
+                }
+            } catch (error) {
                 message.error("Server Error", 2)
             }
         }
@@ -47,14 +55,18 @@ const Statistics = () => {
 
     useEffect(() => {
         const getRanking = async (garageId) => {
+            try {
+                const rank = await apiGetRankingEngineer(garageId)
 
-            const rank = await apiGetRankingEngineer(garageId)
-
-            if (rank?.data?.err === 0) {
-                setDataRanking(rank?.data?.response)
-            } else {
+                if (rank?.data?.err === 0) {
+                    setDataRanking(rank?.data?.response)
+                } else {
+                    message.error("Server Error", 2)
+                }
+            } catch (error) {
                 message.error("Server Error", 2)
             }
+
         }
         getRanking(garageId)
     }, [garageId])
@@ -65,18 +77,13 @@ const Statistics = () => {
 
 
     const taskLabels = Object.keys(tasks);
-    const taskColors = {
-        "pending": '#FF6384',
-        "in_progress": '#36A2EB',
-        "completed": '#66ed8b'
-    };
 
     const data = {
         labels: taskLabels,
         datasets: [{
             label: 'Tasks',
             data: taskLabels.map(label => tasks[label]),
-            backgroundColor: taskLabels.map(label => taskColors[label]),
+            backgroundColor: taskLabels.map(label => taskStatusColors[label]),
             borderWidth: 1
         }]
     };

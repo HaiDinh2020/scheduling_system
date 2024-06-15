@@ -9,7 +9,7 @@ import moment from 'moment/moment';
 
 const UpdateTaskModal = ({ isModalOpen, setIsModalOpen, socket, taskData, setTasks }) => {
 
-    const {engineers} = useSelector((state) => state.engineers);
+    const { engineers } = useSelector((state) => state.engineers);
     const [form] = Form.useForm();
 
     const [taskStatus, setTaskStatus] = useState("");
@@ -17,6 +17,7 @@ const UpdateTaskModal = ({ isModalOpen, setIsModalOpen, socket, taskData, setTas
 
     useEffect(() => {
         // Nếu taskData được truyền vào, điền dữ liệu vào form
+        // need update: setinitialvalue for form like updatemodal in engineer folder
         console.log(taskData)
         if (taskData) {
             form.setFieldsValue({
@@ -27,7 +28,7 @@ const UpdateTaskModal = ({ isModalOpen, setIsModalOpen, socket, taskData, setTas
             });
 
             if (taskData.task_status === "in_progress") {
-                
+
                 form.setFieldValue({
                     assign_to: taskData.assign_to,
                     allocation_date: taskData.allocation_date ? moment(taskData.allocation_date) : null,
@@ -62,7 +63,7 @@ const UpdateTaskModal = ({ isModalOpen, setIsModalOpen, socket, taskData, setTas
             };
 
             if (taskData?.id) {
-                const response = await apiUpdateTask( taskData.id, taskDataUpdate);
+                const response = await apiUpdateTask(taskData.id, taskDataUpdate);
                 console.log(response);
                 if (response.status === 200) {
                     message.success(response?.data.msg);
@@ -126,6 +127,7 @@ const UpdateTaskModal = ({ isModalOpen, setIsModalOpen, socket, taskData, setTas
                     >
                         <Select defaultValue={"select"} onChange={handleStatusChange}>
                             <Select.Option value='pending'>Pending</Select.Option>
+                            <Select.Option value='assigned'>Assigned</Select.Option>
                             <Select.Option value='in_progress'>In progress</Select.Option>
                             <Select.Option value='completed'>Completed</Select.Option>
                         </Select>
@@ -137,9 +139,9 @@ const UpdateTaskModal = ({ isModalOpen, setIsModalOpen, socket, taskData, setTas
                     >
                         <Input type="number" addonAfter="phút" />
                     </Form.Item>
-                    {(taskStatus === "in_progress" || taskStatus === "completed") && (
+                    {(taskStatus === "assigned" || taskStatus === "in_progress" || taskStatus === "completed") && (
                         <div>
-                            <div className='flex justify-between'>
+                            <div className='flex justify-between gap-2'>
 
                                 <Form.Item
                                     label="Giao cho"
@@ -177,98 +179,103 @@ const UpdateTaskModal = ({ isModalOpen, setIsModalOpen, socket, taskData, setTas
                                     <DatePicker />
                                 </Form.Item>
                             </div>
-
-                            <Form.Item
-                                label="Ngày bắt đầu"
-                                style={{
-                                    marginBottom: 0,
-                                }}
-                            >
-                                <Form.Item
-                                    name={"start_date"}
-                                    initialValue={moment()}
-                                    rules={[
-                                        ({ getFieldValue }) => ({
-                                            validator(_, value) {
-                                                if (!value) {
-                                                    return Promise.reject('Vui lòng chọn ngày bắt đầu');
-                                                } else {
-                                                    return Promise.resolve();
-                                                }
-                                            },
-                                        }),
-                                    ]}
-                                    style={{
-                                        display: 'inline-block',
-                                        width: 'calc(50% - 8px)',
-                                    }}
-                                >
-                                    <DatePicker defaultValue={moment(taskData.start_date, 'YYYY-MM-DD')} />
-                                </Form.Item>
-
-                                <Form.Item
-                                    name={"start_time"}
-                                    rules={[
-                                        {
-                                            required: true,
-                                        },
-                                    ]}
-                                    style={{
-                                        display: 'inline-block',
-                                        width: 'calc(50% - 8px)',
-                                        margin: '0 8px',
-                                    }}
-                                >
-                                    <TimePicker defaultValue={moment(taskData.start_time, 'HH:mm:ss')} />
-                                </Form.Item>
-                            </Form.Item>
-
                             {
-                                taskStatus === "completed" && (
-                                    <Form.Item
-                                        label="Ngày hoàn thành"
-                                        style={{
-                                            marginBottom: 0,
-                                        }}
-                                    >
+                                (taskStatus === "in_progress" || taskStatus === "completed") && (
+                                    <div>
                                         <Form.Item
-                                            name={"end_date"}
-                                            initialValue={moment()}
-                                            rules={[
-                                                ({ getFieldValue }) => ({
-                                                    validator(_, value) {
-                                                        if (!value) {
-                                                            return Promise.reject('Vui lòng chọn ngày bắt đầu');
-                                                        } else {
-                                                            return Promise.resolve();
-                                                        }
-                                                    },
-                                                }),
-                                            ]}
+                                            label="Ngày bắt đầu"
                                             style={{
-                                                display: 'inline-block',
-                                                width: 'calc(50% - 8px)',
+                                                marginBottom: 0,
                                             }}
                                         >
-                                            <DatePicker />
+                                            <Form.Item
+                                                name={"start_date"}
+                                                initialValue={moment()}
+                                                rules={[
+                                                    ({ getFieldValue }) => ({
+                                                        validator(_, value) {
+                                                            if (!value) {
+                                                                return Promise.reject('Vui lòng chọn ngày bắt đầu');
+                                                            } else {
+                                                                return Promise.resolve();
+                                                            }
+                                                        },
+                                                    }),
+                                                ]}
+                                                style={{
+                                                    display: 'inline-block',
+                                                    width: 'calc(50% - 8px)',
+                                                }}
+                                            >
+                                                <DatePicker defaultValue={moment(taskData.start_date, 'YYYY-MM-DD')} />
+                                            </Form.Item>
+
+                                            <Form.Item
+                                                name={"start_time"}
+                                                rules={[
+                                                    {
+                                                        required: true,
+                                                    },
+                                                ]}
+                                                style={{
+                                                    display: 'inline-block',
+                                                    width: 'calc(50% - 8px)',
+                                                    margin: '0 8px',
+                                                }}
+                                            >
+                                                <TimePicker defaultValue={moment(taskData.start_time, 'HH:mm:ss')} />
+                                            </Form.Item>
                                         </Form.Item>
 
-                                        <Form.Item
-                                            name={"end_time"}
-                                            rules={[
-                                                {
-                                                    required: true,
-                                                },
-                                            ]}
-                                            style={{
-                                                display: 'inline-block',
-                                                width: 'calc(50% - 8px)',
-                                                margin: '0 8px',
-                                            }}
-                                        >
-                                            <TimePicker />
-                                        </Form.Item>
-                                    </Form.Item>
+                                        {
+                                            taskStatus === "completed" && (
+                                                <Form.Item
+                                                    label="Ngày hoàn thành"
+                                                    style={{
+                                                        marginBottom: 0,
+                                                    }}
+                                                >
+                                                    <Form.Item
+                                                        name={"end_date"}
+                                                        initialValue={moment()}
+                                                        rules={[
+                                                            ({ getFieldValue }) => ({
+                                                                validator(_, value) {
+                                                                    if (!value) {
+                                                                        return Promise.reject('Vui lòng chọn ngày bắt đầu');
+                                                                    } else {
+                                                                        return Promise.resolve();
+                                                                    }
+                                                                },
+                                                            }),
+                                                        ]}
+                                                        style={{
+                                                            display: 'inline-block',
+                                                            width: 'calc(50% - 8px)',
+                                                        }}
+                                                    >
+                                                        <DatePicker />
+                                                    </Form.Item>
+
+                                                    <Form.Item
+                                                        name={"end_time"}
+                                                        rules={[
+                                                            {
+                                                                required: true,
+                                                            },
+                                                        ]}
+                                                        style={{
+                                                            display: 'inline-block',
+                                                            width: 'calc(50% - 8px)',
+                                                            margin: '0 8px',
+                                                        }}
+                                                    >
+                                                        <TimePicker />
+                                                    </Form.Item>
+                                                </Form.Item>
+                                            )
+                                        }
+                                    </div>
                                 )
                             }
                         </div>

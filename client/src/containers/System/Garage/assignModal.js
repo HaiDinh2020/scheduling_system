@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Form, Modal, Radio } from "antd";
+import { Button, Form, Modal, Radio, message } from "antd";
 import { useDispatch, useSelector } from 'react-redux';
 import * as actions from '../../../store/actions'
 import { apiGetAllEngineer, apiGetAvailableEngineer } from '../../../services/Engineer/engineer';
@@ -14,15 +14,24 @@ const AssignModal = ({ isModalOpen, setIsModalOpen, bookingId, socket }) => {
 
     useEffect(() => {
         const getAllEngineer = async (garageId) => {
-            const engineers = await apiGetAllEngineer(garageId)
-            if (engineers?.data?.err === 0) {
-                setEngineers(engineers?.data?.response)
+            try {
+                const engineers = await apiGetAllEngineer(garageId)
+                if (engineers?.data?.err === 0) {
+                    setEngineers(engineers?.data?.response)
+                }
+            } catch (error) {
+                message.error("server error", 2)
             }
+
         }
         const getAvailableEngineer = async (garageId) => {
-            const availableEngin = await apiGetAvailableEngineer(garageId)
-            if (availableEngin?.data?.err === 0) {
-                setAvailableEngineer(availableEngin?.data.response)
+            try {
+                const availableEngin = await apiGetAvailableEngineer(garageId)
+                if (availableEngin?.data?.err === 0) {
+                    setAvailableEngineer(availableEngin?.data.response)
+                }
+            } catch (error) {
+                message.error("server error")
             }
         }
 
@@ -75,7 +84,7 @@ const AssignModal = ({ isModalOpen, setIsModalOpen, bookingId, socket }) => {
                         </Form.Item>
 
                         <Form.Item>
-                           
+
                             <Button type="primary" htmlType="submit">
                                 Gửi
                             </Button>

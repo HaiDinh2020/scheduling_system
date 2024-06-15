@@ -70,15 +70,18 @@ export const getTaskEngineer = async (req, res) => {
 export const updateTaskEngineer = async (req, res) => {
     try {
         const taskId = req.params.taskId
-        const { task_status, end_date, end_time} = req.body
+        const { task_status, start_date, start_time, end_date, end_time} = req.body
         console.log(req.body)
-        if(task_status !== "completed" || !end_date || !end_time) {
-            res.status(400).json({
-                err: 1,
-                msg: "Missing input"
-            })
-        }
-        const response = await TaskServices.updateTaskEngineerServices(taskId, task_status, end_date, end_time)
+
+        // need updated: check missing input
+        // if(task_status !== "completed" || !end_date || !end_time) {
+        //     return res.status(400).json({
+        //         err: 1,
+        //         msg: "Missing input"
+        //     })
+        // }
+
+        const response = await TaskServices.updateTaskEngineerServices(taskId, task_status, start_date, start_time, end_date, end_time)
         res.status(200).json(response)
     } catch (error) {
         console.log(error)

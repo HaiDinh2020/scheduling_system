@@ -1,6 +1,7 @@
 import { Op } from "sequelize"
 import db, { sequelize } from "../models"
 import { v4 } from "uuid"
+import { createAppointmentServices } from "./appointment"
 require('dotenv').config()
 
 export const createTaskServices = (task_name, garage_id, assign_to, level, task_status, allocation_date, estimated_time, start_date, start_time, end_date, end_time) => new Promise(async (resolve, reject) => {
@@ -92,25 +93,41 @@ export const getTaskEngineerServices = (engineerId) => new Promise(async (resolv
     }
 })
 
-export const updateTaskEngineerServices = (taskId, task_status, end_date, end_time) => new Promise(async (resolve, reject) => {
+export const updateTaskEngineerServices = (taskId, task_status, start_date, start_time, end_date, end_time) => new Promise(async (resolve, reject) => {
     try {
         const task = await db.Task.findOne({ where: { id: taskId } });
 
         if (!task) {
             reject("task not found")
         } else {
-            const updatedRowsCount = await task.update(
+            const updatedTask = await task.update(
                 {
                     task_status: task_status,
+                    start_date: start_date,
+                    start_time: start_time,
                     end_date: end_date,
                     end_time: end_time
                 }
             );
-            
+
+            if (task_status === "in_progress") {
+                try {
+                    const startTime = new Date(start_date + "T" + start_time)
+                    const endTime = new Date(startTime.getTime() + task.estimated_time * 60000)
+                    await createAppointmentServices(task.assign_to, null, "Sua chua", task.task_name, startTime, endTime, "engineer")
+                } catch (error) {
+                    return resolve({
+                        err: 0,
+                        msg: "Error to add to your appointmet",
+                        response: updatedTask || {}
+                    });
+                }
+            }
+
             resolve({
                 err: 0,
-                msg: "Update status task success2",
-                response: updatedRowsCount || {}
+                msg: "Update status task success",
+                response: updatedTask || {}
             });
 
         }

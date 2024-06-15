@@ -17,30 +17,38 @@ module.exports = {
                 references: {
                     model: 'Garages',
                     key: 'id'
-                  },
-                  onUpdate: 'CASCADE',
-                  onDelete: 'CASCADE'
+                },
+                onUpdate: 'CASCADE',
+                onDelete: 'CASCADE'
             },
+            // booking_id: {
+            //     type: Sequelize.STRING,
+            //     references: {
+            //         model: 'Bookings',
+            //         key: 'id'
+            //     },
+            //     onUpdate: 'CASCADE',
+            //     onDelete: 'CASCADE'
+            // },
             assign_to: {
                 type: Sequelize.STRING,
                 references: {
                     model: 'Engineers',
                     key: 'id'
-                  },
-                  onUpdate: 'CASCADE',
-                  onDelete: 'CASCADE'
+                },
+                onUpdate: 'CASCADE',
+                onDelete: 'CASCADE'
             },
             level: {
                 type: Sequelize.ENUM("easy", "medium", "hard"),
                 defaultValue: "easy"
             },
             task_status: {
-                type: Sequelize.ENUM("pending", "in_progress", "completed"),
+                type: Sequelize.ENUM("pending", "assigned", "in_progress", "completed"),
                 defaultValue: "pending"
             },
             allocation_date: {
                 type: Sequelize.DATEONLY,
-                allowNull: false
             },
             estimated_time: {
                 type: Sequelize.INTEGER,
@@ -48,19 +56,19 @@ module.exports = {
             },
             start_date: {
                 type: Sequelize.DATEONLY,
-                
+
             },
             start_time: {
                 type: Sequelize.TIME,
-                
+
             },
             end_date: {
                 type: Sequelize.DATEONLY,
-                
+
             },
             end_time: {
                 type: Sequelize.TIME,
-               
+
             },
             createdAt: {
                 allowNull: false,

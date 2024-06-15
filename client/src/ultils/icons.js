@@ -5,7 +5,7 @@ import { BsChevronRight, BsBookmarkStarFill, BsChevronDown, BsBell, BsListUl, Bs
 import { HiOutlineLocationMarker } from 'react-icons/hi'
 import { TbReportMoney } from 'react-icons/tb'
 import { RiCrop2Line, RiHeartFill, RiHeartLine } from 'react-icons/ri'
-import { MdOutlineHouseSiding, MdOutlineLibraryBooks, MdOutlinePlaylistAddCheck } from 'react-icons/md'
+import { MdOutlineHouseSiding, MdOutlineLibraryBooks, MdOutlinePlaylistAddCheck, MdOutlineAssignmentInd } from 'react-icons/md'
 import { FiSearch, FiPlus, FiTrash2, FiSend, FiDownload, FiZoomOut, FiZoomIn } from 'react-icons/fi'
 import { ImPencil2, ImBin } from 'react-icons/im'
 import { BiUserPin } from 'react-icons/bi'
@@ -20,6 +20,7 @@ import { PiInfoDuotone, PiGarageBold } from "react-icons/pi";
 import { IoBarChartOutline } from "react-icons/io5";
 
 const icons = {
+    MdOutlineAssignmentInd,
     FaRegStar,
     IoBarChartOutline,
     FaRegClock, 

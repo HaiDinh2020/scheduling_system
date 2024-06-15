@@ -7,8 +7,9 @@ import { apiCountTasksOfStatus, apiGetTasksOfGarage } from '../../../services/Ga
 import { useSelector } from 'react-redux';
 import UpdateTaskModal from '../../../components/Garage/UpdateTaskModal';
 import './Task.css';
+import { taskStatusColors } from '../../../ultils/constants';
 
-const { FaStopwatch, FaSpinner, FaCircleCheck, FiPlus, FaRegClock, MdOutlinePlaylistAddCheck, FaExclamation } = icons
+const { FaStopwatch, FaSpinner, FaCircleCheck, FiPlus, FaRegClock, MdOutlinePlaylistAddCheck, FaExclamation, MdOutlineAssignmentInd } = icons
 
 const Task = () => {
 
@@ -27,20 +28,25 @@ const Task = () => {
 
     useEffect(() => {
         const getTasksOfGarage = async (garageId) => {
-            const response = await apiGetTasksOfGarage(garageId)
+            try {
+                const response = await apiGetTasksOfGarage(garageId)
 
-            if (response?.data?.err === 0) {
-                setTasks(response?.data?.response)
-            } else {
+                if (response?.data?.err === 0) {
+                    setTasks(response?.data?.response)
+                } else {
+                    message.error("Fail to get tasks of garage", 2)
+                }
+            } catch (error) {
                 message.error("Fail to get tasks of garage", 2)
             }
+
         }
         getTasksOfGarage(garageId)
     }, [garageId])
 
     useEffect(() => {
         const countTasksByStatus = () => {
-
+            // need update: add status assigned 
             const pendingTasks = tasks.filter(task => task.task_status === "pending");
             const inProgressTasks = tasks.filter(task => task.task_status === "in_progress");
             const completedTasks = tasks.filter(task => task.task_status === "completed");
@@ -152,21 +158,25 @@ const Task = () => {
                                     <Table.Column title="End Date" dataIndex="end_date" key="end_date" />
                                     <Table.Column title="End Time" dataIndex="end_time" key="end_time" />
                                     <Table.Column title="Status" dataIndex="task_status" key="task_status" render={(status) => (
-                                        <Tag color={status === 'pending' ? 'red' : status === 'in_progress' ? 'orange' : 'green'}>{status}</Tag>
+                                        <Tag color={taskStatusColors[status]}>{status}</Tag>
                                     )} />
                                     <Table.Column title="Action" dataIndex="task_status" render={(status, task) => (
                                         status === "pending" ?
                                             (
-                                                <Button type='text' icon={<FaExclamation color='red' size={20} onClick={() => updateTask(task)} />} />
+                                                <Button type='text' icon={<FaExclamation color={taskStatusColors[status]} size={20} onClick={() => updateTask(task)} />} />
                                             )
-                                            : status === "in_progress" ?
+                                            : status === "assigned" ?
                                                 (
-                                                    <Button type='text' icon={<FaRegClock color='orange' size={20} onClick={() => updateTask(task)} />} />
+                                                    <Button type='text' icon={<MdOutlineAssignmentInd color={taskStatusColors[status]} size={20} onClick={() => updateTask(task)} />} />
                                                 )
-                                                :
-                                                (
-                                                    <Button type='text' icon={<MdOutlinePlaylistAddCheck color='green' size={20} />} />
-                                                )
+                                                : status === "in_progress" ?
+                                                    (
+                                                        <Button type='text' icon={<FaRegClock color={taskStatusColors[status]} size={20} onClick={() => updateTask(task)} />} />
+                                                    )
+                                                    :
+                                                    (
+                                                        <Button type='text' icon={<MdOutlinePlaylistAddCheck color={taskStatusColors[status]} size={20} />} />
+                                                    )
                                     )} />
                                 </Table>
                             </div>

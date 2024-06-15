@@ -7,6 +7,8 @@ import { useSelector } from 'react-redux';
 import icons from '../../../ultils/icons';
 import { apiGetTasksOfEngineer } from '../../../services/Engineer/task';
 import UpdateTaskModal from '../../../components/Engineer/UpdateTaskModal';
+import { taskStatusColors } from '../../../ultils/constants';
+import { MdOutlineAssignmentInd } from 'react-icons/md';
 
 const { FaRegClock, MdOutlinePlaylistAddCheck, FaExclamation } = icons
 
@@ -75,21 +77,25 @@ const ViewTask = () => {
                                 <Table.Column title="End Date" dataIndex="end_date" key="end_date" />
                                 <Table.Column title="End Time" dataIndex="end_time" key="end_time" />
                                 <Table.Column title="Status" dataIndex="task_status" key="task_status" render={(status) => (
-                                    <Tag color={status === 'pending' ? 'red' : status === 'in_progress' ? 'orange' : 'green'}>{status}</Tag>
+                                    <Tag color={taskStatusColors[status]}>{status}</Tag>
                                 )} />
                                 <Table.Column title="Action" dataIndex="task_status" key="action" render={(status, task) => (
                                     status === "pending" ?
                                         (
-                                            <Button type='text' icon={<FaExclamation color='red' size={20} onClick={() => updateTask(task)} />} />
+                                            <Button type='text' icon={<FaExclamation color={taskStatusColors[status]} size={20} onClick={() => updateTask(task)} />} />
                                         )
-                                        : status === "in_progress" ?
+                                        : status === "assigned" ?
                                             (
-                                                <Button type='text' icon={<FaRegClock color='orange' size={20} onClick={() => updateTask(task)} />} />
+                                                <Button type='text' icon={<MdOutlineAssignmentInd color={taskStatusColors[status]} size={20} onClick={() => updateTask(task)} />} />
                                             )
-                                            :
-                                            (
-                                                <Button type='text' icon={<MdOutlinePlaylistAddCheck color='green' size={20} />} />
-                                            )
+                                            : status === "in_progress" ?
+                                                (
+                                                    <Button type='text' icon={<FaRegClock color={taskStatusColors[status]} size={20} onClick={() => updateTask(task)} />} />
+                                                )
+                                                :
+                                                (
+                                                    <Button type='text' icon={<MdOutlinePlaylistAddCheck color={taskStatusColors[status]} size={20} />} />
+                                                )
                                 )} />
                             </Table>
                         </div>

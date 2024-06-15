@@ -35,6 +35,8 @@ const UpdateTaskModal = ({ isModalOpen, setIsModalOpen, socket, taskData, setTas
         try {
             const taskDataUpdate = {
                 task_status: values.task_status,
+                start_date: values.start_date ? values.start_date.format('YYYY-MM-DD') : null,
+                start_time: values.start_time ? values.start_time.format('HH:mm:ss') : null,
                 end_date: values.end_date ? values.end_date.format('YYYY-MM-DD') : null,
                 end_time: values.end_time ? values.end_time.format('HH:mm:ss') : null,
             };

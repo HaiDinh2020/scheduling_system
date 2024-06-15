@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   Appointment.init({
     engineer_id: DataTypes.STRING,
-    booking_id: DataTypes.STRING,
+    booking_id: DataTypes.STRING, // xóa đi thêm vào model task
     title: DataTypes.STRING,
     description: DataTypes.STRING,
     startTime: DataTypes.DATE,
