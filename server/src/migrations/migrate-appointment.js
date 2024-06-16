@@ -17,9 +17,6 @@ module.exports = {
                   onUpdate: 'CASCADE',
                   onDelete: 'CASCADE'
             },
-            booking_id: {
-                type: Sequelize.STRING,
-            },
             title: {
                 type: Sequelize.STRING,
                 allowNull: false

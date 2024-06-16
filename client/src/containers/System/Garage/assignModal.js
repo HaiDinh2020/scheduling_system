@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Form, Modal, Radio, message } from "antd";
+import { Button, Form, Input, Modal, Radio, message } from "antd";
 import { useDispatch, useSelector } from 'react-redux';
 import * as actions from '../../../store/actions'
 import { apiGetAllEngineer, apiGetAvailableEngineer } from '../../../services/Engineer/engineer';
@@ -44,7 +44,7 @@ const AssignModal = ({ isModalOpen, setIsModalOpen, bookingId, socket }) => {
     }, [availableEngineer])
 
     const onFinish = async (value) => {
-        dispatch(actions.updateBookingGarage(garage_id, bookingId, value.engineerId))
+        dispatch(actions.updateBookingGarage(garage_id, bookingId, value.level, value.estimated_time))
         setIsModalOpen(false);
     }
 
@@ -55,7 +55,7 @@ const AssignModal = ({ isModalOpen, setIsModalOpen, bookingId, socket }) => {
         setIsModalOpen(false);
     };
     return (
-        <Modal title={`Phân công`} centered open={isModalOpen} onCancel={handleCancel} footer >
+        <Modal title={`Đánh giá tổng quan`} centered open={isModalOpen} onCancel={handleCancel} footer >
 
             <div>
                 <div className="container mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
@@ -65,8 +65,24 @@ const AssignModal = ({ isModalOpen, setIsModalOpen, bookingId, socket }) => {
                         onFinishFailed={onFinishFailed}
                     >
 
-
-                        <Form.Item name={"engineerId"} initialValue={""} label="Phân công cho">
+                        <Form.Item
+                            label="Độ khó"
+                            name={"level"}
+                        >
+                            <Radio.Group defaultValue={"easy"} >
+                                <Radio value={"easy"}>easy</Radio>
+                                <Radio value={"medium"}>medium</Radio>
+                                <Radio value={"hard"}>hard</Radio>
+                            </Radio.Group>
+                        </Form.Item>
+                        <Form.Item
+                            label="Thời gian dự kiến"
+                            name="estimated_time"
+                            rules={[{ required: true, message: 'Vui lòng nhập thời gian dự kiến hoàn thành!' }]}
+                        >
+                            <Input type="number" addonAfter="phút" />
+                        </Form.Item>
+                        {/* <Form.Item name={"engineerId"} initialValue={""} label="Phân công cho">
                             <Radio.Group defaultValue="" name="engineerId">
                                 {
                                     engineers && engineers.length > 0 &&
@@ -81,7 +97,7 @@ const AssignModal = ({ isModalOpen, setIsModalOpen, bookingId, socket }) => {
                                     ))
                                 }
                             </Radio.Group>
-                        </Form.Item>
+                        </Form.Item> */}
 
                         <Form.Item>
 

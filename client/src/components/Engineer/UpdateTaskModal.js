@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, DatePicker, Form, Image, Input, InputNumber, Modal, Radio, Select, Space, TimePicker, message } from "antd";
-import icons from '../../ultils/icons';
-import { Option } from 'antd/es/mentions';
-import { useSelector } from 'react-redux';
-import { apiUpdateTask } from '../../services/Garage/task';
+import { Button, DatePicker, Form, Input, Modal, Select, TimePicker, message } from "antd";
 import moment from 'moment/moment';
 import { apiEngineerUpdateTask } from '../../services/Engineer/task';
 

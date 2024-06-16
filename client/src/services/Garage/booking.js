@@ -65,12 +65,15 @@ export const apiUpdateBookingStatus = (garageId, newStatus) => new Promise(async
     }
 })
 
-export const apiUpdateBookingGarage = (garageId, bookingId, engineerId) => new Promise(async(resolve, reject) => {
+export const apiUpdateBookingGarage = (garageId, bookingId, level, estimated_time) => new Promise(async(resolve, reject) => {
     try {
         const response = await axiosConfig({
             method: 'put',
             url: `/api/v1/booking/garage/${garageId}/${bookingId}`,
-            data: {"engineerId": engineerId}
+            data: {
+                "level": level,
+                "estimated_time": estimated_time
+            }
         })
         resolve(response)
     } catch (error) {

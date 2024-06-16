@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
       Booking.belongsTo(models.Car, { foreignKey: 'car_id', targetKey: 'id', as: 'car' });
 
       Booking.hasOne(models.Invoice, { foreignKey: 'booking_id', as: 'invoice' })
-      // Booking.hasOne(models.Task, { foreignKey: 'booking_id', as: 'task' })
+      Booking.hasOne(models.Task, { foreignKey: 'booking_id', as: 'task' })
     }
   }
   Booking.init({

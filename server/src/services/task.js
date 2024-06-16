@@ -33,6 +33,36 @@ export const createTaskServices = (task_name, garage_id, assign_to, level, task_
     }
 })
 
+export const createTaskBookingServices = (task_name, garage_id, booking_id, assign_to, level, task_status, allocation_date, estimated_time, start_date, start_time, end_date, end_time) => new Promise(async (resolve, reject) => {
+    try {
+
+        const newTask = await db.Task.create({
+            id: v4(),
+            task_name,
+            garage_id,
+            booking_id,
+            assign_to,
+            level,
+            task_status,
+            allocation_date,
+            estimated_time,
+            start_date,
+            start_time,
+            end_date,
+            end_time
+        })
+        const tasks = await db.Task.findAll({ where: { garage_id: garage_id } })
+        resolve({
+            err: 0,
+            msg: "success to create new task",
+            response: newTask,
+            tasks
+        });
+    } catch (error) {
+        reject(error)
+    }
+})
+
 export const getTaskServices = (garage_id) => new Promise(async (resolve, reject) => {
     try {
 
@@ -114,13 +144,23 @@ export const updateTaskEngineerServices = (taskId, task_status, start_date, star
                 try {
                     const startTime = new Date(start_date + "T" + start_time)
                     const endTime = new Date(startTime.getTime() + task.estimated_time * 60000)
-                    await createAppointmentServices(task.assign_to, null, "Sua chua", task.task_name, startTime, endTime, "engineer")
+                    console.log(123)
+                    console.log(task.assign_to, task.task_name, startTime, endTime)
+                    await createAppointmentServices(task.assign_to, "Sua chua", task.task_name, startTime, endTime, "engineer")
                 } catch (error) {
                     return resolve({
                         err: 0,
                         msg: "Error to add to your appointmet",
                         response: updatedTask || {}
                     });
+                }
+            }
+
+            if (task_status === "completed") {
+                try {
+                    // gửi thông báo tới garage
+                } catch (error) {
+                    
                 }
             }
 

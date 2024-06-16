@@ -69,7 +69,7 @@ const Task = () => {
     }
 
     const filteredTasks = tasks.filter(task => {
-        const taskDate = moment(task.allocation_date, 'YYYY-MM-DD');
+        const taskDate = moment(task.createdAt, 'YYYY-MM-DD');
         return taskDate.isSame(currentDate, 'day');
     });
 

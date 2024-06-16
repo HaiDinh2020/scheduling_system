@@ -162,9 +162,9 @@ export const updateBookingStatus = (bookingId, newStatus) => async (dispatch) =>
     }
 }
 
-export const updateBookingGarage =  (garageId, bookingId, engineerId) => async (dispatch) => {
+export const updateBookingGarage =  (garage_id, bookingId, level, estimated_time) => async (dispatch) => {
     try {
-        const response = await apiUpdateBookingGarage(garageId, bookingId, engineerId)
+        const response = await apiUpdateBookingGarage(garage_id, bookingId, level, estimated_time)
         if (response?.data.err === 0) {
             dispatch({
                 type: actionTypes.DELETE_GARAGE_BOOKING,

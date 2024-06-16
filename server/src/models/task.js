@@ -13,13 +13,13 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
       Task.belongsTo(models.Garage, { foreignKey: 'garage_id', targetKey: 'id', as: 'garage' });
       Task.belongsTo(models.Engineer, { foreignKey: 'assign_to', targetKey: 'id', as: 'assignto'} )
-      // Task.belongsTo(models.Booking, { foreignKey: 'booking_id', targetKey: 'id', as: 'belong_booking' })
+      Task.belongsTo(models.Booking, { foreignKey: 'booking_id', targetKey: 'id', as: 'belong_booking' })
     }
   }
   Task.init({   // thêm trường booking_id để xem là task từ customer booking
     task_name: DataTypes.STRING,
     garage_id: DataTypes.STRING,
-    // booking_id: DataTypes.STRING,
+    booking_id: DataTypes.STRING,
     assign_to: DataTypes.STRING,
     level: DataTypes.ENUM('easy', 'medium', 'hard'),
     task_status: DataTypes.ENUM('pending', 'assigned', 'in_progress', 'completed'),
@@ -34,11 +34,6 @@ module.exports = (sequelize, DataTypes) => {
     modelName: 'Task',
     charset: 'utf8',
     collate: 'utf8_unicode_ci',
-    hooks: {
-      beforeCreate: (instance, options) => {
-        instance.createdAt = new Date(); // hoặc instance.createdAt = new Date().toLocaleString("vi-VN", {timeZone: "Asia/Ho_Chi_Minh"});
-      }
-    }
   });
   return Task;
 };

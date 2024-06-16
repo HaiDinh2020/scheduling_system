@@ -3,9 +3,9 @@ import db, { sequelize } from "../models"
 import { v4 } from "uuid"
 require('dotenv').config()
 
-export const createAppointmentServices = (engineer_id, booking_id, title, description, startTime, endTime, createBy) => new Promise(async (resolve, reject) => {
+export const createAppointmentServices = (engineer_id, title, description, startTime, endTime, createBy) => new Promise(async (resolve, reject) => {
     try {
-
+        console.log(engineer_id, title, description, startTime, endTime, createBy)
         const overlappingAppointments = await db.Appointment.findOne({
             where: {
                 engineer_id,
@@ -45,7 +45,6 @@ export const createAppointmentServices = (engineer_id, booking_id, title, descri
         const appointment = await db.Appointment.create({
             id: v4(),
             engineer_id,
-            booking_id,
             title,
             description,
             startTime,
@@ -59,6 +58,7 @@ export const createAppointmentServices = (engineer_id, booking_id, title, descri
             response: appointment
         });
     } catch (error) {
+        console.log(error)
         reject(error)
     }
 })

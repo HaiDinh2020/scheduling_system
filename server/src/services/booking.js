@@ -2,6 +2,7 @@ import { Op } from "sequelize"
 import db, { Sequelize, sequelize } from "../models"
 import { v4 } from "uuid"
 import { createAppointmentServices } from "./appointment"
+import { createTaskBookingServices } from "./task"
 require('dotenv').config()
 
 // done
@@ -54,6 +55,7 @@ export const createBookingServices = (customer_id, car_id, status, services, des
                 radius += 5; // Tăng bán kính tìm kiếm nếu không tìm thấy garage
             }
         }
+        console.log(garages)
 
         // gửi socket booking tới 2 garage
         // lắng nghe sự kiện soket garage gửi về ở file server.js để xem garage nào nhận booking này sau đó sẽ cập nhật trạng thái booking và garage_id
@@ -241,18 +243,7 @@ export const getBookingStatusServices = (garageId, status) => new Promise(async 
             include: [
                 { model: db.User, as: 'customer', attributes: ['name', 'phone', 'avatar'] },
                 { model: db.Car, as: 'car', attributes: ['make', 'model', 'number_plate'] },
-                {
-                    model: db.Appointment, as: 'appointment',
-                    attributes: ['title'],
-                    include: [
-                        {
-                            model: db.Engineer, as: 'engineer', attributes: ['major'],
-                            include: [
-                                { model: db.User, as: 'user', attributes: ['name'] }
-                            ]
-                        }
-                    ]
-                }
+                
             ],
             attributes: ['id', 'status', 'services', 'description', 'booking_images', 'booking_date']
         })
@@ -290,7 +281,7 @@ export const updateStatusBookingServices = (bookingId, newStatus) => new Promise
     }
 })
 
-export const updateBookingGarageServices = (garageId, bookingId, engineerId) => new Promise(async (resolve, reject) => {
+export const updateBookingGarageServices = (garageId, bookingId, level, estimated_time) => new Promise(async (resolve, reject) => {
     try {
         const booking = await db.Booking.findOne({ where: { id: bookingId } });
 
@@ -304,7 +295,8 @@ export const updateBookingGarageServices = (garageId, bookingId, engineerId) => 
                 const startTime = new Date();
                 const endTime = new Date(startTime.getTime() + 60 * 60 * 1000);
 
-                await createAppointmentServices(engineerId, booking.id, "Sua chua", "Sua chua theo phan cong", startTime, endTime, "garage")
+                // await createAppointmentServices(engineerId, booking.id, "Sua chua", "Sua chua theo phan cong", startTime, endTime, "garage")
+                await createTaskBookingServices("Sửa chữa cho khách", garageId, booking.id, null, level, "pending", null, estimated_time, null, null, null, null)
                 // console.log(response)
                 resolve({
                     err: 0,

@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Button, DatePicker, Form, Image, Input, InputNumber, Modal, Radio, Select, Space, TimePicker, message } from "antd";
-import icons from '../../ultils/icons';
+import { Button, DatePicker, Form, Input, Modal, Radio, Select, TimePicker, message } from "antd";
 import { Option } from 'antd/es/mentions';
 import { useSelector } from 'react-redux';
-import { apiGetAllEngineer } from '../../services/Engineer/engineer';
-import { apiCreateTask, apiUpdateTask } from '../../services/Garage/task';
+import { apiUpdateTask } from '../../services/Garage/task';
 import moment from 'moment/moment';
 
 const UpdateTaskModal = ({ isModalOpen, setIsModalOpen, socket, taskData, setTasks }) => {

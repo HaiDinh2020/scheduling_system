@@ -164,7 +164,8 @@ export const updateBookingGarage = async (req, res) => {
         const bookingId = req.params.bookingId;
         const garageId = req.params.garageId;
         console.log(req.body)
-        const engineerId = req.body.engineerId
+        const level = req.body.level
+        const estimated_time = req.body.estimated_time
         if (!garageId ) {
             res.status(400).json({
                 err: 1,
@@ -172,15 +173,15 @@ export const updateBookingGarage = async (req, res) => {
             })
         }
 
-        if (!engineerId ) {
+        if (!level || !estimated_time ) {
             res.status(400).json({
                 err: 1,
-                msg: "You have to assign this booking to engineer!"
+                msg: "Missing input!"
             })
         }
 
 
-        const response = await BookingServices.updateBookingGarageServices(garageId, bookingId, engineerId)
+        const response = await BookingServices.updateBookingGarageServices(garageId, bookingId, level, estimated_time)
         res.status(200).json(response)
     } catch (error) {
         console.log(error)

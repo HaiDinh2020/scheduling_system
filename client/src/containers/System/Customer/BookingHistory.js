@@ -140,7 +140,7 @@ const BookingHistory = () => {
             }
         },
         { title: "Dịch vụ", dataIndex: "services", key: "services" },
-        { title: "Mô tả", dataIndex: "description", key: "description" },
+        { title: "Mô tả", dataIndex: "description", key: "description", width: 200  },
         {
             title: "Ngày đặt lịch",
             dataIndex: "booking_date",

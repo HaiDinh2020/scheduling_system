@@ -14,30 +14,30 @@ module.exports = {
             },
             garage_id: {
                 type: Sequelize.STRING,
-                references: {
-                    model: 'Garages',
-                    key: 'id'
-                },
-                onUpdate: 'CASCADE',
-                onDelete: 'CASCADE'
+                // references: {
+                //     model: 'Garages',
+                //     key: 'id'
+                // },
+                // onUpdate: 'CASCADE',
+                // onDelete: 'CASCADE'
             },
-            // booking_id: {
-            //     type: Sequelize.STRING,
-            //     references: {
-            //         model: 'Bookings',
-            //         key: 'id'
-            //     },
-            //     onUpdate: 'CASCADE',
-            //     onDelete: 'CASCADE'
-            // },
+            booking_id: {
+                type: Sequelize.STRING,
+                // references: {
+                //     model: 'Booking',
+                //     key: 'id'
+                // },
+                // onUpdate: 'CASCADE',
+                // onDelete: 'CASCADE'
+            },
             assign_to: {
                 type: Sequelize.STRING,
-                references: {
-                    model: 'Engineers',
-                    key: 'id'
-                },
-                onUpdate: 'CASCADE',
-                onDelete: 'CASCADE'
+                // references: {
+                //     model: 'Engineers',
+                //     key: 'id'
+                // },
+                // onUpdate: 'CASCADE',
+                // onDelete: 'CASCADE'
             },
             level: {
                 type: Sequelize.ENUM("easy", "medium", "hard"),
