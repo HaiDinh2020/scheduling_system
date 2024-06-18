@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { apiUploadImages } from '../../../services/Garage/garage';
 import * as actions from '../../../store/actions'
 import icons from '../../../ultils/icons'
+import { useNavigate } from 'react-router-dom';
 
 const { Option } = Select;
 const { FaMapMarkerAlt } = icons
@@ -12,6 +13,7 @@ const { FaMapMarkerAlt } = icons
 const BookingRepair = ({ socket }) => {
 
     const dispatch = useDispatch();
+    const navigate = useNavigate()
     const { cars } = useSelector(state => state.cars);
     const userId = useSelector(state => state.user?.userCurentProfile?.id)
     const [form] = Form.useForm();
@@ -63,6 +65,9 @@ const BookingRepair = ({ socket }) => {
             const socketBookingData = booking;
             socketBookingData.senderId = userId;
             socket?.emit("booking", socketBookingData)
+
+            navigate("/customer/booking-history")
+            
         }
     };
 

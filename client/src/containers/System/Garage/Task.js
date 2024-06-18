@@ -83,7 +83,7 @@ const Task = () => {
                                 <h5 class="text-lg font-semibold mb-2">Pending</h5>
 
                                 <div class="flex items-center">
-                                    <FaStopwatch size={30} color='red' />
+                                    <FaStopwatch size={30} color='#FF6384' />
                                     <div class="ml-3">
                                         <h6 class="text-lg font-semibold">{pendingNum}</h6>
                                     </div>
@@ -95,7 +95,7 @@ const Task = () => {
                                 <h5 class="text-lg font-semibold mb-2">In progress</h5>
 
                                 <div class="flex items-center">
-                                    <FaSpinner size={30} color='orange' />
+                                    <FaSpinner className='loading-icon' size={30} color='#64CAFF' />
                                     <div class="ml-3">
                                         <h6 class="text-lg font-semibold">{inProgressNum}</h6>
                                     </div>
@@ -108,7 +108,7 @@ const Task = () => {
                                 <h5 class="text-lg font-semibold mb-2">Complete</h5>
 
                                 <div class="flex items-center">
-                                    <FaCircleCheck size={30} color='green' />
+                                    <FaCircleCheck size={30} color='#66ed8b' />
                                     <div class="ml-3">
                                         <h6 class="text-lg font-semibold">{completedNum}</h6>
                                     </div>

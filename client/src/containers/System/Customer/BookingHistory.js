@@ -5,6 +5,7 @@ import * as actions from '../../../store/actions'
 import icons from '../../../ultils/icons'
 import { apiGetPaymentUrl } from '../../../services/Customer/vnpay';
 import PaymentModal from '../../../components/CustomerComponents/PaymentModal';
+import { bookingStatusColors } from '../../../ultils/constants';
 
 const { FiTrash2, FaMinus } = icons
 const BookingHistory = () => {
@@ -14,52 +15,31 @@ const BookingHistory = () => {
 
     const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
     const [invoiceSelect, setInvoiceSelect] = useState({})
-
-    const recentBooking = [{
-        "id": "7b15c2a4-b64c-4175-b34c-f05fedf33227",
-        "status": "request",
-        "services": "sua_chua",
-        "description": "thay kinh",
-        "booking_images": "",
-        "booking_date": "2024-06-01T15:19:04.000Z",
-        "car": {
-            "make": "Toyota",
-            "model": "Camry Solara",
-            "number_plate": "37D2 - 32221"
-        },
-        "garage": {
-            "garage_name": null,
-            "garageAddress": "Thanh Nhan - HBT",
-            "exactAddress": "21.063275, 105.788383"
-        },
-        "customer": {
-            "name": "Jack Jack",
-            "phone": "0347654312",
-            "avatar": "https://res.cloudinary.com/dmrsdkvzl/image/upload/v1716103993/datn/avatar/awflaxgf1zp2bxmtmfjq.png"
-        }
-    }]
+    const [currentBooking, setCurrentBooking] = useState([])
+    const [ historyBooking, setHistoryBooking] = useState([])
 
     useEffect(() => {
-        console.log(customerBookingData[0])
         dispatch(actions.getAllBookingCustomer())
     }, [])
 
+    useEffect(()=> {
+        if(customerBookingData?.length > 0) {
+            setCurrentBooking(customerBookingData.filter((booking) => booking.status === "request" || booking.status === "in-progress"))
+            setHistoryBooking(customerBookingData.filter((booking) => booking.status !== "request" && booking.status !== "in-progress"))
+        }
+    }, [customerBookingData])
 
-    const formateDate = (date) => {
-
-    }
     const columns2 = [
         {
             title: "Garage", dataIndex: 'garage', key: 'garage',
             render: (garage) => {
-
                 return (
                     <>{garage?.garage_name}</>
                 )
             }
         },
         {
-            title: "ĐƯờng Đi", dataIndex: 'garage', key: 'way',
+            title: "Địa chỉ", dataIndex: 'garage', key: 'way',
             render: (garage) => {
                 const lat = garage?.exactAddress?.split(", ")[0]
                 const long = garage?.exactAddress?.split(", ")[1]
@@ -95,17 +75,9 @@ const BookingHistory = () => {
             dataIndex: 'status',
             key: 'status',
             render: (status) => {
-                let color = '#FFD700';
-                if (status === "complete") {
-                    color = '#32CD32';
-                } else if (status === "in-progress") {
-                    color = '#6495ED';
-                } else if (status === 'reject') {
-                    color = '#FF6347';
-                }
                 return (
                     <span>
-                        <Tag color={color} key={status}>{status}</Tag>
+                        <Tag color={bookingStatusColors[status]} key={status}>{status}</Tag>
                     </span>
                 );
             }
@@ -118,7 +90,7 @@ const BookingHistory = () => {
                 <Space className='items-center' size="large">
                     <Popconfirm
                         title="Delete"
-                        description="Are you sure to delete this schedule?"
+                        description="Xác nhận hủy lịch đặt?"
                         onConfirm={() => confirmDelete(record)}
                         okText="Yes"
                         cancelText="No"
@@ -166,17 +138,9 @@ const BookingHistory = () => {
             dataIndex: 'status',
             key: 'status',
             render: (status) => {
-                let color = '#FFD700';
-                if (status === "complete") {
-                    color = '#32CD32';
-                } else if (status === "in-progress") {
-                    color = '#6495ED';
-                } else if (status === 'reject') {
-                    color = '#FF6347';
-                }
                 return (
                     <span>
-                        <Tag color={color} key={status}>{status}</Tag>
+                        <Tag color={bookingStatusColors[status]} key={status}>{status}</Tag>
                     </span>
                 );
             }
@@ -191,7 +155,7 @@ const BookingHistory = () => {
                 let color = '#FFD700';
                 if (invoice.status === "paid") {
                     color = '#32CD32';
-                } else if (invoice.status === "pending") {
+                } else if (invoice.status === "unpaid") {
                     color = '#6495ED';
                 } else if (invoice.status === 'failed') {
                     color = '#FF6347';
@@ -202,7 +166,7 @@ const BookingHistory = () => {
 
                         {
                             record.status === "complete" ?
-                                invoice?.status === "pending"
+                                invoice?.status === "unpaid"
                                     ?
 
                                     <Button type="primary" size='small' className='bg-red-600' onClick={() => handlePayment(invoice)}>
@@ -222,8 +186,8 @@ const BookingHistory = () => {
         },
     ]
 
-    const confirmDelete = () => {
-
+    const confirmDelete = (booking) => {
+        dispatch(actions.cancelBooking(booking.id))
     }
 
     const handlePayment = async (invoiceSelect) => {
@@ -234,18 +198,19 @@ const BookingHistory = () => {
 
     return (
         <div>
-            {/* <div className='container flex flex-col items-center'>
+            <div className='container flex flex-col items-center'>
                 <div className='bg-white  rounded-xl border-2 shadow-md w-[95%] px-4 mb-2'>
                     <div className='font-bold text-lg'>Lịch đặt hiện tại</div>
                     <div className=' w-full pt-2'>
                         <Table
                             className='w-full'
                             columns={columns2}
-                            dataSource={recentBooking}
+                            dataSource={currentBooking}
+                            pagination={{ pageSize: 5 }}
                         />
                     </div>
                 </div>
-            </div> */}
+            </div>
             <PaymentModal isModalOpen={isPaymentModalOpen} setIsModalOpen={setIsPaymentModalOpen} invoice={invoiceSelect} />
             <div className='container flex flex-col items-center'>
                 <div className='bg-white  rounded-xl border-2 shadow-md w-[95%] px-4 mb-2'>
@@ -253,8 +218,8 @@ const BookingHistory = () => {
                         <Table
                             className='w-full'
                             columns={columns}
-                            dataSource={customerBookingData}
-                            pagination={{ pageSize: 7 }}
+                            dataSource={historyBooking}
+                            pagination={{ pageSize: 10 }}
                         />
                     </div>
                 </div>
