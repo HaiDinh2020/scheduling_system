@@ -23,7 +23,6 @@ module.exports = {
       },
       invoice_image: {
         type: Sequelize.STRING,
-        allowNull: false
       },
       createdAt: {
         allowNull: false,

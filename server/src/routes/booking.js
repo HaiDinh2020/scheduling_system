@@ -9,6 +9,7 @@ router.use(verifyToken)
 router.post('/customer', checkIsGarage,  bookingController.createBooking)
 router.post('/customer/maintenance', bookingController.createBookingMaintenance)
 router.get('/customer', bookingController.getAllBookingCustomer)
+router.put('/customer/:bookingId', bookingController.cancelBooking)
 
 router.put("/garage/:garageId/:bookingId", bookingController.updateBookingGarage)
 router.put('/garage/:bookingId', bookingController.updateStatusBooking)

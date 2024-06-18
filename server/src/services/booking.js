@@ -205,6 +205,7 @@ export const getAllBookingCustomerServices = (customerId) => new Promise(async (
     }
 })
 
+// garage action
 //done
 export const getAllBookingServices = (garageId) => new Promise(async (resolve, reject) => {
     try {
@@ -243,7 +244,7 @@ export const getBookingStatusServices = (garageId, status) => new Promise(async 
             include: [
                 { model: db.User, as: 'customer', attributes: ['name', 'phone', 'avatar'] },
                 { model: db.Car, as: 'car', attributes: ['make', 'model', 'number_plate'] },
-                
+                { model: db.Invoice, as: 'invoice', attributes: ['id', 'amount', 'status', 'invoice_image'] }
             ],
             attributes: ['id', 'status', 'services', 'description', 'booking_images', 'booking_date']
         })
@@ -281,6 +282,7 @@ export const updateStatusBookingServices = (bookingId, newStatus) => new Promise
     }
 })
 
+// update garage for booking
 export const updateBookingGarageServices = (garageId, bookingId, level, estimated_time) => new Promise(async (resolve, reject) => {
     try {
         const booking = await db.Booking.findOne({ where: { id: bookingId } });
@@ -288,6 +290,12 @@ export const updateBookingGarageServices = (garageId, bookingId, level, estimate
         if (!booking) {
             reject("booking not found")
         } else {
+            if (booking.status === "cancelled") {
+                return resolve({
+                    err: 1,
+                    msg: "Booking has already cancelled"
+                });
+            }
             if (booking.garage_id === null) {
                 const response = await booking.update({ garage_id: garageId, status: "in-progress" })
 

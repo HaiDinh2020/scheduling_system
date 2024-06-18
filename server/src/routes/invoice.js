@@ -12,6 +12,9 @@ router.use(verifyToken)
 router.post('/garage/', checkGarage,  invoiceController.createInvoice)
 router.get('/garage/:invoiceId', checkGarage, invoiceController.getInvoice)
 
+// garage
+router.put('/garage/:invoiceId', checkGarage, invoiceController.updateInvoice)
+
 
 
 export default router;

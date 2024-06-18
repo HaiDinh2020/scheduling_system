@@ -1,8 +1,9 @@
 import { message } from "antd";
-import { apiCreateBookingMaintenance } from "../../services/Customer/booking";
+import { apiCancelBooking, apiCreateBookingMaintenance } from "../../services/Customer/booking";
 import { apiCreateBooking, apiGetAllBooking, apiGetAllBookingCustomer, apiGetBookingStatus, apiUpdateBookingGarage, apiUpdateBookingStatus } from "../../services/Garage/booking";
 import { actionTypes } from "./actionTypes";
 import { toast } from 'react-toastify';
+import { apiCreateInvoice } from "../../services/Garage/invoice";
 
 export const createBooking = (payload) => async (dispatch) => {
     try {
@@ -82,6 +83,29 @@ export const getAllBookingCustomer = () => async (dispatch) => {
     }
 }
 
+export const cancelBooking = (bookingId) => async (dispatch) => {
+    try {
+        const response = await apiCancelBooking(bookingId)
+        if (response?.data.err === 0) {
+            dispatch({
+                type: actionTypes.CANCEL_BOOKING,
+                data: {
+                    err: 0,
+                    bookingId,
+                    newStatus: "cancelled"
+                }
+            })
+            message.success("Hủy bỏ thành công", 2)
+        } else {
+            console.log(response?.data)
+            message.error(response.data?.msg, 2)
+        }
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+// garage
 export const getAllBooking = (garageId) => async (dispatch) => {
     try {
         const response = await apiGetAllBooking(garageId)
@@ -162,7 +186,7 @@ export const updateBookingStatus = (bookingId, newStatus) => async (dispatch) =>
     }
 }
 
-export const updateBookingGarage =  (garage_id, bookingId, level, estimated_time) => async (dispatch) => {
+export const updateBookingGarage = (garage_id, bookingId, level, estimated_time) => async (dispatch) => {
     try {
         const response = await apiUpdateBookingGarage(garage_id, bookingId, level, estimated_time)
         if (response?.data.err === 0) {
@@ -193,4 +217,31 @@ export const addBooking = (bookingRequest) => async (dispatch) => {
         type: actionTypes.ADD_GARAGE_BOOKING,
         data: bookingRequest
     })
+}
+
+// create invoice => update invoice in booking
+export const createInvoice = (payload) => async (dispatch) => {
+    try {
+        const response = await apiCreateInvoice(payload)
+        if (response?.data.err === 0) {
+            dispatch({
+                type: actionTypes.CREATE_INVOICE,
+                data: {
+                    bookingId: response?.data?.response?.booking_id,
+                    invoice: response?.data?.response
+                }
+            })
+            return response?.data?.response
+        } else {
+            message.error(response.data?.msg, 2)
+        }
+    } catch (error) {
+        if (error.response) {
+            message.error(error.response.data.msg || "Server error");
+        } else if (error.request) {
+            message.error("Network error");
+        } else {
+            message.error("Unexpected error");
+        }
+    }
 }

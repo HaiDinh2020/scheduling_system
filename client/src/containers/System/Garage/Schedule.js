@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { ToastContainer, toast } from 'react-toastify';
-import { Form, Input, InputNumber, Modal, Popconfirm, Select } from "antd";
+import { Popconfirm, Tag, message } from "antd";
 import menuScheduleStatus from '../../../ultils/menuScheduleStatus';
 import icons from '../../../ultils/icons';
 import avatarDefault from '../../../asests/avatar_default.png'
-import logo from '../../../asests/logo.jpg'
 import Button from '../../../components/Button'
 import * as actions from '../../../store/actions'
-import { Option } from 'antd/es/mentions';
-import InvoiceModal from './InvoiceModal';
+import InvoiceModal from '../../../components/Garage/InvoiceModal';
 import AssignModal from './assignModal';
 
 const { LuFlagTriangleRight, FcOvertime, MdOutlinePhone } = icons
@@ -79,21 +77,35 @@ const Schedule = ({ socket }) => {
     const showConfirm = () => {
 
     }
-    const onFinish = (values) => {
-        console.log('Success:', values);
-        // Gửi dữ liệu đến backend
+
+    const handleCreateInvoice = async (booking) => {
+        const invoiceCreate = await dispatch(actions.createInvoice({ garage_id: garageId, booking_id: booking.id, amount: 0, invoice_image: null }))
+
+        if (invoiceCreate) {
+            setBooking({
+                ...booking,
+                invoice: {
+                    id: invoiceCreate?.id,
+                    amount: invoiceCreate?.amount,
+                    status: invoiceCreate?.status,
+                    invoice_image: invoiceCreate?.invoice_image
+                }
+            })
+            setIsInvoiceModalOpen(true)
+        }
     };
 
-    const onFinishFailed = (errorInfo) => {
-        console.log('Failed:', errorInfo);
-    };
+    const handleViewInvoice = (booking) => {    // maybe here is invoiceId
+
+    }
+
     const handleComplete = (bookingDetail) => {
         setBooking(bookingDetail)
         setIsInvoiceModalOpen(true)
     }
 
     const handleScheduleMaintenance = (booking) => {
-        
+
     }
 
     const renderBookingTime = (booking_date) => {
@@ -132,6 +144,17 @@ const Schedule = ({ socket }) => {
         } else if (status === "in-progress") {
             return (
                 <div className='flex justify-end gap-2'>
+                    {
+                        booking?.invoice?.id === null
+                            ?
+                            (<>
+                                <Button text={"Tạo hóa đơn"} bgcolor={"bg-gray-400"} textcolor={'text-white'} onClick={(e) => handleCreateInvoice(booking)} />
+                            </>)
+                            :
+                            (<>
+                                <Button text={"Hóa đơn"} bgcolor={"bg-blue-400"} textcolor={'text-white'} onClick={(e) => handleComplete(booking)} />
+                            </>)
+                    }
                     <Button text={"Hoàn thành"} bgcolor={"bg-green-400"} textcolor={'text-white'} onClick={(e) => handleComplete(booking)} />
                     <Button
                         text={"Hủy bỏ"}
@@ -146,6 +169,12 @@ const Schedule = ({ socket }) => {
         } else if (status === "complete") {
             return (
                 <div className='flex justify-end gap-2'>
+                    {
+                        booking?.invoice?.id !== null &&
+                        (<>
+                            <Button text={"Hóa đơn"} bgcolor={"bg-blue-400"} textcolor={'text-white'} onClick={(e) => handleComplete(booking)} />
+                        </>)
+                    }
                     <Button text={"Lên lịch bảo dưỡng"} bgcolor={"bg-green-400"} textcolor={'text-white'} onClick={(e) => handleScheduleMaintenance(booking)} />
                     <Popconfirm
                         placement="topLeft"
@@ -190,11 +219,11 @@ const Schedule = ({ socket }) => {
                 <AssignModal isModalOpen={isAssignModalOpen} setIsModalOpen={setIsAssignModalOpen} bookingId={bookingRequest} socket={socket} />
             </div>
 
-            <div className='bg-white h-full min-h-screen rounded-xl border-2 shadow-md w-[95%] p-4'>
+            <div className='w-full h-fit flex flex-col items-center '>
                 {
                     listBooking && listBooking.map((item, index) => {
                         return (
-                            <div key={index} className='w-full border-b-8 border-b-slate-550 p-2 mb-5'>
+                            <div key={index} className='w-[95%] bg-white rounded-xl border-2 shadow-md px-4 py-2 mb-2'>
                                 <div className='w-full flex gap-3 mb-1'>
                                     <div className='w-1/3'>
                                         <div className='flex items-center gap-2 mb-3'>
@@ -240,11 +269,17 @@ const Schedule = ({ socket }) => {
                                     </div>
                                 </div>
 
-                                <div className='w-full flex align-middle'>
-                                    <div className='flex'>
-                                        <div className='font-bold mb-1 mr-1'>Người phụ trách: </div>
-                                        <div>{item.appointment?.engineer?.user?.name}</div>
-                                    </div>
+                                <div className='w-full flex align-middle pt-2 border-t-2 border-gray-200'>
+                                    {
+                                        (item?.status === "complete" || (item?.status === "in-progress" && booking?.invoice?.id !== null)) && (
+                                            <div className='flex'>
+                                                <div className='font-bold mb-1 mr-1'>Số tiền:  </div>
+                                                <div className='mr-2'>{item?.invoice?.amount} vnđ</div>
+                                                <Tag color={item?.invoice?.status === "paid" ? "success" : "error"} className='h-fit' >{item?.invoice?.status}</Tag>
+                                            </div>
+                                        )
+                                    }
+
                                     <div className='flex-1'>
                                         {renderButton(item.status, item.id, item)}
                                     </div>

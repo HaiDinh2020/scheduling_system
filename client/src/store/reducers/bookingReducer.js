@@ -32,18 +32,24 @@ const bookingReducer = (state = initState, action) => {
                 }
             }
 
-        // case actionTypes.CREATE_BOOKING:
-        //     if (action.data) {
-        //         const newCustomerBookingData = [...state.customerBookingData, action.data]
-        //         return {
-        //             ...state,
-        //             customerBookingData: newCustomerBookingData
-        //         }
-        //     } else {
-        //         return {
-        //             ...state
-        //         }
-        //     }
+        case actionTypes.CANCEL_BOOKING:
+            if (action.data.err === 0) {
+                const { bookingId, newStatus } = action.data;
+                const updatedBookings = state.customerBookingData?.map(booking => {
+                    if (booking.id === bookingId) {
+                        return { ...booking, status: newStatus };
+                    }
+                    return booking;
+                });
+                return {
+                    ...state,
+                    customerBookingData: updatedBookings
+                }
+            } else {
+                return {
+                    ...state,
+                }
+            }
         case actionTypes.GET_ALL_BOOKING_CUSTOMER:
             return {
                 ...state,
@@ -61,6 +67,25 @@ const bookingReducer = (state = initState, action) => {
             return {
                 ...state,
                 garageBookingData: state.garageBookingData.filter(booking => booking.id !== action.data.bookingId)
+            }
+        case actionTypes.CREATE_INVOICE:
+            const { bookingId, invoice } = action.data;
+            const updatedBookings = state.garageBookingData?.map(booking => {
+                if (booking.id === bookingId) {
+                    return {
+                        ...booking, invoice: {
+                            id: invoice.id,
+                            amount: invoice.amount,
+                            status: invoice.status,
+                            invoice_image: invoice.invoice_image
+                        }
+                    };
+                }
+                return booking;
+            });
+            return {
+                ...state,
+                garageBookingData: updatedBookings
             }
         case actionTypes.LOGOUT:
             return {

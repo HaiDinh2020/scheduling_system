@@ -7,15 +7,15 @@ export const createInvoice = async (req, res) => {
         const { garage_id, booking_id, amount, invoice_image } = req.body;
 
         // check body miss
-        if (!garage_id || !booking_id || !amount || !invoice_image) {
-            res.status(400).json({
+        if (!garage_id || !booking_id ) {
+            return res.status(400).json({
                 err: 1,
                 msg: "Missing input!"
             })
         }
 
         const response = await InvoiceServices.createInvoiceServices(garage_id, booking_id, amount, invoice_image)
-        res.status(200).json(response)
+        return res.status(200).json(response)
     } catch (error) {
         console.log(error)
         res.status(500).json({
@@ -29,8 +29,6 @@ export const getInvoice = async (req, res) => {
     try {
 
         const invoiceId = req.params.invoiceId;
-
-       
 
         const response = await InvoiceServices.getInvoiceServices(invoiceId)
 
@@ -47,6 +45,23 @@ export const getInvoice = async (req, res) => {
         res.status(500).json({
             err: -1,
             msg: 'Fail to create invoice ' + error,
+        })
+    }
+}
+
+export const updateInvoice = async (req, res) => {
+    try {
+        const invoiceId = req.params.invoiceId;
+        const {amount, invoice_image} = req.body
+
+        const response = await InvoiceServices.updateInvoiceServices(invoiceId, amount, invoice_image)
+
+        res.status(200).json(response)
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            err: -1,
+            msg: 'Fail to update invoice ',
         })
     }
 }

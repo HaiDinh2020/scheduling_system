@@ -1,5 +1,5 @@
-import React, { memo, useState } from 'react'
-import { Button, Form, Image, Input, InputNumber, Modal, Radio, Space } from "antd";
+import React, { memo, useEffect, useState } from 'react'
+import { Button, Form, Image, Input, InputNumber, Modal, Radio, Space, message } from "antd";
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { apiGetPaymentUrl } from '../../services/Customer/vnpay';
@@ -9,6 +9,19 @@ const { FiDownload, FiZoomOut, FiZoomIn } = icons
 
 
 const PaymentModal = ({ isModalOpen, setIsModalOpen, invoice, socket }) => {
+
+    const [form] = Form.useForm();
+  
+    const [initialValues, setInitialValues] = useState({})
+
+    useEffect(() => {
+        if (invoice) {
+            setInitialValues({
+                amount: invoice.amount
+            })
+            form.setFieldValue("amount", invoice.amount)
+        }
+    }, [form, invoice]);
 
     const onFinish = async (value) => {
         try {
@@ -26,15 +39,15 @@ const PaymentModal = ({ isModalOpen, setIsModalOpen, invoice, socket }) => {
                 // Chuyển hướng tới URL thanh toán từ VNPAY
                 window.location.href = response?.data?.vnpUrl;
             } else {
-                console.error('Failed to create payment URL');
+                message.error('Failed to create payment URL');
             }
         } catch (error) {
-            console.error('Error:', error);
+            message.error('Server error');
         }
     }
 
     const onFinishFailed = async (value) => {
-        setIsModalOpen(false);
+        console.log('Error:');
     }
 
     const handleCancel = () => {
@@ -65,7 +78,7 @@ const PaymentModal = ({ isModalOpen, setIsModalOpen, invoice, socket }) => {
                     <div className='flex w-full gap-2'>
                         <div className='w-1/2'>
                             <Image
-                                
+
                                 src={invoice.invoice_image}
                                 preview={{
                                     toolbarRender: (
@@ -84,12 +97,12 @@ const PaymentModal = ({ isModalOpen, setIsModalOpen, invoice, socket }) => {
                                 }}
                             />
                         </div>
+
                         <div className='w-1/2'>
-
-
                             <Form
-
+                                form={form}
                                 layout="vertical"
+                                initialValues={initialValues}
                                 onFinish={onFinish}
                                 onFinishFailed={onFinishFailed}
                             >

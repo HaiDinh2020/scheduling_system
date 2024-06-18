@@ -115,6 +115,22 @@ export const getAllBooking = async (req, res) => {
     }
 }
 
+export const cancelBooking = async (req, res) => {
+    try {
+        const bookingId = req.params.bookingId
+        const response = await BookingServices.updateStatusBookingServices(bookingId, "cancelled")
+        res.status(200).json(response)
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            err: -1,
+            msg: "Fail to get schedule: " + error
+        })
+    }
+}
+
+
+//garage
 export const getBookingStatus = async (req, res) => {
     try {
         const garageId = req.params.garageId

@@ -133,6 +133,7 @@ router.get('/vnpay_return', async (req, res) => {
         let signed = hmac.update(Buffer.from(signData, 'utf-8')).digest('hex');
 
         if (secureHash === signed) {
+            // tạo transaction và cập nhật status invoice
             const transaction = await db.Transaction.create({
                 id: v4(),
                 invoice_id: invoice.id,

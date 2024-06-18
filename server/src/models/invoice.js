@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       Invoice.belongsTo(models.Garage, { foreignKey: 'garage_id', targetKey: 'id', as: 'garage' });
       Invoice.belongsTo(models.Booking, { foreignKey: 'booking_id', targetKey: 'id', as: 'booking' });
       Invoice.hasMany(models.Transaction, { foreignKey: 'invoice_id', as: 'transactions' });
+      Invoice.hasMany(models.InvoiceDetail, { foreignKey: 'invoice_id', as: 'invoiceDetail' });
       Invoice.belongsTo(models.GaragePaymentConfig, { foreignKey: 'garage_id', targetKey: 'garage_id', as: 'paymentConfig' });
     }
   }

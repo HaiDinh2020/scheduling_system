@@ -39,6 +39,15 @@ export const services = [
 export const taskStatusColors = {
     "pending": '#FF6384',
     "assigned": "#C4AC54",
-    "in_progress": '#FF8C00',
+    "in_progress": '#64CAFF',
     "completed": '#66ed8b'
 };
+
+export const bookingStatusColors = {
+    "request": "#FFD700",
+    "schedule": "#00FFFF",
+    "in-progress": "#64CAFF",
+    "complete": "#32CD32",
+    "reject": "#FF6347",
+    "cancelled": "#D3D3D3"
+}
