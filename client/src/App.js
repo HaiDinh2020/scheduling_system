@@ -84,12 +84,13 @@ function App() {
   useEffect(() => {
     if (isLoggedIn) {
       if (role === 'garage') {
-        // navigate("/garage")
+        navigate("/garage")
+      } else if (role === 'engineer') {
+        navigate("/engineer")
       }
     } else {
       navigate("/login")
     }
-    // setCookie()
   }, [])
 
   return (

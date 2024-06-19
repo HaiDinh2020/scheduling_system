@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Badge, Button, Card, Menu, Table, Tag, message } from 'antd';
+import { Button, Card, Select, Table, Tag, message } from 'antd';
 import moment from 'moment';
 import icons from '../../../ultils/icons';
 import AddTaskModal from '../../../components/Garage/AddTaskModal';
@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import UpdateTaskModal from '../../../components/Garage/UpdateTaskModal';
 import './Task.css';
 import { taskStatusColors } from '../../../ultils/constants';
+import { apiGetAllBooking } from '../../../services/Garage/booking';
 
 const { FaStopwatch, FaSpinner, FaCircleCheck, FiPlus, FaRegClock, MdOutlinePlaylistAddCheck, FaExclamation, MdOutlineAssignmentInd } = icons
 
@@ -24,7 +25,27 @@ const Task = () => {
     const [pendingNum, setPendingNum] = useState()
     const [inProgressNum, setInProgressNum] = useState()
     const [completedNum, setCompletedNum] = useState()
-    const [currentDate, setCurrentDate] = useState(moment());
+    const [filterCar, setfilterCar] = useState("all");
+    const [filterStatus, setfilterStatus] = useState("all");
+    const [allBooking, setAllBooking] = useState([])
+
+    useEffect(() => {
+        getAllBooking(garageId)
+    }, [])
+
+    const getAllBooking = async (garageId) => {
+        try {
+            const response = await apiGetAllBooking(garageId)
+
+            if (response?.data?.err === 0) {
+                setAllBooking(response?.data?.response)
+            } else {
+                console.log(response?.data?.msg)
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     useEffect(() => {
         const getTasksOfGarage = async (garageId) => {
@@ -69,10 +90,21 @@ const Task = () => {
     }
 
     const filteredTasks = tasks.filter(task => {
-        const taskDate = moment(task.createdAt, 'YYYY-MM-DD');
-        return taskDate.isSame(currentDate, 'day');
+        let matchCar = true;
+        let matchStatus = true;
+
+        if (filterCar !== "all") {
+            matchCar = task.booking_id === filterCar;
+        }
+
+        if (filterStatus !== "all") {
+            matchStatus = task.task_status === filterStatus;
+        }
+
+        return matchCar && matchStatus;
     });
 
+    console.log(filteredTasks)
     return (
         <div >
             <div className="flex-1 ml-2 ">
@@ -132,10 +164,50 @@ const Task = () => {
                         <Card className="recent-sales overflow-auto">
                             <div className="card-body">
                                 <UpdateTaskModal isModalOpen={isUpdateTaskModalOpen} setIsModalOpen={setIsUpdateTaskModalOpen} taskData={taskSelect} setTasks={setTasks} />
-                                <h4 className='font-bold'>Tasks for {currentDate.format('MMMM Do, YYYY')}</h4>
-                                <Button onClick={() => setCurrentDate(moment())}>Today</Button>
-                                <Button onClick={() => setCurrentDate(currentDate.clone().subtract(1, 'day'))}>Back</Button>
-                                <Button onClick={() => setCurrentDate(currentDate.clone().add(1, 'day'))}>Next</Button>
+                                <div className='flex items-center justify-between '>
+
+                                    <div className='flex gap-2 mb-3 items-center'>
+                                        <h4 className='font-bold'>Tasks for </h4>
+                                        <Select
+                                            defaultValue={"All"}
+                                            onChange={(value) => {
+                                                setfilterCar(value)
+                                            }}
+                                            style={{
+                                                minWidth: 250
+                                            }}
+                                        >
+                                            <Select.Option value={"all"} >Tất cả</Select.Option>
+                                            {
+                                                allBooking.length > 0 && allBooking.map((booking, index) => {
+                                                    const value = booking?.car.make + " " + booking?.car.model + " " + booking?.car.number_plate
+                                                    return (
+                                                        booking.id && <Select.Option key={index} value={booking.id} >{value}</Select.Option>
+                                                    )
+                                                })
+                                            }
+
+                                        </Select>
+                                    </div>
+                                    <div>
+                                        <Select
+                                            defaultValue={"All"}
+                                            onChange={(value) => {
+                                                setfilterStatus(value)
+                                            }}
+                                            style={{
+                                                minWidth: 100
+                                            }}
+                                        >
+                                            <Select.Option value={"all"} >Tất cả</Select.Option>
+                                            <Select.Option value={"pending"} >Pending</Select.Option>
+                                            <Select.Option value={"assigned"} >Assigned</Select.Option>
+                                            <Select.Option value={"in_progress"} >In Progress</Select.Option>
+                                            <Select.Option value={"completed"} >Completed</Select.Option>
+                                        </Select>
+                                    </div>
+                                </div>
+
                                 <Table
                                     className="custom-table"
                                     dataSource={filteredTasks} pagination={{ current: 1, pageSize: 10 }}

@@ -3,6 +3,7 @@ import db, { Sequelize, sequelize } from "../models"
 import { v4 } from "uuid"
 import { createAppointmentServices } from "./appointment"
 import { createTaskBookingServices } from "./task"
+import { sendNotiServices } from "./notification"
 require('dotenv').config()
 
 // done
@@ -60,11 +61,21 @@ export const createBookingServices = (customer_id, car_id, status, services, des
         // gửi socket booking tới 2 garage
         // lắng nghe sự kiện soket garage gửi về ở file server.js để xem garage nào nhận booking này sau đó sẽ cập nhật trạng thái booking và garage_id
         console.log(global.onlineUsers2)
-        garages?.forEach(garage => {
+        const titleNoti = "Đặt lịch";
+        const bodyNoti = "Có lịch đặt sửa chữa từ khách hàng"
+        garages?.forEach(async (garage) => {
+            // gửi thông báo
+            try {
+                const responseSend = await sendNotiServices(garage.owner_id, titleNoti, bodyNoti)
+            } catch (error) {
+                console.log("gửi thông báo tới garage thất bại")
+            }
             const garage_socketId_receive = global.onlineUsers2.find((user) => user.userId === garage.owner_id)
             console.log(111111)
             console.log(garage_socketId_receive)
-            global.bookingNamespace.to(garage_socketId_receive?.socketId).emit('booking_request', bookingCreated);
+            if (garage_socketId_receive) {
+                global.bookingNamespace.to(garage_socketId_receive?.socketId).emit('booking_request', bookingCreated);
+            }
         });
 
         resolve({
@@ -304,7 +315,7 @@ export const updateBookingGarageServices = (garageId, bookingId, level, estimate
                 const endTime = new Date(startTime.getTime() + 60 * 60 * 1000);
 
                 // await createAppointmentServices(engineerId, booking.id, "Sua chua", "Sua chua theo phan cong", startTime, endTime, "garage")
-                await createTaskBookingServices("Sửa chữa cho khách", garageId, booking.id, null, level, "pending", null, estimated_time, null, null, null, null)
+                // await createTaskBookingServices("Sửa chữa cho khách", garageId, booking.id, null, level, "pending", null, estimated_time, null, null, null, null)
                 // console.log(response)
                 resolve({
                     err: 0,
@@ -372,3 +383,4 @@ export const handleRejectRequestBookingServices = (garageId, bookingId) => new P
         reject(error)
     }
 })
+

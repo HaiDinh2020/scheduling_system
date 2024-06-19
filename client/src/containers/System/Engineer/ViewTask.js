@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Calendar, momentLocalizer } from 'react-big-calendar'
 import moment from 'moment'
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { Button, Table, Tag, message } from 'antd';
+import { Button, Select, Table, Tag, message } from 'antd';
 import { useSelector } from 'react-redux';
 import icons from '../../../ultils/icons';
 import { apiGetTasksOfEngineer } from '../../../services/Engineer/task';
@@ -19,12 +19,25 @@ const ViewTask = () => {
     const [isUpdateTaskModalOpen, setIsUpdateTaskModalOpen] = useState(false)
     const [taskSelect, setTaskSelect] = useState()
     const [tasks, setTasks] = useState([])
-    const [currentDate, setCurrentDate] = useState(moment());
+    const [filterCar, setfilterCar] = useState("all");
+    const [filterStatus, setfilterStatus] = useState("all");
+
 
     const filteredTasks = tasks.filter(task => {
-        const taskDate = moment(task.allocation_date, 'YYYY-MM-DD');
-        return taskDate.isSame(currentDate, 'day');
+        let matchCar = true;
+        let matchStatus = true;
+
+        if (filterCar !== "all") {
+            matchCar = task.booking_id === filterCar;
+        }
+
+        if (filterStatus !== "all") {
+            matchStatus = task.task_status === filterStatus;
+        }
+
+        return matchCar && matchStatus;
     });
+
 
     useEffect(() => {
         console.log(engineerId)
@@ -58,10 +71,47 @@ const ViewTask = () => {
 
                         <div className="card-body">
                             <UpdateTaskModal isModalOpen={isUpdateTaskModalOpen} setIsModalOpen={setIsUpdateTaskModalOpen} taskData={taskSelect} setTasks={setTasks} />
-                            <h4 className='font-bold'>Tasks for {currentDate.format('MMMM Do, YYYY')}</h4>
-                            <Button onClick={() => setCurrentDate(moment())}>Today</Button>
-                            <Button onClick={() => setCurrentDate(currentDate.clone().subtract(1, 'day'))}>Back</Button>
-                            <Button onClick={() => setCurrentDate(currentDate.clone().add(1, 'day'))}>Next</Button>
+                            <div className='flex items-center justify-between '>
+                                <div className='flex gap-2 mb-3'>
+                                    <h4 className='font-bold'>Tasks for </h4>
+                                    <Select
+                                        defaultValue={"All"}
+                                        onChange={(value) => {
+                                            setfilterCar(value)
+                                        }}
+                                        style={{
+                                            minWidth: 250
+                                        }}
+                                    >
+                                        <Select.Option value={"all"} >Tất cả</Select.Option>
+                                        {
+                                            tasks.length > 0 && tasks.map((task, index) => {
+                                                const value = task?.belong_booking?.car.make + " " + task?.belong_booking?.car.model + " " + task?.belong_booking?.car.number_plate
+                                                return (
+                                                    task?.booking_id && <Select.Option key={index} value={task?.booking_id} >{value}</Select.Option>
+                                                )
+                                            })
+                                        }
+
+                                    </Select>
+                                </div>
+                                <div>
+                                    <Select
+                                        defaultValue={"All"}
+                                        onChange={(value) => {
+                                            setfilterStatus(value)
+                                        }}
+                                        style={{
+                                            minWidth: 100
+                                        }}
+                                    >
+                                        <Select.Option value={"all"} >Tất cả</Select.Option>
+                                        <Select.Option value={"assigned"} >Assigned</Select.Option>
+                                        <Select.Option value={"in_progress"} >In Progress</Select.Option>
+                                        <Select.Option value={"completed"} >Completed</Select.Option>
+                                    </Select>
+                                </div>
+                            </div>
                             <Table
                                 dataSource={filteredTasks} pagination={{ current: 1, pageSize: 10 }}
                             >

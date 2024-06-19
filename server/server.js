@@ -18,8 +18,10 @@ const allowedOrigins = ["http://localhost:3000", "https://zv440rvb-3000.asse.dev
 
 const io = new Server(server, {
     cors: {
-        origin: process.env.CLIENT_URL,
-    }
+        origin: allowedOrigins,
+        methods: ["GET", "POST", "PUT", "DELETE"],
+        credentials: true,
+    },
 });
 
 
@@ -30,16 +32,18 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use(cors({
-    origin: process.env.CLIENT_URL,
-    // origin: (origin, callback) => {
-    //     if (allowedOrigins.includes(origin)) {
-    //         callback(null, true);
-    //     } else {
-    //         callback(new Error('Not allowed by CORS'));
-    //     }
-    // },
-
-    methods: ["GET", "POST", "PUT", "DELETE"]
+    // origin: process.env.CLIENT_URL,
+    origin: (origin, callback) => {
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        } else {
+            console.log(`Blocked by CORS: ${origin}`);
+            return callback(new Error('Not allowed by CORS'));
+        }
+    },
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
 }))
 
 

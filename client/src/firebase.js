@@ -22,6 +22,7 @@ const db = getFirestore(firebaseApp)
 export const requestPermission = (userId) => {
     console.log("Requesting user permission.....")
     Notification.requestPermission().then((permission) => {
+        console.log("request return")
         if (permission === 'granted') {
             console.log("Notification user permission granted.")
 
@@ -30,7 +31,9 @@ export const requestPermission = (userId) => {
                     "BDt3ghCWQsq0Nnoz6f-yqJq1K82RUHE8HIt-pS8dyp6HjQSqwXihDZ6C6Rc56gD4BZZBR6LnQ_cLAYWKIAN0_4M",
             })
                 .then(async (currentToken) => {
-                    if (currentToken) {
+                    console.log(currentToken)
+                    console.log(userId)
+                    if (currentToken && userId) {
                         const result = await apiSendFCMTokenToServer(currentToken, userId)
                         console.log(result);
                     } else {
@@ -56,25 +59,6 @@ export const onMessageListener = () =>
         });
     });
 
-const sendTokenToServer = (token, userId) => {
-    fetch('your-backend-url/api/save-token', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            // Add any authentication headers if required
-        },
-        body: JSON.stringify({ token, userId }),
-    })
-        .then(response => {
-            if (response.ok) {
-                console.log("Token sent to server successfully.");
-            } else {
-                console.error("Failed to send token to server.");
-            }
-        })
-        .catch(error => {
-            console.error("Error sending token to server:", error);
-        });
-};
+
 
 export { messaging };

@@ -4,10 +4,10 @@ import { validateStartTimeEndTime } from '../validators/Validator';
 
 export const createTask = async (req, res) => {
     try {
-        const { task_name, garage_id, assign_to, level, task_status, allocation_date, estimated_time, start_date, start_time, end_date, end_time } = req.body;
+        const { task_name, garage_id, booking_id, assign_to, level, task_status, allocation_date, estimated_time, start_date, start_time, end_date, end_time } = req.body;
 
 
-        const response = await TaskServices.createTaskServices(task_name, garage_id, assign_to, level, task_status, allocation_date, estimated_time, start_date, start_time, end_date, end_time )
+        const response = await TaskServices.createTaskServices(task_name, garage_id, booking_id, assign_to, level, task_status, allocation_date, estimated_time, start_date, start_time, end_date, end_time )
         res.status(200).json(response)
     } catch (error) {
         console.log(error)

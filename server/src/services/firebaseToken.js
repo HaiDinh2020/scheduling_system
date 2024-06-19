@@ -4,17 +4,17 @@ import { v4 } from "uuid";
 // done
 export const createFirebaseTokenServices = (user_id, firebaseToken) => new Promise(async (resolve, reject) => {
     try {
-        // Tìm kiếm bản ghi với firebaseToken
-        let existingTokenRecord = await db.FirebaseToken.findOne({ where: { firebaseToken } });
+        // Tìm kiếm bản ghi với user_id
+        let existingTokenRecord = await db.FirebaseToken.findOne({ where: { user_id } });
 
         if (existingTokenRecord) {
-            if (existingTokenRecord.user_id !== user_id) {
-                // Token thuộc về tài khoản khác, cập nhật user_id
-                existingTokenRecord.user_id = user_id;
+            if (existingTokenRecord.firebaseToken !== firebaseToken) {
+                // cập nhật token cho user
+                existingTokenRecord.firebaseToken = firebaseToken;
                 await existingTokenRecord.save();
                 resolve({
                     err: 0,
-                    msg: "Device token reassigned to new user successfully",
+                    msg: "Device token reassigned to successfully",
                 });
             } else {
                 // Token đã tồn tại và thuộc về cùng user_id

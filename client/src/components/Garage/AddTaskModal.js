@@ -6,15 +6,34 @@ import { useSelector } from 'react-redux';
 import { apiGetAllEngineer } from '../../services/Engineer/engineer';
 import { apiCreateTask } from '../../services/Garage/task';
 import moment from 'moment/moment';
+import { apiGetAllBooking } from '../../services/Garage/booking';
 
 const AddTaskModal = ({ isModalOpen, setIsModalOpen, socket, setTasks }) => {
+
+    const [form] = Form.useForm();
 
     const garageId = useSelector((state) => state.garage.garageInfor.id);
     const { engineers } = useSelector((state) => state.engineers);
     const [taskStatus, setTaskStatus] = useState("");
+    const [allBooking, setAllBooking] = useState([])
 
-    const [form] = Form.useForm();
+    useEffect(() => {
+        getAllBooking(garageId)
+    }, [])
 
+    const getAllBooking = async (garageId) => {
+        try {
+            const response = await apiGetAllBooking(garageId)
+
+            if (response?.data?.err === 0) {
+                setAllBooking(response?.data?.response)
+            } else {
+                console.log(response?.data?.msg)
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     const onFinish = async (values) => {
         try {
@@ -22,6 +41,7 @@ const AddTaskModal = ({ isModalOpen, setIsModalOpen, socket, setTasks }) => {
             const taskData = {
                 task_name: values.task_name,
                 garage_id: garageId,
+                booking_id: values.booking_id,
                 level: values.level,
                 task_status: values.task_status,
                 estimated_time: values.estimated_time,
@@ -33,7 +53,6 @@ const AddTaskModal = ({ isModalOpen, setIsModalOpen, socket, setTasks }) => {
                 end_time: values.end_time ? values.end_time.format('HH:mm:ss') : null,
             };
 
-            console.log(taskData)
             const response = await apiCreateTask(taskData)
             console.log(response)
             if (response.status === 200) {
@@ -61,6 +80,10 @@ const AddTaskModal = ({ isModalOpen, setIsModalOpen, socket, setTasks }) => {
         setTaskStatus(value);
     };
 
+    const handleBookingIdChange = (value) => {
+
+    }
+
     return (
         <Modal title={``} centered open={isModalOpen} width={400} onCancel={handleCancel} footer>
             <div className='flex flex-col justify-center items-center '>
@@ -79,6 +102,22 @@ const AddTaskModal = ({ isModalOpen, setIsModalOpen, socket, setTasks }) => {
                     >
                         <Input />
                     </Form.Item>
+
+                    <Form.Item
+                        label="Áp dụng cho"
+                        name="booking_id"
+                        rules={[{ required: true, message: 'Vui lòng chọn nhiệm vụ cho xe!' }]}
+                    >
+                        <Select  onChange={handleBookingIdChange}>
+                            {allBooking.length > 0 && allBooking.map((booking, index) => {
+                                const value=booking?.car.make + " " + booking?.car.model + " " + booking?.car.number_plate
+                                return (
+                                    <Select.Option key={index} value={booking.id} >{value}</Select.Option>
+                                )
+                            })}
+                        </Select>
+                    </Form.Item>
+
                     <Form.Item
                         label="Độ khó"
                         name={"level"}

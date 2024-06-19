@@ -4,13 +4,14 @@ import { v4 } from "uuid"
 import { createAppointmentServices } from "./appointment"
 require('dotenv').config()
 
-export const createTaskServices = (task_name, garage_id, assign_to, level, task_status, allocation_date, estimated_time, start_date, start_time, end_date, end_time) => new Promise(async (resolve, reject) => {
+export const createTaskServices = (task_name, garage_id, booking_id, assign_to, level, task_status, allocation_date, estimated_time, start_date, start_time, end_date, end_time) => new Promise(async (resolve, reject) => {
     try {
 
         const newTask = await db.Task.create({
             id: v4(),
             task_name,
             garage_id,
+            booking_id,
             assign_to,
             level,
             task_status,
@@ -67,7 +68,15 @@ export const getTaskServices = (garage_id) => new Promise(async (resolve, reject
     try {
 
         const tasks = await db.Task.findAll({
-            where: { garage_id: garage_id }
+            where: { garage_id: garage_id },
+            include: [
+                { 
+                    model: db.Booking, as: 'belong_booking', attributes: ['status'],
+                    include: [
+                        { model: db.Car, as: 'car', attributes: ['make', 'model', 'number_plate'] },
+                    ]
+                }
+            ]
         })
 
         resolve({
@@ -110,7 +119,15 @@ export const getTaskEngineerServices = (engineerId) => new Promise(async (resolv
         if (!engineer) reject("Engineer not found")
 
         const tasks = await db.Task.findAll({
-            where: { assign_to: engineerId }
+            where: { assign_to: engineerId },
+            include: [
+                { 
+                    model: db.Booking, as: 'belong_booking', attributes: ['status'],
+                    include: [
+                        { model: db.Car, as: 'car', attributes: ['make', 'model', 'number_plate'] },
+                    ]
+                }
+            ]
         })
 
         resolve({

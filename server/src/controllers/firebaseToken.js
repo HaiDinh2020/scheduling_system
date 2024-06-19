@@ -8,14 +8,14 @@ export const createFirebaseToken = async (req, res) => {
         if(!fcmtoken) {
             return res.status(400).json({
                 err:1,
-                msg: "Missing data!"
+                msg: "Missing fcmtoken!"
             })
         }
 
         if(!userId) {
             return res.status(400).json({
                 err:1,
-                msg: "Missing data!"
+                msg: "Missing userId!"
             })
         }
 
