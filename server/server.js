@@ -10,10 +10,10 @@ const socketServices = require('./src/services/socket')
 const http = require('http');
 const server = http.createServer(app)
 const { Server } = require('socket.io');
-
+const scheduleService = require('./src/services/schedule');
 const admin = require('./src/config/configFirebaseAdmin')
 
-const allowedOrigins = ["http://localhost:3000", "https://zv440rvb-3000.asse.devtunnels.ms"];
+const allowedOrigins = [process.env.CLIENT_URL_FORWARD, process.env.CLIENT_URL];
 
 
 const io = new Server(server, {
@@ -59,6 +59,7 @@ app.use(express.urlencoded({ extended: true }))
 initRoutes(app)
 connectDatabase()
 
+scheduleService.scheduleNotiBookingMaintence();
 
 // xử lý kết nói từ namespace '\chat'
 const chatNamespace = io.of('/chat');

@@ -3,6 +3,7 @@ import verifyToken from '../middlewares/verifyToken'
 import db from '../models';
 import moment from 'moment';
 import { v4 } from 'uuid';
+import { sendNotiServices } from '../services/notification';
 const qs = require('qs');
 const crypto = require('crypto');
 
@@ -41,7 +42,7 @@ router.post('/create_payment_url', async (req, res) => {
         let tmnCode = config.vnp_TmnCode;
         let secretKey = config.vnp_HashSecret;
         let vnpUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-        let returnUrl = config.vnp_ReturnUrl;
+        let returnUrl = `${process.env.CLIENT_URL_FORWARD}/customer/vnpay_return`;
         let orderId = invoice.id;
         let amount = req.body.amount;
         let bankCode = req.body.bankCode;
@@ -120,7 +121,10 @@ router.get('/vnpay_return', async (req, res) => {
         const invoiceId = vnp_Params['vnp_TxnRef'];
         const invoice = await db.Invoice.findOne({
             where: { id: invoiceId },
-            include: [{ model: db.GaragePaymentConfig, as: 'paymentConfig' }]
+            include: [
+                { model: db.GaragePaymentConfig, as: 'paymentConfig' },
+                { model: db.Garage, as: 'garage', attributes: ['owner_id'] },
+            ]
         });
 
         if (!invoice) {
@@ -142,14 +146,25 @@ router.get('/vnpay_return', async (req, res) => {
                 status: vnp_Params['vnp_ResponseCode'] === '00' ? 'success' : 'failed'
             });
 
+            // trả về và gửi thông báo
+            console.log(invoice)
             if (vnp_Params['vnp_ResponseCode'] === '00') {
                 invoice.status = 'paid';
                 await invoice.save();
-                res.status(200).json({ code: '00', message: 'Payment Successful' });
+                try {
+                    await sendNotiServices(invoice.garage?.owner_id,
+                        "Thanh toán hóa đơn", 
+                        `Hóa đơn đã được thanh toán
+                        Tài khoản + ${vnp_Params['vnp_Amount'] / 100}`
+                    )
+                } catch (error) {
+                    console.log(error)
+                }
+                return res.status(200).json({ code: '00', message: 'Payment Successful' });
             } else {
                 invoice.status = 'failed';
                 await invoice.save();
-                res.status(200).json({ code: vnp_Params['vnp_ResponseCode'], message: 'Payment Failed' });
+                return res.status(200).json({ code: vnp_Params['vnp_ResponseCode'], message: 'Payment Failed' });
             }
         } else {
             res.status(200).json({ code: '97', message: 'Checksum failed' });

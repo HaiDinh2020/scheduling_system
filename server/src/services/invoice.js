@@ -1,6 +1,7 @@
 import { Op } from "sequelize"
 import db, { sequelize } from "../models"
 import { v4 } from "uuid"
+import { sendNotiServices } from "./notification"
 require('dotenv').config()
 
 export const createInvoiceServices = (garage_id, booking_id, amount, invoice_image) => new Promise(async (resolve, reject) => {
@@ -36,6 +37,14 @@ export const updateInvoiceServices = (invoiceId, amount, invoice_image) => new P
                 amount,
                 invoice_image
             })
+
+            // gửi thông báo tới customer
+            try {
+                const booking = await db.Booking.findOne({ where: {id: invoice.booking_id}})
+                const sendNoti = await sendNotiServices(booking.customer_id, "Hóa đơn", "Bạn có hóa đơn từ garage")
+            } catch (error) {
+                console.log("thông báo gửi hóa đơn tới khách hàng thất bại")
+            }
             return resolve({
                 err: 0,
                 msg: "update invoice success",
@@ -52,9 +61,8 @@ export const getInvoiceServices = (invoiceId) => new Promise(async (resolve, rej
         const invoice = await db.Invoice.findOne({
             where: { id: invoiceId },
             include: [
-                { model: db.Garage },
-                { model: db.User },
-                { model: db.Transaction },
+                { model: db.Garage, as: 'garage', attributes: ['owner_id'] },
+                { model: db.Transaction, as: 'transactions' },
             ],
         });
 

@@ -113,11 +113,14 @@ export const createBookingMaintenanceServices = (
             return;
         }
 
-        // thêm vào appointment của engineer
-        const appointment = await createAppointmentServices(engineer_id, booking.id, title, description, startTime, endTime, createBy)
-
-        if (appointment?.err !== 0) {
-            return resolve(appointment)
+        // thêm vào task của engineer, thời gian từ 90p-3h
+        const task = await createTaskBookingServices("Bảo trì", garage_id, booking.id, engineer_id, "medium", "assigned", startTime, 120)
+        const titleNoti = "Đặt lịch";
+        const bodyNoti = "Có lịch đặt bảo dưỡng từ khách hàng"
+        try {
+            const responseSend = await sendNotiServices(garage_id, titleNoti, bodyNoti)
+        } catch (error) {
+            console.log("gửi thông báo tới garage thất bại")
         }
 
         // trả về data để customer hiển thị ui đặt lịch
@@ -310,13 +313,14 @@ export const updateBookingGarageServices = (garageId, bookingId, level, estimate
             if (booking.garage_id === null) {
                 const response = await booking.update({ garage_id: garageId, status: "in-progress" })
 
-                // add booking to appointment of engineer
-                const startTime = new Date();
-                const endTime = new Date(startTime.getTime() + 60 * 60 * 1000);
-
-                // await createAppointmentServices(engineerId, booking.id, "Sua chua", "Sua chua theo phan cong", startTime, endTime, "garage")
-                // await createTaskBookingServices("Sửa chữa cho khách", garageId, booking.id, null, level, "pending", null, estimated_time, null, null, null, null)
-                // console.log(response)
+                // gửi thông báo tới customer
+                try {
+                    const titleNoti = "Đặt lịch sửa chữa thành công!"
+                    const bodyNoti = booking.pickupOption === 0 ? "Bạn vui lòng chờ trong giây lát, garage sẽ đến lấy phương tiện của bạn!" : "Vui lòng đưa xe đến garage, xin cảm ơn!"
+                    const sendNoti = await sendNotiServices(booking.customer_id, titleNoti, bodyNoti)
+                } catch (error) {
+                    console.log("gửi thông báo tới garage thất bại")
+                }
                 resolve({
                     err: 0,
                     msg: "update garage booking success",

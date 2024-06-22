@@ -18,7 +18,7 @@ export const createBooking = async (req, res) => {
 
         // check body miss
         if (!customer_id || !car_id || !services || !booking_date) {
-            res.status(400).json({
+            return res.status(400).json({
                 err: 1,
                 msg: "Missing input!"
             })

@@ -32,7 +32,7 @@ export const getInvoice = async (req, res) => {
 
         const response = await InvoiceServices.getInvoiceServices(invoiceId)
 
-        if (!response.invoice) {
+        if (response.response === null) {
             return res.status(404).json({
                 err: 1,
                 msg: 'Invoice not found',
