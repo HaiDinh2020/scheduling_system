@@ -16,14 +16,14 @@ const BookingHistory = () => {
     const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
     const [invoiceSelect, setInvoiceSelect] = useState({})
     const [currentBooking, setCurrentBooking] = useState([])
-    const [ historyBooking, setHistoryBooking] = useState([])
+    const [historyBooking, setHistoryBooking] = useState([])
 
     useEffect(() => {
         dispatch(actions.getAllBookingCustomer())
     }, [])
 
-    useEffect(()=> {
-        if(customerBookingData?.length > 0) {
+    useEffect(() => {
+        if (customerBookingData?.length > 0) {
             setCurrentBooking(customerBookingData.filter((booking) => booking.status === "request" || booking.status === "in-progress"))
             setHistoryBooking(customerBookingData.filter((booking) => booking.status !== "request" && booking.status !== "in-progress"))
         }
@@ -87,17 +87,36 @@ const BookingHistory = () => {
             key: "action",
             align: 'center',
             render: (_, record) => (
-                <Space className='items-center' size="large">
-                    <Popconfirm
-                        title="Delete"
-                        description="Xác nhận hủy lịch đặt?"
-                        onConfirm={() => confirmDelete(record)}
-                        okText="Yes"
-                        cancelText="No"
-                    >
-                        <div className='cursor-pointer'  ><FiTrash2 color='red' /></div>
-                    </Popconfirm>
-                </Space>
+                <div>
+                    {
+                        record.status === "request"
+                            ?
+                            <Space className='items-center' size="large">
+                                <Popconfirm
+                                    title="Delete"
+                                    description="Xác nhận hủy lịch đặt?"
+                                    onConfirm={() => confirmDelete(record)}
+                                    okText="Yes"
+                                    cancelText="No"
+                                >
+                                    <div className='cursor-pointer'  ><FiTrash2 color='red' /></div>
+                                </Popconfirm>
+                            </Space>
+                            :
+                            record?.invoice?.amount !== 0 ?
+                                record?.invoice?.status === "unpaid"
+                                    ?
+
+                                    <Button type="primary" size='small' className='bg-red-600' onClick={() => handlePayment(record?.invoice)}>
+                                        Thanh toán ngay!
+                                    </Button>
+
+
+                                    :
+                                    <Tag color={"#32CD32"} key={record?.invoice?.status}>{record?.invoice?.status}</Tag>
+                                : <><FaMinus color={"yellow"} /></>
+                    }
+                </div>
             )
         },
     ]
@@ -112,7 +131,7 @@ const BookingHistory = () => {
             }
         },
         { title: "Dịch vụ", dataIndex: "services", key: "services" },
-        { title: "Mô tả", dataIndex: "description", key: "description", width: 200  },
+        { title: "Mô tả", dataIndex: "description", key: "description", width: 200 },
         {
             title: "Ngày đặt lịch",
             dataIndex: "booking_date",
@@ -191,6 +210,7 @@ const BookingHistory = () => {
     }
 
     const handlePayment = async (invoiceSelect) => {
+        console.log(invoiceSelect)
         setInvoiceSelect(invoiceSelect)
         setIsPaymentModalOpen(true)
     }

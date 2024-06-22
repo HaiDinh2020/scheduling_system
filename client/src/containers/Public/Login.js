@@ -47,8 +47,10 @@ const Login = () => {
     if (isLoggedIn) {
       if (role === 'customer') {
         navigate("/")
-      } else {
+      } else if (role === 'garage') {
         navigate('/garage')
+      } else {
+        navigate('/engineer')
       }
     }
     isLoggedIn && setTimeout(() => {

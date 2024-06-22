@@ -9,6 +9,7 @@ import { apiGetEngineerOfGarage, apiGetGarageHaveBeenRepaired } from '../../../s
 import { apiGetAppointment } from '../../../services/Engineer/appointment';
 import icons from '../../../ultils/icons'
 import * as actions from "../../../store/actions"
+import { useNavigate } from 'react-router-dom';
 
 const { Option } = Select;
 const { FaMapMarkerAlt } = icons
@@ -39,6 +40,7 @@ const filterTimeSlots = (slots, events, selectedDate) => {
 
 const BookingMaintenance = ({ socket }) => {
     const dispatch = useDispatch()
+    const navigate = useNavigate()
     const { cars } = useSelector(state => state.cars);
 
     const [listGarage, setListGarage] = useState([])
@@ -130,7 +132,7 @@ const BookingMaintenance = ({ socket }) => {
         }
     };
 
-    const handleBookingMaintenance = () => {
+    const handleBookingMaintenance = async () => {
         const startTime = new Date(selectedDate);
         startTime.setHours(selectedSlot.getHours(), selectedSlot.getMinutes());
         const endTime = new Date(startTime);
@@ -149,7 +151,10 @@ const BookingMaintenance = ({ socket }) => {
             endTime: endTime
         }
         console.log(finalDataBooking)
-        dispatch(actions.createBookingMaintenance(finalDataBooking))
+        const booking = await dispatch(actions.createBookingMaintenance(finalDataBooking))
+        if (booking) {
+            navigate("/customer/booking-history")
+        }
     }
 
     const next = () => {
@@ -265,7 +270,7 @@ const BookingMaintenance = ({ socket }) => {
         {
             title: 'Chọn Day và Time',
             content: (
-                <div className='flex justify-center'>
+                <div className='flex justify-center flex-col sm:flex-row'>
                     <div className="w-2/3">
                         {selectedGarage && (
                             <DayPicker

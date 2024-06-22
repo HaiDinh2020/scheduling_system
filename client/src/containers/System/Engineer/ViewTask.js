@@ -122,6 +122,7 @@ const ViewTask = () => {
                                         <Tag color={text === "easy" ? "green" : text === "medium" ? "blue" : "red"}>{text.toUpperCase()}</Tag>
                                     )}
                                 />
+                                <Table.Column title="Allocation Date" dataIndex="allocation_date" key="allocation_date" />
                                 <Table.Column title="Start Date" dataIndex="start_date" key="start_date" />
                                 <Table.Column title="Start Time" dataIndex="start_time" key="start_time" />
                                 <Table.Column title="End Date" dataIndex="end_date" key="end_date" />

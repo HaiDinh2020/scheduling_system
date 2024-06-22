@@ -14,7 +14,7 @@ import Chat from "./containers/System/Chat/Chat";
 import socketIOClient from "socket.io-client";
 import Notification from "./components/Notification";
 
-const URL = process.env.NODE_ENV === 'production' ? undefined : 'http://localhost:5000/booking';
+const URL = process.env.NODE_ENV === 'production' ? undefined : `${process.env.REACT_APP_SERVER_URL}/booking`;
 
 function App() {
 

@@ -50,6 +50,7 @@ export const createBookingMaintenance = (payload) => async (dispatch) => {
                 msg: response?.data.msg
             })
             message.error(response?.data.msg || "Create booking fail")
+            return false;
         }
     } catch (error) {
         console.log(error)
@@ -58,6 +59,7 @@ export const createBookingMaintenance = (payload) => async (dispatch) => {
             msg: "Create booking fail!"
         })
         message.error("Server Error!")
+        return false;
     }
 }
 
@@ -206,8 +208,13 @@ export const updateBookingGarage = (garage_id, bookingId, level, estimated_time)
             })
         }
     } catch (error) {
-        console.log(error)
-        toast("Server Error!")
+        if (error.response) {
+            message.error(error.response.data.msg || "Server error");
+        } else if (error.request) {
+            message.error("Network error");
+        } else {
+            message.error("Unexpected error");
+        }
     }
 }
 

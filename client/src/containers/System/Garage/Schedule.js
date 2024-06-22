@@ -96,7 +96,8 @@ const Schedule = ({ socket }) => {
     };
 
     const handleViewInvoice = (booking) => {    // maybe here is invoiceId
-
+        setBooking(booking)
+        setIsInvoiceModalOpen(true)
     }
 
     const handleComplete = (bookingDetail) => {
@@ -130,13 +131,28 @@ const Schedule = ({ socket }) => {
         } else if (status === "schedule") {
             return (
                 <div className='flex justify-end gap-2'>
-                    <Button text={"Sửa chữa"} bgcolor={"bg-green-400"} textcolor={'text-white'} onClick={(e) => handleChangeStatus(bookingId, "in-progress")} />
+                    <Button
+                        text={"Sửa chữa"}
+                        bgcolor={"bg-green-400"}
+                        textcolor={'text-white'}
+                        onClick={(e) => {
+                            const today = new Date();
+                            const year = today.getFullYear();
+                            const month = String(today.getMonth() + 1).padStart(2, '0'); 
+                            const day = String(today.getDate()).padStart(2, '0');
+                            if ((new Date(booking.booking_date.split("T")[0])).getTime() === (new Date(`${year}-${month}-${day}`)).getTime()) {
+                                handleChangeStatus(bookingId, "in-progress")
+                            }else {
+                                message.error("Hôm nay không phải lịch hẹn")
+                            }
+                        }
+                        }
+                    />
                     <Button
                         text={"Hủy bỏ"}
                         bgcolor={"bg-red-400"}
                         textcolor={'text-white'}
                         onClick={(e) => {
-
                             handleChangeStatus(bookingId, "reject")
                         }} />
                 </div>
@@ -152,10 +168,10 @@ const Schedule = ({ socket }) => {
                             </>)
                             :
                             (<>
-                                <Button text={"Hóa đơn"} bgcolor={"bg-blue-400"} textcolor={'text-white'} onClick={(e) => handleComplete(booking)} />
+                                <Button text={"Hóa đơn"} bgcolor={"bg-blue-400"} textcolor={'text-white'} onClick={(e) => handleViewInvoice(booking)} />
                             </>)
                     }
-                    <Button text={"Hoàn thành"} bgcolor={"bg-green-400"} textcolor={'text-white'} onClick={(e) => handleComplete(booking)} />
+                    <Button text={"Hoàn thành"} bgcolor={"bg-green-400"} textcolor={'text-white'} onClick={(e) => handleChangeStatus(bookingId, "complete")} />
                     <Button
                         text={"Hủy bỏ"}
                         bgcolor={"bg-red-400"}
@@ -172,7 +188,7 @@ const Schedule = ({ socket }) => {
                     {
                         booking?.invoice?.id !== null &&
                         (<>
-                            <Button text={"Hóa đơn"} bgcolor={"bg-blue-400"} textcolor={'text-white'} onClick={(e) => handleComplete(booking)} />
+                            <Button text={"Hóa đơn"} bgcolor={"bg-blue-400"} textcolor={'text-white'} onClick={(e) => handleViewInvoice(booking)} />
                         </>)
                     }
                     <Button text={"Lên lịch bảo dưỡng"} bgcolor={"bg-green-400"} textcolor={'text-white'} onClick={(e) => handleScheduleMaintenance(booking)} />

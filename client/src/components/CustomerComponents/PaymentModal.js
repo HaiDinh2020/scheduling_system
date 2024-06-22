@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { apiGetPaymentUrl } from '../../services/Customer/vnpay';
 import icons from '../../ultils/icons';
+import { apigetInvoiceDetail } from '../../services/Garage/invoice';
 
 const { FiDownload, FiZoomOut, FiZoomIn } = icons
 
@@ -11,10 +12,15 @@ const { FiDownload, FiZoomOut, FiZoomIn } = icons
 const PaymentModal = ({ isModalOpen, setIsModalOpen, invoice, socket }) => {
 
     const [form] = Form.useForm();
-  
+
     const [initialValues, setInitialValues] = useState({})
+    const [invoiceDetails, setInvoiceDetails] = useState([])
 
     useEffect(() => {
+        if (invoice?.id) {
+            console.log("get detail")
+            getInvoiceDetail(invoice?.id)
+        }
         if (invoice) {
             setInitialValues({
                 amount: invoice.amount
@@ -22,6 +28,17 @@ const PaymentModal = ({ isModalOpen, setIsModalOpen, invoice, socket }) => {
             form.setFieldValue("amount", invoice.amount)
         }
     }, [form, invoice]);
+
+    const getInvoiceDetail = async (invoiceId) => {
+        try {
+            const invoiceDts = await apigetInvoiceDetail(invoiceId)
+            if (invoiceDts?.data?.err === 0) {
+                setInvoiceDetails(invoiceDts?.data?.response)
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     const onFinish = async (value) => {
         try {
@@ -77,6 +94,21 @@ const PaymentModal = ({ isModalOpen, setIsModalOpen, invoice, socket }) => {
                     <h2 className="text-2xl font-bold mb-6">Thanh toán hóa đơn</h2>
                     <div className='flex w-full gap-2'>
                         <div className='w-1/2'>
+                        <div className='flex items-center gap-4 font-semibold'>Bảng giá: </div>
+                            <div className='w-full mim-h-[80%] flex flex-col gap-2 items-center'>
+                                {invoiceDetails.length > 0 && invoiceDetails.map((invoice, index) => {
+                                    return (
+                                        <div
+                                            key={index}
+                                            className='flex w-[80%] justify-between items-center p-4 cursor-pointer bg-white shadow-lg rounded-lg'
+                                        >
+                                            <div className='text-black text-base m-2'>{invoice.item_description}</div>
+                                            <div>{invoice.quantity * invoice.unit_price} đ</div>
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                            <div className='w-[90%] h-0.5 flex items-end bg-gray-400 my-4'></div>
                             <Image
 
                                 src={invoice.invoice_image}
@@ -138,7 +170,7 @@ const PaymentModal = ({ isModalOpen, setIsModalOpen, invoice, socket }) => {
                                 </Form.Item>
 
                                 <Form.Item>
-                                    <Button type="default" htmlType="submit">
+                                    <Button type="primary" htmlType="submit">
                                         Thanh toán
                                     </Button>
                                 </Form.Item>
@@ -151,4 +183,4 @@ const PaymentModal = ({ isModalOpen, setIsModalOpen, invoice, socket }) => {
     )
 }
 
-export default memo(PaymentModal)
+export default (PaymentModal)

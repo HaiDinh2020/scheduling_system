@@ -21,7 +21,7 @@ const BookingRepair = ({ socket }) => {
     const [bookingImages, setBookingImage] = useState([]);
     const [carIndex, setCarIndex] = useState();
     const [exactAddress, setExactAddress] = useState('');
-    const [pickupOption, setPickupOption] = useState('garage');
+    const [pickupOption, setPickupOption] = useState();
 
 
     const uploadImage = async options => {

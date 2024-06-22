@@ -12,8 +12,6 @@ const { AiOutlinePlusCircle, FaCar, RxAvatar } = icons
 
 const InvoiceModal = ({ isModalOpen, setIsModalOpen, booking, socket }) => {
 
-    const dispatch = useDispatch();
-    const garage_id = useSelector(state => state.garage?.garageInfor?.id)
     const [form] = Form.useForm()
 
     const [initialValues, setInitialValues] = useState()
@@ -92,7 +90,7 @@ const InvoiceModal = ({ isModalOpen, setIsModalOpen, booking, socket }) => {
     const onFinish = async () => {
         try {
             const finalData = {}
-            finalData["invoice_image"] = invoiceImages.map(pre => pre.url).join(", ");
+            finalData["invoice_image"] = invoiceImages.map(pre => pre.url).join(", ") ||  booking?.invoice?.invoice_image;
             finalData["amount"] = amount
 
             const invoiceUpdate = await apiUpdateInvoice(booking?.invoice?.id, finalData)
@@ -127,7 +125,6 @@ const InvoiceModal = ({ isModalOpen, setIsModalOpen, booking, socket }) => {
         setFileList(newFileList);
     };
 
-    console.log(fileList)
     return (
         <Modal title={`Hóa đơn`} centered open={isModalOpen} onCancel={handleCancel} footer >
 

@@ -99,8 +99,8 @@ const Statistics = () => {
                         <RangePicker onChange={handleDateChange} />
                         <Select onChange={(value => setFilterEngineer(value))} placeholder="Thợ sửa chữa">
                             <Select.Option value={""} >Tất cả</Select.Option>
-                            {engineers && engineers.map(engineer => (
-                                <Select.Option value={engineer.id} >{engineer.user.name}</Select.Option>
+                            {engineers && engineers.map((engineer, index) => (
+                                <Select.Option key={index} value={engineer.id} >{engineer.user.name}</Select.Option>
                             ))}
                         </Select>
                     </div>
