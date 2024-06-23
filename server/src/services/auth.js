@@ -15,6 +15,7 @@ export const loginService = ({ email, password }) => new Promise(async (resolve,
         const isCorrectPassword = response && bcrypt.compareSync(password, response.password)
 
         const token = isCorrectPassword && jwt.sign({ id: response.id, email: response.email, role: response.role }, process.env.SECRET_KEY, { expiresIn: '2d' })
+        // const refreshToken = jwt.sign({ id: response.id, email: response.email, role: response.role }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: _CONF.refreshTokenLife})
         resolve({
             err: token ? 0 : 2,
             msg: token ? "Login is successfully!" : response ? "Password is wrong !" : "Account is not registered!",

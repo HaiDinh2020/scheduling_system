@@ -13,6 +13,7 @@ import engineerRouter from "./engineer"
 import taskRouter from "./task"
 import statRouter from "./statistics"
 import invoiceDetailRouter from "./invoiceDetail"
+import maintenanceRouter from "./maintenanceSchedule"
 
 const initRoutes = (app) => {
     app.use('/api/v1/user', userRouter)
@@ -30,6 +31,7 @@ const initRoutes = (app) => {
     app.use('/api/v1/task', taskRouter)
     app.use('/api/v1/stat', statRouter)
     app.use('/api/v1/invoice-detail', invoiceDetailRouter)
+    app.use('/api/v1/maintenance', maintenanceRouter)
     
     return app.use('/', (req, res) => { 
         

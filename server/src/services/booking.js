@@ -258,7 +258,8 @@ export const getBookingStatusServices = (garageId, status) => new Promise(async 
             include: [
                 { model: db.User, as: 'customer', attributes: ['name', 'phone', 'avatar'] },
                 { model: db.Car, as: 'car', attributes: ['make', 'model', 'number_plate'] },
-                { model: db.Invoice, as: 'invoice', attributes: ['id', 'amount', 'status', 'invoice_image'] }
+                { model: db.Invoice, as: 'invoice', attributes: ['id', 'amount', 'status', 'invoice_image'] },
+                { model: db.MaintenanceSchedule, as: 'maintenance', attributes: ['id', 'maintenanceTime', 'note']}
             ],
             attributes: ['id', 'status', 'services', 'description', 'booking_images', 'booking_date']
         })
