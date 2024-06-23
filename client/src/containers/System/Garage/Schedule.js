@@ -9,6 +9,7 @@ import Button from '../../../components/Button'
 import * as actions from '../../../store/actions'
 import InvoiceModal from '../../../components/Garage/InvoiceModal';
 import AssignModal from './assignModal';
+import MaintenanceScheduleModal from '../../../components/Garage/MaintenanceScheduleModal';
 
 const { LuFlagTriangleRight, FcOvertime, MdOutlinePhone } = icons
 const Schedule = ({ socket }) => {
@@ -20,6 +21,7 @@ const Schedule = ({ socket }) => {
 
     const [displayStatus, setDisplayStatus] = useState(menuScheduleStatus[0].status);
     const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false)
+    const [isMaintenanceScheduleModalOpen, setIsMaintenanceScheduleModalOpen] = useState(false)
     const [isAssignModalOpen, setIsAssignModalOpen] = useState(false)
 
     const [bookingRequest, setBookingRequest] = useState({})
@@ -106,7 +108,8 @@ const Schedule = ({ socket }) => {
     }
 
     const handleScheduleMaintenance = (booking) => {
-
+        setBooking(booking)
+        setIsMaintenanceScheduleModalOpen(true)
     }
 
     const renderBookingTime = (booking_date) => {
@@ -191,7 +194,13 @@ const Schedule = ({ socket }) => {
                             <Button text={"Hóa đơn"} bgcolor={"bg-blue-400"} textcolor={'text-white'} onClick={(e) => handleViewInvoice(booking)} />
                         </>)
                     }
-                    <Button text={"Lên lịch bảo dưỡng"} bgcolor={"bg-green-400"} textcolor={'text-white'} onClick={(e) => handleScheduleMaintenance(booking)} />
+                    {
+                        booking?.maintenance?.id === null 
+                        ?
+                        <Button text={"Lên lịch bảo dưỡng"} bgcolor={"bg-green-400"} textcolor={'text-white'} onClick={(e) => handleScheduleMaintenance(booking)} />
+                        :
+                        <Button text={"lịch bảo dưỡng"} bgcolor={"bg-green-400"} textcolor={'text-white'} onClick={(e) => handleScheduleMaintenance(booking)} />
+                    }
                     <Popconfirm
                         placement="topLeft"
                         title={"Xác nhận hủy bỏ lịch hẹn"}
@@ -232,6 +241,7 @@ const Schedule = ({ socket }) => {
                     }
                 </div>
                 <InvoiceModal isModalOpen={isInvoiceModalOpen} setIsModalOpen={setIsInvoiceModalOpen} booking={booking} socket={socket} />
+                <MaintenanceScheduleModal isModalOpen={isMaintenanceScheduleModalOpen} setIsModalOpen={setIsMaintenanceScheduleModalOpen} booking={booking} />
                 <AssignModal isModalOpen={isAssignModalOpen} setIsModalOpen={setIsAssignModalOpen} bookingId={bookingRequest} socket={socket} />
             </div>
 
