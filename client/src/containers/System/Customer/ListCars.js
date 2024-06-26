@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { Space, Table, Button, message, Popconfirm } from 'antd';
-import CreateCarModal from './CreateCarModal';
+import CreateCarModal from '../../../components/Customer/CreateCarModal';
 import { useDispatch, useSelector } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import icons from '../../../ultils/icons'

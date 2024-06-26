@@ -90,7 +90,7 @@ export const createBookingServices = (customer_id, car_id, status, services, des
 
 export const createBookingMaintenanceServices = (
     customer_id, garage_id, car_id, status, services, address, exactAddress, pickupOption,
-    engineer_id, title, description, startTime, endTime, createBy
+    mechanic_id, title, description, startTime, endTime, createBy
 ) => new Promise(async (resolve, reject) => {
     try {
         // tạo booking
@@ -113,8 +113,8 @@ export const createBookingMaintenanceServices = (
             return;
         }
 
-        // thêm vào task của engineer, thời gian từ 90p-3h
-        const task = await createTaskBookingServices("Bảo trì", garage_id, booking.id, engineer_id, "medium", "assigned", startTime, 120)
+        // thêm vào task của mechanic, thời gian từ 90p-3h
+        const task = await createTaskBookingServices("Bảo trì", garage_id, booking.id, mechanic_id, "medium", "assigned", startTime, 120)
         const titleNoti = "Đặt lịch";
         const bodyNoti = "Có lịch đặt bảo dưỡng từ khách hàng"
         try {
@@ -202,7 +202,8 @@ export const getAllBookingCustomerServices = (customerId) => new Promise(async (
             include: [
                 { model: db.Car, as: 'car', attributes: ['make', 'model', 'number_plate'] },
                 { model: db.Garage, as: 'garage', attributes: ['garage_name', 'garageAddress', 'exactAddress'] },
-                { model: db.Invoice, as: 'invoice', attributes: ['id', 'amount', 'status', 'invoice_image'] }
+                { model: db.Invoice, as: 'invoice', attributes: ['id', 'amount', 'status', 'invoice_image'] },
+                { model: db.MaintenanceSchedule, as: 'maintenance', attributes: ['id', 'maintenanceTime', 'note']}
             ],
             attributes: ['id', 'status', 'services', 'description', 'booking_images', 'booking_date']
         })
@@ -322,13 +323,13 @@ export const updateBookingGarageServices = (garageId, bookingId, level, estimate
                 } catch (error) {
                     console.log("gửi thông báo tới garage thất bại")
                 }
-                resolve({
+                return resolve({
                     err: 0,
                     msg: "update garage booking success",
                     response: response
                 })
             } else {
-                resolve({
+                return resolve({
                     err: 1,
                     msg: "Booking has already been accepted"
                 });
@@ -340,25 +341,25 @@ export const updateBookingGarageServices = (garageId, bookingId, level, estimate
 })
 
 
-const findAvailableEngineer = async (garageId) => {
+const findAvailableMechanic = async (garageId) => {
     const currentTime = new Date();
 
     console.log("currentTime")
     console.log(currentTime)
 
-    const engineer = await db.Engineer.findOne({
+    const mechanic = await db.Mechanic.findOne({
         where: {
             garage_id: garageId,
             id: {
                 [Op.notIn]: Sequelize.literal(
-                    `(SELECT engineer_id FROM appointments WHERE startTime <= NOW() AND endTime >= NOW())`
+                    `(SELECT mechanic_id FROM appointments WHERE startTime <= NOW() AND endTime >= NOW())`
                 )
             }
         },
 
     });
 
-    return engineer;
+    return mechanic;
 };
 
 // sẽ gọi lại 2 garage khác khi cả 2 garage kia đều từ chối

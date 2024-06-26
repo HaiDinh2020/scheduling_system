@@ -10,8 +10,8 @@ router.use(verifyToken)
 
 // tạo appointment
 router.post('/',  appointmentController.createAppointment)
-router.get('/:engineer_id', appointmentController.getAppointment)
-// router.post('/engineer', checkGarage, invoiceController.getInvoice)
+router.get('/:mechanic_id', appointmentController.getAppointment)
+// router.post('/mechanic', checkGarage, invoiceController.getInvoice)
 
 
 

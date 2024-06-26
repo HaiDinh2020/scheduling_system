@@ -80,9 +80,8 @@ export const registerService = ({ name, phone, password, email, role, garageName
                 token: token || null,
                 role: "garage"
             })
-        } else if (response[1] && role === 'engineer') {
-            console.log("create_engineer")
-            const create_engineer = await db.Engineer.findOrCreate({
+        } else if (response[1] && role === 'mechanic') {
+            const create_mechanic = await db.Mechanic.findOrCreate({
                 where: { user_id: response[0].id },
                 defaults: {
                     id: v4(),
@@ -92,25 +91,24 @@ export const registerService = ({ name, phone, password, email, role, garageName
                 }
             })
 
-            
-            console.log(create_engineer)
 
-            if (!create_engineer[1]) {
+
+            if (!create_mechanic[1]) {
                 // Xử lý trường hợp tạo garage không thành công
                 await db.User.destroy({ where: { id: response[0].id } }); // Xóa user đã tạo
                 return resolve({
                     err: 2,
-                    msg: "Error when creating engineer info",
+                    msg: "Error when creating mechanic info",
                     token: null,
                     role: null
                 });
             }
 
             return resolve({
-                err: create_engineer[1] ? 0 : 2,
-                msg: create_engineer[1] ? "Register is successfully!" : "Error whent create engineer",
+                err: create_mechanic[1] ? 0 : 2,
+                msg: create_mechanic[1] ? "Register is successfully!" : "Error whent create mechanic",
                 token: token || null,
-                role: "engineer"
+                role: "mechanic"
             })
 
         } else {

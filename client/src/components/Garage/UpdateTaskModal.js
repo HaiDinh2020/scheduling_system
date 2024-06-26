@@ -7,7 +7,7 @@ import moment from 'moment/moment';
 
 const UpdateTaskModal = ({ isModalOpen, setIsModalOpen, socket, taskData, setTasks }) => {
 
-    const { engineers } = useSelector((state) => state.engineers);
+    const { mechanics } = useSelector((state) => state.mechanics);
     const [form] = Form.useForm();
 
     const [taskStatus, setTaskStatus] = useState("");
@@ -15,7 +15,7 @@ const UpdateTaskModal = ({ isModalOpen, setIsModalOpen, socket, taskData, setTas
 
     useEffect(() => {
         // Nếu taskData được truyền vào, điền dữ liệu vào form
-        // need update: setinitialvalue for form like updatemodal in engineer folder
+        // need update: setinitialvalue for form like updatemodal in mechanic folder
         console.log(taskData)
         if (taskData) {
             form.setFieldsValue({
@@ -148,8 +148,8 @@ const UpdateTaskModal = ({ isModalOpen, setIsModalOpen, socket, taskData, setTas
                                     rules={[{ required: true, message: 'Vui lòng chọn thợ sửa chữa!' }]}
                                 >
                                     <Select placeholder="Chọn thợ">
-                                        {engineers.map(engineer => (
-                                            <Option key={engineer.id} value={engineer.id}>{engineer.user.name}</Option>
+                                        {mechanics.map(mechanic => (
+                                            <Option key={mechanic.id} value={mechanic.id}>{mechanic.user.name}</Option>
                                         ))}
                                     </Select>
                                 </Form.Item>

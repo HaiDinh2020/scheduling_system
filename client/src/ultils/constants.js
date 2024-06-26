@@ -5,7 +5,9 @@ export const path = {
     REGISTER: 'register',
     GARAGE: '/garage/*',
     CUSTOMER: '/customer/*',
-    BOOKING: 'booking',
+    SERVICES: 'services',
+    REPAIR: 'services/repair',
+    MAINTENANCE: 'services/maintenance',
     List_CARS: 'list-cars',
     BOOKING_HISTORY: 'booking-history',
     PAYMENTRESULT: 'vnpay_return',
@@ -22,10 +24,10 @@ export const path = {
     SYSTEM: 'system',
     MESSAGE: 'message',
 
-    ENGINEER: '/engineer/',
-    ENGINEERPROFILE: 'profile',
-    ENGINEERWORKSCHEDULE: 'work-schedule',
-    ENGINEERTASK: 'view-task'
+    MECHANIC: '/mechanic/',
+    MECHANICPROFILE: 'profile',
+    MECHANICWORKSCHEDULE: 'work-schedule',
+    MECHANICTASK: 'view-task'
 
     
 }

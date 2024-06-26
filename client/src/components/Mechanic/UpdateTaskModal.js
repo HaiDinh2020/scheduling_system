@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, DatePicker, Form, Input, Modal, Select, TimePicker, message } from "antd";
 import moment from 'moment/moment';
-import { apiEngineerUpdateTask } from '../../services/Engineer/task';
+import { apiMechanicUpdateTask } from '../../services/Mechanic/task';
 
 const UpdateTaskModal = ({ isModalOpen, setIsModalOpen, socket, taskData, setTasks }) => {
 
@@ -38,7 +38,7 @@ const UpdateTaskModal = ({ isModalOpen, setIsModalOpen, socket, taskData, setTas
             };
 
             if (taskData?.id) {
-                const response = await apiEngineerUpdateTask(taskData.id, taskDataUpdate);
+                const response = await apiMechanicUpdateTask(taskData.id, taskDataUpdate);
                 console.log(response);
                 if (response.status === 200) {
                     message.success(response?.data.msg);

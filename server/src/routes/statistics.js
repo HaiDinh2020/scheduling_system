@@ -7,7 +7,7 @@ const router = express.Router()
 router.use(verifyToken)
 
 router.get('/:garageId', statController.statTaskTimer)
-router.get('/:garageId/ranking', statController.getRankingEngineer)
+router.get('/:garageId/ranking', statController.getRankingMechanic)
 
 
 export default router;

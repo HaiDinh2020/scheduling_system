@@ -4,17 +4,17 @@ import db, { Sequelize, sequelize } from "../models"
 require('dotenv').config()
 
 
-export const findAvailableEngineerServices = (garageId) => new Promise(async (resolve, reject) => {
+export const findAvailableMechanicServices = (garageId) => new Promise(async (resolve, reject) => {
     try {
 
-        const engineer = await db.Engineer.findAll({
+        const mechanic = await db.Mechanic.findAll({
             where: {
                 garage_id: garageId,
                 [Op.and]: [
                     {
                         id: {
                             [Op.notIn]: Sequelize.literal(
-                                `(SELECT engineer_id FROM appointments WHERE startTime <= NOW() AND endTime >= NOW())`
+                                `(SELECT mechanic_id FROM appointments WHERE startTime <= NOW() AND endTime >= NOW())`
                             )
                         }
                     }
@@ -28,16 +28,16 @@ export const findAvailableEngineerServices = (garageId) => new Promise(async (re
             attributes: ['id', 'major']
         });
 
-        if (engineer !== null) {
+        if (mechanic !== null) {
             return resolve({
                 err: 0,
-                msg: "success to find available engineer",
-                response: engineer
+                msg: "success to find available mechanic",
+                response: mechanic
             });
         } else {
             return resolve({
                 err: 1,
-                msg: "There is no engineer available now ",
+                msg: "There is no mechanic available now ",
                 response: null
             })
         }
@@ -46,10 +46,10 @@ export const findAvailableEngineerServices = (garageId) => new Promise(async (re
     }
 })
 
-export const getAllEngineerServices = (garageId) => new Promise(async (resolve, reject) => {
+export const getAllMechanicServices = (garageId) => new Promise(async (resolve, reject) => {
     try {
 
-        const engineer = await db.Engineer.findAll({
+        const mechanic = await db.Mechanic.findAll({
             where: {
                 garage_id: garageId
             },
@@ -64,8 +64,8 @@ export const getAllEngineerServices = (garageId) => new Promise(async (resolve, 
 
         return resolve({
             err: 0,
-            msg: "success to find engineer",
-            response: engineer
+            msg: "success to find mechanic",
+            response: mechanic
         });
     } catch (error) {
         reject(error)

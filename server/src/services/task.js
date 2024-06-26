@@ -111,15 +111,15 @@ export const updateTaskServices = (task_id, level, task_status, estimated_time, 
     }
 })
 
-// phía engineer
-export const getTaskEngineerServices = (engineerId) => new Promise(async (resolve, reject) => {
+// phía mechanic
+export const getTaskMechanicServices = (mechanicId) => new Promise(async (resolve, reject) => {
     try {
-        const engineer = await db.Engineer.findOne({ where: { id: engineerId } })
+        const mechanic = await db.Mechanic.findOne({ where: { id: mechanicId } })
 
-        if (!engineer) reject("Engineer not found")
+        if (!mechanic) reject("Mechanic not found")
 
         const tasks = await db.Task.findAll({
-            where: { assign_to: engineerId },
+            where: { assign_to: mechanicId },
             include: [
                 { 
                     model: db.Booking, as: 'belong_booking', attributes: ['status'],
@@ -132,7 +132,7 @@ export const getTaskEngineerServices = (engineerId) => new Promise(async (resolv
 
         resolve({
             err: 0,
-            msg: "success to get task of engineer",
+            msg: "success to get task of mechanic",
             response: tasks
         });
     } catch (error) {
@@ -140,7 +140,7 @@ export const getTaskEngineerServices = (engineerId) => new Promise(async (resolv
     }
 })
 
-export const updateTaskEngineerServices = (taskId, task_status, start_date, start_time, end_date, end_time) => new Promise(async (resolve, reject) => {
+export const updateTaskMechanicServices = (taskId, task_status, start_date, start_time, end_date, end_time) => new Promise(async (resolve, reject) => {
     try {
         const task = await db.Task.findOne({ where: { id: taskId } });
 
@@ -163,7 +163,7 @@ export const updateTaskEngineerServices = (taskId, task_status, start_date, star
                     const endTime = new Date(startTime.getTime() + task.estimated_time * 60000)
                     console.log(123)
                     console.log(task.assign_to, task.task_name, startTime, endTime)
-                    await createAppointmentServices(task.assign_to, "Sua chua", task.task_name, startTime, endTime, "engineer")
+                    await createAppointmentServices(task.assign_to, "Sua chua", task.task_name, startTime, endTime, "mechanic")
                 } catch (error) {
                     return resolve({
                         err: 0,

@@ -1,10 +1,10 @@
 import axiosConfig from "../../axiosConfig";
 
-export const apiGetAllEngineer = (garageId) => new Promise(async(resolve, reject) => {
+export const apiGetTasksOfMechanic = (mechanicId) => new Promise(async (resolve, reject) => {
     try {
         const response = await axiosConfig({
             method: 'get',
-            url:`/api/v1/engineer/${garageId}`
+            url: `/api/v1/task/mechanic/${mechanicId}`
         })
 
         resolve(response)
@@ -13,11 +13,12 @@ export const apiGetAllEngineer = (garageId) => new Promise(async(resolve, reject
     }
 })
 
-export const apiGetAvailableEngineer = (garageId) => new Promise(async(resolve, reject) => {
+export const apiMechanicUpdateTask = (taskId, dataUpdate) => new Promise(async (resolve, reject) => {
     try {
         const response = await axiosConfig({
-            method: 'get',
-            url:`/api/v1/engineer/available/${garageId}`
+            method: 'put',
+            url: `/api/v1/task/mechanic/${taskId}`,
+            data: dataUpdate
         })
 
         resolve(response)

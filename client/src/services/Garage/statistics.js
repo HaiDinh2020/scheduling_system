@@ -5,8 +5,8 @@ export const apiStatTask = (garageId, options) => new Promise(async (resolve, re
         let url = `/api/v1/stat/${garageId}`;
         let params = {};
 
-        if (options.engineerId) {
-            params.engineerId = options.engineerId;
+        if (options.mechanicId) {
+            params.mechanicId = options.mechanicId;
         }
         if (options.startTime) {
             params.startTime = options.startTime;
@@ -27,7 +27,7 @@ export const apiStatTask = (garageId, options) => new Promise(async (resolve, re
     }
 })
 
-export const apiGetRankingEngineer = (garageId) => new Promise(async (resolve, reject) => {
+export const apiGetRankingMechanic = (garageId) => new Promise(async (resolve, reject) => {
     try {
         let url = `/api/v1/stat/${garageId}/ranking`;
     

@@ -1,15 +1,14 @@
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { path } from "./ultils/constants";
-import { DetailGarage, Home, HomePage, Login } from "./containers/Public";
+import { Home, Login } from "./containers/Public";
 import 'react-toastify/dist/ReactToastify.css';
-import { Booking, BookingHistory, Customer, ListCars, PaymentResult } from "./containers/System/Customer";
+import { Booking, BookingHistory, BookingMaintenance, BookingRepair, Customer, ListCars, PaymentResult } from "./containers/System/Customer";
 import { Dashboard, Garage, Infor, Schedule, Statistics, Task } from "./containers/System/Garage";
-import { Engineer, WorkSchedule, ViewTask } from "./containers/System/Engineer"
+import { Mechanic, WorkSchedule, ViewTask } from "./containers/System/Mechanic"
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import * as actions from './store/actions'
 import Profile from "./containers/System/Profile";
-import axios from "axios";
 import Chat from "./containers/System/Chat/Chat";
 import socketIOClient from "socket.io-client";
 import Notification from "./components/Notification";
@@ -52,7 +51,7 @@ function App() {
       });
 
       return () => {
-        socket.off("booking_request"); 
+        socket.off("booking_request");
       };
     }
   }, [socket]);
@@ -76,8 +75,8 @@ function App() {
   useEffect(() => {
     if (isLoggedIn) {
       if (role === 'garage') {
-        dispatch(actions.getAllEngineer(garageId))
-      } 
+        dispatch(actions.getAllMechanic(garageId))
+      }
     }
   }, [garageId, isLoggedIn, role])
 
@@ -85,8 +84,8 @@ function App() {
     if (isLoggedIn) {
       if (role === 'garage') {
         navigate("/garage")
-      } else if (role === 'engineer') {
-        navigate("/engineer")
+      } else if (role === 'mechanic') {
+        navigate("/mechanic")
       }
     } else {
       navigate("/login")
@@ -98,10 +97,11 @@ function App() {
       <Notification />
       <Routes>
         <Route path={path.HOME} Component={Home} >
-          <Route path='*' element={<HomePage socket={socket} />} />
-          <Route path={path.GARAGE_DETAIL} element={<DetailGarage socket={socket} />} />
           <Route path={path.LOGIN} Component={Login} />
-          <Route path={path.BOOKING} element={<Booking socket={socket} />} />
+          <Route path={path.SERVICES} element={<Booking socket={socket} />} >
+          </Route>
+          <Route path={path.REPAIR} element={ <BookingRepair socket={socket} />} />
+          <Route path={path.MAINTENANCE} Component={BookingMaintenance} />
         </Route>
         <Route path={path.CUSTOMER} Component={Customer}>
           <Route path={path.USERPROFILE} Component={Profile} />
@@ -113,15 +113,15 @@ function App() {
           <Route path={path.GARAGEPROFILE} Component={Profile} />
           <Route path={path.GARAGEINFO} Component={Infor} />
           <Route path={path.GARAGESCHEDULE} element={<Schedule socket={socket} />} />
-          <Route path={path.GARAGETASK} element= {<Task />}/>
-          <Route path={path.GARAGESTAT} element= {<Statistics />} />
+          <Route path={path.GARAGETASK} element={<Task />} />
+          <Route path={path.GARAGESTAT} element={<Statistics />} />
         </Route>
         <Route path={path.GARAGE_DASHBOARD} Component={Dashboard} />
 
-        <Route path={path.ENGINEER} Component={Engineer}>
-          <Route path={path.ENGINEERPROFILE} Component={Profile} />
-          <Route path={path.ENGINEERWORKSCHEDULE} element={<WorkSchedule />} />
-          <Route path={path.ENGINEERTASK} element={<ViewTask />} />
+        <Route path={path.MECHANIC} Component={Mechanic}>
+          <Route path={path.MECHANICPROFILE} Component={Profile} />
+          <Route path={path.MECHANICWORKSCHEDULE} element={<WorkSchedule />} />
+          <Route path={path.MECHANICTASK} element={<ViewTask />} />
         </Route>
         <Route path={path.SYSTEM} >
           <Route path={path.MESSAGE} Component={Chat} />

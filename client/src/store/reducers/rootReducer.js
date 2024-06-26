@@ -8,7 +8,7 @@ import {combineReducers} from "redux";
 import storage from "redux-persist/lib/storage"
 import {persistReducer} from "redux-persist";
 import autoMergeLevel2 from "redux-persist/es/stateReconciler/autoMergeLevel2";
-import engineerReducer from "./engineerReducer";
+import mechanicReducer from "./mechanicReducer";
 
 const commonConfig = {
     storage,
@@ -29,7 +29,7 @@ const rootReducer = combineReducers({
     booking: bookingReducer,
     post: postReducer,
     cars: carReducer,
-    engineers: engineerReducer
+    mechanics: mechanicReducer
 })
 
 export default rootReducer;

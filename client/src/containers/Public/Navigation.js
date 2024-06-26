@@ -3,9 +3,8 @@ import React from 'react'
 import { NavLink } from 'react-router-dom';
 
 const nav = [
-  { name: "home", path: '/' },
-  { name: "Đặt lịch", path: '/booking' },
-  { name: "xem lịch", path: '/customer/booking-history' },
+  { name: "Dịch vụ", path: '/services' },
+  { name: "Lịch đặt", path: '/customer/booking-history' },
 ]
 const Navigation = () => {
   return (

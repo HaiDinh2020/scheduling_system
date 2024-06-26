@@ -27,9 +27,9 @@ const Dashboard = () => {
                             <Menu.Item key="1">Create Task</Menu.Item>
                             <Menu.Item key="2">View Tasks</Menu.Item>
                         </SubMenu>
-                        <SubMenu key="sub2" title="Engineer Manager">
+                        <SubMenu key="sub2" title="Mechanic Manager">
                             <Menu.Item key="3">Assign Tasks</Menu.Item>
-                            <Menu.Item key="4">View Engineers</Menu.Item>
+                            <Menu.Item key="4">View Mechanics</Menu.Item>
                         </SubMenu>
                     </Menu>
                 </div>

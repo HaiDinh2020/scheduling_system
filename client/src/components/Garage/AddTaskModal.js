@@ -3,7 +3,7 @@ import { Button, DatePicker, Form, Image, Input, InputNumber, Modal, Radio, Sele
 import icons from '../../ultils/icons';
 import { Option } from 'antd/es/mentions';
 import { useSelector } from 'react-redux';
-import { apiGetAllEngineer } from '../../services/Engineer/engineer';
+import { apiGetAllMechanic } from '../../services/Mechanic/mechanic';
 import { apiCreateTask } from '../../services/Garage/task';
 import moment from 'moment/moment';
 import { apiGetAllBooking } from '../../services/Garage/booking';
@@ -13,7 +13,7 @@ const AddTaskModal = ({ isModalOpen, setIsModalOpen, socket, setTasks }) => {
     const [form] = Form.useForm();
 
     const garageId = useSelector((state) => state.garage.garageInfor.id);
-    const { engineers } = useSelector((state) => state.engineers);
+    const { mechanics } = useSelector((state) => state.mechanics);
     const [taskStatus, setTaskStatus] = useState("");
     const [allBooking, setAllBooking] = useState([])
 
@@ -160,8 +160,8 @@ const AddTaskModal = ({ isModalOpen, setIsModalOpen, socket, setTasks }) => {
                                     rules={[{ required: true, message: 'Vui lòng chọn thợ sửa chữa!' }]}
                                 >
                                     <Select placeholder="Chọn thợ">
-                                        {engineers.map(engineer => (
-                                            <Option key={engineer.id} value={engineer.id}>{engineer.user.name}</Option>
+                                        {mechanics.map(mechanic => (
+                                            <Option key={mechanic.id} value={mechanic.id}>{mechanic.user.name}</Option>
                                         ))}
                                     </Select>
                                 </Form.Item>

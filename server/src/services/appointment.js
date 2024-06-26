@@ -3,12 +3,12 @@ import db, { sequelize } from "../models"
 import { v4 } from "uuid"
 require('dotenv').config()
 
-export const createAppointmentServices = (engineer_id, title, description, startTime, endTime, createBy) => new Promise(async (resolve, reject) => {
+export const createAppointmentServices = (mechanic_id, title, description, startTime, endTime, createBy) => new Promise(async (resolve, reject) => {
     try {
-        console.log(engineer_id, title, description, startTime, endTime, createBy)
+        console.log(mechanic_id, title, description, startTime, endTime, createBy)
         const overlappingAppointments = await db.Appointment.findOne({
             where: {
-                engineer_id,
+                mechanic_id,
                 [Op.or]: [
                     { startTime: { [Op.between]: [startTime, endTime] } },
                     {
@@ -44,7 +44,7 @@ export const createAppointmentServices = (engineer_id, title, description, start
 
         const appointment = await db.Appointment.create({
             id: v4(),
-            engineer_id,
+            mechanic_id,
             title,
             description,
             startTime,
@@ -63,11 +63,11 @@ export const createAppointmentServices = (engineer_id, title, description, start
     }
 })
 
-export const GetAppointmentServices = (engineer_id) => new Promise(async (resolve, reject) => {
+export const GetAppointmentServices = (mechanic_id) => new Promise(async (resolve, reject) => {
     try {
 
         const appointments = await db.Appointment.findAll({
-            where: { engineer_id: engineer_id }
+            where: { mechanic_id: mechanic_id }
         });
 
         resolve({
@@ -80,12 +80,12 @@ export const GetAppointmentServices = (engineer_id) => new Promise(async (resolv
     }
 })
 
-export const UpdateAppointmentServices = (engineer_id, booking_id, title, description, startTime, endTime, status, createBy) => new Promise(async (resolve, reject) => {
+export const UpdateAppointmentServices = (mechanic_id, booking_id, title, description, startTime, endTime, status, createBy) => new Promise(async (resolve, reject) => {
     try {
 
         const appointment = await db.Appointment.create({
             id: v4(),
-            engineer_id,
+            mechanic_id,
             booking_id,
             title,
             description,
@@ -107,6 +107,6 @@ export const UpdateAppointmentServices = (engineer_id, booking_id, title, descri
 
 
 // not complete
-export const checkAppointmentEngineerOfGarage = (garage_id, startTime, endTime) => new Promise(async (resolve, reject) => {
+export const checkAppointmentMechanicOfGarage = (garage_id, startTime, endTime) => new Promise(async (resolve, reject) => {
 
 })

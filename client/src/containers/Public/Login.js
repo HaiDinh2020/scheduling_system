@@ -50,7 +50,7 @@ const Login = () => {
       } else if (role === 'garage') {
         navigate('/garage')
       } else {
-        navigate('/engineer')
+        navigate('/mechanic')
       }
     }
     isLoggedIn && setTimeout(() => {
@@ -173,6 +173,7 @@ const Login = () => {
               >
                 <option value={"customer"}>Customer</option>
                 <option value={"garage"}>Garage</option>
+                <option value={"mechanic"}>Thợ sửa chữa</option>
               </select>
               <div className='pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700'>
                 <BsChevronDown />

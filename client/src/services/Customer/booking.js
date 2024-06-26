@@ -13,11 +13,11 @@ export const apiGetGarageHaveBeenRepaired = () => new Promise(async(resolve, rej
     }
 })
 
-export const apiGetEngineerOfGarage = (garageId) => new Promise(async(resolve, reject) => {
+export const apiGetMechanicOfGarage = (garageId) => new Promise(async(resolve, reject) => {
     try {
         const response = await axiosConfig({
             method: 'get',
-            url: `/api/v1/garage/${garageId}/engineers`
+            url: `/api/v1/garage/${garageId}/mechanics`
         })
 
         resolve(response)

@@ -16,7 +16,7 @@ const Task = () => {
 
 
     const garageId = useSelector((state) => state.garage.garageInfor.id);
-    const { engineers } = useSelector((state) => state.engineers);
+    const { mechanics } = useSelector((state) => state.mechanics);
 
     const [isTaskModalOpen, setIsTaskModalOpen] = useState(false)
     const [isUpdateTaskModalOpen, setIsUpdateTaskModalOpen] = useState(false)
@@ -216,7 +216,7 @@ const Task = () => {
 
                                     <Table.Column title="Assignt to" dataIndex={"assign_to"} key={"assign_to"} render={(assign_to) => (
                                         <>{
-                                            engineers.find((engineer) => engineer.id === assign_to)?.user?.name
+                                            mechanics.find((mechanic) => mechanic.id === assign_to)?.user?.name
                                         }</>
                                     )} />
                                     <Table.Column title="Task Name" dataIndex="task_name" key="task_name" width={300} />

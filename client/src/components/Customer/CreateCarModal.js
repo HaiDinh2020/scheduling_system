@@ -1,9 +1,9 @@
 import { Button, Form, Input, Modal, Select, Space } from 'antd';
 import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux';
-import { apiGetMake, apiGetModel, apiGetYear } from '../../../services/Customer/customer';
-import icons from '../../../ultils/icons';
-import * as actions from '../../../store/actions'
+import { apiGetMake, apiGetModel, apiGetYear } from '../../services/Customer/customer';
+import icons from '../../ultils/icons';
+import * as actions from '../../store/actions'
 import { ToastContainer, toast } from 'react-toastify';
 
 

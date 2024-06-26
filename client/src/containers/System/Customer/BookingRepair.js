@@ -5,12 +5,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { apiUploadImages } from '../../../services/Garage/garage';
 import * as actions from '../../../store/actions'
 import icons from '../../../ultils/icons'
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const { Option } = Select;
 const { FaMapMarkerAlt } = icons
 
-const BookingRepair = ({ socket }) => {
+const BookingRepair = ({socket}) => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate()

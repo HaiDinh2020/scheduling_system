@@ -6,15 +6,15 @@ import { response } from "express";
 
 // statitic task
 
-export const statTaskStatusTimerServices = (garage_id, engineer_id, startTime, endTime) => new Promise(async (resolve, reject) => {
+export const statTaskStatusTimerServices = (garage_id, mechanic_id, startTime, endTime) => new Promise(async (resolve, reject) => {
     try {
 
         const whereClause = {
             garage_id: garage_id
         };
 
-        if (engineer_id !== undefined) {
-            whereClause.assign_to = engineer_id;
+        if (mechanic_id !== undefined) {
+            whereClause.assign_to = mechanic_id;
         }
 
         if (startTime !== undefined && endTime !== undefined) {
@@ -44,14 +44,14 @@ export const statTaskStatusTimerServices = (garage_id, engineer_id, startTime, e
     }
 })
 
-export const getRankingEngineerServices = (garage_id) => new Promise(async (resolve, reject) => {
+export const getRankingMechanicServices = (garage_id) => new Promise(async (resolve, reject) => {
     try {
         const tasks = await db.Task.findAll({ where: { garage_id: garage_id } });
-        const engineers = await db.Engineer.findAll({ where: { garage_id: garage_id } });
-        let engineerScores = {};
+        const mechanics = await db.Mechanic.findAll({ where: { garage_id: garage_id } });
+        let mechanicScores = {};
 
-        engineers.forEach(engineer => {
-            engineerScores[engineer.id] = { score: 0, easy: 0, medium: 0, hard: 0 };
+        mechanics.forEach(mechanic => {
+            mechanicScores[mechanic.id] = { score: 0, easy: 0, medium: 0, hard: 0 };
         })
 
         tasks.forEach((task) => {
@@ -62,28 +62,28 @@ export const getRankingEngineerServices = (garage_id) => new Promise(async (reso
                     hard: 3
                 };
 
-                engineerScores[task.assign_to].score += 1 + levelScore[task.level];
+                mechanicScores[task.assign_to].score += 1 + levelScore[task.level];
 
-                engineerScores[task.assign_to][task.level] += 1;
+                mechanicScores[task.assign_to][task.level] += 1;
             }
         })
 
-        const sortedEngineers = Object.keys(engineerScores).map(engineerId => {
+        const sortedMechanics = Object.keys(mechanicScores).map(mechanicId => {
             return {
-                id: engineerId,
-                score: engineerScores[engineerId].score,
-                easy: engineerScores[engineerId].easy,
-                medium: engineerScores[engineerId].medium,
-                hard: engineerScores[engineerId].hard
+                id: mechanicId,
+                score: mechanicScores[mechanicId].score,
+                easy: mechanicScores[mechanicId].easy,
+                medium: mechanicScores[mechanicId].medium,
+                hard: mechanicScores[mechanicId].hard
             };
         });
 
-        sortedEngineers.sort((a, b) => b.score - a.score);
+        sortedMechanics.sort((a, b) => b.score - a.score);
 
         resolve({
             err: 0,
             msg: "success to get ranking",
-            response: sortedEngineers
+            response: sortedMechanics
         })
     } catch (error) {
         reject(error)

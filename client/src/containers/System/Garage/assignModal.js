@@ -2,46 +2,46 @@ import React, { useEffect, useState } from 'react'
 import { Button, Form, Input, Modal, Radio, message } from "antd";
 import { useDispatch, useSelector } from 'react-redux';
 import * as actions from '../../../store/actions'
-import { apiGetAllEngineer, apiGetAvailableEngineer } from '../../../services/Engineer/engineer';
+import { apiGetAllMechanic, apiGetAvailableMechanic } from '../../../services/Mechanic/mechanic';
 
 const AssignModal = ({ isModalOpen, setIsModalOpen, bookingId, socket }) => {
 
     const dispatch = useDispatch();
     const garage_id = useSelector(state => state.garage?.garageInfor?.id)
 
-    const [engineers, setEngineers] = useState([])
-    const [availableEngineer, setAvailableEngineer] = useState([])
+    const [mechanics, setMechanics] = useState([])
+    const [availableMechanic, setAvailableMechanic] = useState([])
 
     useEffect(() => {
-        const getAllEngineer = async (garageId) => {
+        const getAllMechanic = async (garageId) => {
             try {
-                const engineers = await apiGetAllEngineer(garageId)
-                if (engineers?.data?.err === 0) {
-                    setEngineers(engineers?.data?.response)
+                const mechanics = await apiGetAllMechanic(garageId)
+                if (mechanics?.data?.err === 0) {
+                    setMechanics(mechanics?.data?.response)
                 }
             } catch (error) {
                 message.error("server error", 2)
             }
 
         }
-        const getAvailableEngineer = async (garageId) => {
+        const getAvailableMechanic = async (garageId) => {
             try {
-                const availableEngin = await apiGetAvailableEngineer(garageId)
+                const availableEngin = await apiGetAvailableMechanic(garageId)
                 if (availableEngin?.data?.err === 0) {
-                    setAvailableEngineer(availableEngin?.data.response)
+                    setAvailableMechanic(availableEngin?.data.response)
                 }
             } catch (error) {
                 message.error("server error")
             }
         }
 
-        getAllEngineer(garage_id)
-        getAvailableEngineer(garage_id)
+        getAllMechanic(garage_id)
+        getAvailableMechanic(garage_id)
     }, [garage_id])
 
     useEffect(() => {
-        console.log(availableEngineer)
-    }, [availableEngineer])
+        console.log(availableMechanic)
+    }, [availableMechanic])
 
     const onFinish = async (value) => {
         dispatch(actions.updateBookingGarage(garage_id, bookingId, value.level, value.estimated_time))
@@ -82,15 +82,15 @@ const AssignModal = ({ isModalOpen, setIsModalOpen, bookingId, socket }) => {
                         >
                             <Input type="number" addonAfter="phút" />
                         </Form.Item>
-                        {/* <Form.Item name={"engineerId"} initialValue={""} label="Phân công cho">
-                            <Radio.Group defaultValue="" name="engineerId">
+                        {/* <Form.Item name={"mechanicId"} initialValue={""} label="Phân công cho">
+                            <Radio.Group defaultValue="" name="mechanicId">
                                 {
-                                    engineers && engineers.length > 0 &&
-                                    engineers.map((engineer, index) => (
+                                    mechanics && mechanics.length > 0 &&
+                                    mechanics.map((mechanic, index) => (
                                         <div key={index}>
-                                            <Radio value={engineer.id}>
-                                                {engineer.user?.name} -
-                                                {availableEngineer.some(available => available.id === engineer.id) ? ' (free)' : ' (busy)'}
+                                            <Radio value={mechanic.id}>
+                                                {mechanic.user?.name} -
+                                                {availableMechanic.some(available => available.id === mechanic.id) ? ' (free)' : ' (busy)'}
                                             </Radio>
 
                                         </div>

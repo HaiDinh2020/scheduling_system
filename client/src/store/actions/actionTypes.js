@@ -25,6 +25,6 @@ export const actionTypes = {
     CREATE_CAR: 'CREATE_CAR',
     DELETE_CAR: 'DELETE_CAR',
 
-    GET_ENGINEERS: 'GET_ENGINEERS',
+    GET_MECHANICS: 'GET_MECHANICS',
 
 }

@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Task.belongsTo(models.Garage, { foreignKey: 'garage_id', targetKey: 'id', as: 'garage' });
-      Task.belongsTo(models.Engineer, { foreignKey: 'assign_to', targetKey: 'id', as: 'assignto'} )
+      Task.belongsTo(models.Mechanic, { foreignKey: 'assign_to', targetKey: 'id', as: 'assignto'} )
       Task.belongsTo(models.Booking, { foreignKey: 'booking_id', targetKey: 'id', as: 'belong_booking' })
     }
   }

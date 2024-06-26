@@ -5,8 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { DayPicker } from 'react-day-picker';
 import "react-day-picker/dist/style.css";
-import { apiGetEngineerOfGarage, apiGetGarageHaveBeenRepaired } from '../../../services/Customer/booking';
-import { apiGetAppointment } from '../../../services/Engineer/appointment';
+import { apiGetMechanicOfGarage, apiGetGarageHaveBeenRepaired } from '../../../services/Customer/booking';
+import { apiGetAppointment } from '../../../services/Mechanic/appointment';
 import icons from '../../../ultils/icons'
 import * as actions from "../../../store/actions"
 import { useNavigate } from 'react-router-dom';
@@ -72,15 +72,15 @@ const BookingMaintenance = ({ socket }) => {
     }, [])
 
     useEffect(() => {
-        const getAllEngineers = async (garageId) => {
+        const getAllMechanics = async (garageId) => {
             if (garageId) {
-                const engineers = await apiGetEngineerOfGarage(garageId)
-                if (engineers?.data?.err === 0) {
-                    setListMechanic(engineers?.data.response[0].engineers)
+                const mechanics = await apiGetMechanicOfGarage(garageId)
+                if (mechanics?.data?.err === 0) {
+                    setListMechanic(mechanics?.data.response[0].mechanics)
                 }
             }
         }
-        getAllEngineers(selectedGarage?.id)
+        getAllMechanics(selectedGarage?.id)
     }, [selectedGarage])
 
     useEffect(() => {
@@ -88,9 +88,9 @@ const BookingMaintenance = ({ socket }) => {
     }, [listMechanic])
 
     useEffect(() => {
-        const getAppointmentOfMechanic = async (engineerId) => {
-            if (engineerId) {
-                const appointments = await apiGetAppointment(engineerId)
+        const getAppointmentOfMechanic = async (mechanicId) => {
+            if (mechanicId) {
+                const appointments = await apiGetAppointment(mechanicId)
                 if (appointments?.data.err === 0) {
                     setMechanicEvents(appointments?.data?.response)
                 } else {
@@ -144,7 +144,7 @@ const BookingMaintenance = ({ socket }) => {
             address: address,
             exactAddress: exactAddress,
             pickupOption: pickupOption,
-            engineer_id: selectedMechanic,
+            mechanic_id: selectedMechanic,
             title: "bao duong " + selectedParts.join(", "),
             description: "bao duong cho khach hang ",
             startTime: startTime,

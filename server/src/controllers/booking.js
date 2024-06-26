@@ -55,10 +55,10 @@ export const createBookingMaintenance = async (req, res) => {
         const exactAddress = req.body.exactAddress
         const pickupOption = req.body.pickupOption || "0"
         const createBy = req.user.role
-        const { engineer_id, title, description, startTime, endTime } = req.body;
+        const { mechanic_id, title, description, startTime, endTime } = req.body;
 
         // check body miss
-        if (!customer_id || !car_id  || !garage_id || !exactAddress || !engineer_id || !startTime ) {
+        if (!customer_id || !car_id  || !garage_id || !exactAddress || !mechanic_id || !startTime ) {
             res.status(400).json({
                 err: 1,
                 msg: "Missing input!"
@@ -74,7 +74,7 @@ export const createBookingMaintenance = async (req, res) => {
 
         const response = await BookingServices.createBookingMaintenanceServices(
             customer_id, garage_id, car_id, status, services, address, exactAddress, pickupOption,
-            engineer_id, title, description, startTime, endTime, createBy
+            mechanic_id, title, description, startTime, endTime, createBy
         )
         res.status(200).json(response)
     } catch (error) {
@@ -183,14 +183,14 @@ export const updateBookingGarage = async (req, res) => {
         const level = req.body.level
         const estimated_time = req.body.estimated_time
         if (!garageId ) {
-            res.status(400).json({
+            return res.status(400).json({
                 err: 1,
                 msg: "Missing garageId!"
             })
         }
 
         if (!level || !estimated_time ) {
-            res.status(400).json({
+            return res.status(400).json({
                 err: 1,
                 msg: "Missing input!"
             })

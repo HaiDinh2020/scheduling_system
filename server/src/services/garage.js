@@ -88,14 +88,14 @@ export const updateGarageInforServices = (garageId, garage_name, garageAddress, 
 
 // new
 
-export const getAllEngineerServices = (garage_id) => new Promise(async (resolve, reject) => {
+export const getAllMechanicServices = (garage_id) => new Promise(async (resolve, reject) => {
   try {
-    const engineers = await db.Garage.findAll({
+    const mechanics = await db.Garage.findAll({
       where: {id: garage_id},
       include: [
         {
-          model: db.Engineer,  
-          as: 'engineers',
+          model: db.Mechanic,  
+          as: 'mechanics',
           attributes: ['id', 'major'],
           include: [
             {model: db.User, as: 'user', attributes: ['name', 'phone']}
@@ -105,8 +105,8 @@ export const getAllEngineerServices = (garage_id) => new Promise(async (resolve,
     })
     resolve({
       err: 0,
-      msg: "Get engineer of garage success",
-      response: engineers
+      msg: "Get mechanic of garage success",
+      response: mechanics
     })
   } catch (error) {
     reject(error)

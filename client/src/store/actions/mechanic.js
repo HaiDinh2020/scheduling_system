@@ -1,23 +1,23 @@
 import { actionTypes } from "./actionTypes";
-import {apiGetAllEngineer } from "../../services/Engineer/engineer";
+import {apiGetAllMechanic } from "../../services/Mechanic/mechanic";
 
-export const getAllEngineer = (garageId) => async (dispatch) => {
+export const getAllMechanic = (garageId) => async (dispatch) => {
     try {
-        const response = await apiGetAllEngineer(garageId)
+        const response = await apiGetAllMechanic(garageId)
         if (response?.data.err === 0) {
             dispatch({
-                type: actionTypes.GET_ENGINEERS,
+                type: actionTypes.GET_MECHANICS,
                 data: response.data.response
             })
         } else {
             dispatch({
-                type: actionTypes.GET_ENGINEERS,
+                type: actionTypes.GET_MECHANICS,
                 data: []
             })
         }
     } catch (error) {
         dispatch({
-            type: actionTypes.GET_ENGINEERS,
+            type: actionTypes.GET_MECHANICS,
             data: []
         })
     }

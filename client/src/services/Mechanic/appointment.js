@@ -1,6 +1,6 @@
 import axiosConfig from "../../axiosConfig";
 
-// payload dạng { engineer_id, title, description, startTime, endTime }
+// payload dạng { mechanic_id, title, description, startTime, endTime }
 export const apiCreateAppointment = (payload) => new Promise(async(resolve, reject) => {
     try {
         const response = await axiosConfig({
@@ -15,11 +15,11 @@ export const apiCreateAppointment = (payload) => new Promise(async(resolve, reje
     }
 })
 
-export const apiGetAppointment = (engineer_id) => new Promise(async(resolve, reject) => {
+export const apiGetAppointment = (mechanic_id) => new Promise(async(resolve, reject) => {
     try {
         const response = await axiosConfig({
             method: 'get',
-            url:`/api/v1/appointment/${engineer_id}`,
+            url:`/api/v1/appointment/${mechanic_id}`,
         })
 
         resolve(response)

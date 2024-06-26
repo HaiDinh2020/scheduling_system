@@ -5,7 +5,7 @@ import { path } from '../../../ultils/constants'
 import { Header } from '../../Public/index'
 import Sidebar from './Sidebar'
 
-const Engineer = () => {
+const Mechanic = () => {
     const { isLoggedIn, role } = useSelector(state => state.auth)
 
    
@@ -27,4 +27,4 @@ const Engineer = () => {
     )
 }
 
-export default Engineer
+export default Mechanic

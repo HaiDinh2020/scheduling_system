@@ -10,7 +10,7 @@ router.post('/',  taskController.createTask)
 router.get('/garage/:garageId', taskController.getTask)
 router.put('/:taskId', taskController.updateTaskStatus)
 
-router.get('/engineer/:engineerId', taskController.getTaskEngineer)
-router.put('/engineer/:taskId', taskController.updateTaskEngineer)
+router.get('/mechanic/:mechanicId', taskController.getTaskMechanic)
+router.put('/mechanic/:taskId', taskController.updateTaskMechanic)
 
 export default router;

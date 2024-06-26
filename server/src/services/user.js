@@ -14,7 +14,7 @@ export const getCurrentProfileServices = (id) => new Promise(async (resolve, rej
         exclude: ['password']
       },
       include: [
-        { model: db.Engineer, as: 'engineer', attributes: ['id', 'garage_id', 'major'] },
+        { model: db.Mechanic, as: 'mechanic', attributes: ['id', 'garage_id', 'major'] },
       ]
     })
 

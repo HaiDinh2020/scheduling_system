@@ -5,8 +5,8 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Button, Select, Table, Tag, message } from 'antd';
 import { useSelector } from 'react-redux';
 import icons from '../../../ultils/icons';
-import { apiGetTasksOfEngineer } from '../../../services/Engineer/task';
-import UpdateTaskModal from '../../../components/Engineer/UpdateTaskModal';
+import { apiGetTasksOfMechanic } from '../../../services/Mechanic/task';
+import UpdateTaskModal from '../../../components/Mechanic/UpdateTaskModal';
 import { taskStatusColors } from '../../../ultils/constants';
 import { MdOutlineAssignmentInd } from 'react-icons/md';
 
@@ -14,7 +14,7 @@ const { FaRegClock, MdOutlinePlaylistAddCheck, FaExclamation } = icons
 
 const ViewTask = () => {
 
-    const engineerId = useSelector(state => state.user?.userCurentProfile?.engineer?.id)
+    const mechanicId = useSelector(state => state.user?.userCurentProfile?.mechanic?.id)
 
     const [isUpdateTaskModalOpen, setIsUpdateTaskModalOpen] = useState(false)
     const [taskSelect, setTaskSelect] = useState()
@@ -40,22 +40,22 @@ const ViewTask = () => {
 
 
     useEffect(() => {
-        console.log(engineerId)
-        const getTasksOfGarage = async (engineerId) => {
+        console.log(mechanicId)
+        const getTasksOfGarage = async (mechanicId) => {
             try {
-                const response = await apiGetTasksOfEngineer(engineerId)
+                const response = await apiGetTasksOfMechanic(mechanicId)
 
                 if (response?.data?.err === 0) {
                     setTasks(response?.data?.response)
                 } else {
-                    message.error("Fail to get tasks of engineer", 2)
+                    message.error("Fail to get tasks of mechanic", 2)
                 }
             } catch (error) {
                 message.error("Failed to get tasks: Network error", 2);
             }
         }
-        getTasksOfGarage(engineerId)
-    }, [engineerId])
+        getTasksOfGarage(mechanicId)
+    }, [mechanicId])
 
     const updateTask = (task) => {
         setTaskSelect(task)

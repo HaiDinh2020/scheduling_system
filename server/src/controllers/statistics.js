@@ -3,9 +3,9 @@ import * as StatServices from '../services/statistics';
 export const statTaskTimer = async (req, res) => {
     try {
         const {garageId} = req.params
-        const {engineerId, startTime, endTime} = req.query
+        const {mechanicId, startTime, endTime} = req.query
         console.log(startTime, endTime)
-        const response = await StatServices.statTaskStatusTimerServices(garageId, engineerId, startTime, endTime)
+        const response = await StatServices.statTaskStatusTimerServices(garageId, mechanicId, startTime, endTime)
         return res.status(200).json(response);
         
     } catch (error) {
@@ -17,11 +17,11 @@ export const statTaskTimer = async (req, res) => {
     }
 }
 
-export const getRankingEngineer = async (req, res) => {
+export const getRankingMechanic = async (req, res) => {
     try {
         const {garageId} = req.params
         
-        const response = await StatServices.getRankingEngineerServices(garageId)
+        const response = await StatServices.getRankingMechanicServices(garageId)
         return res.status(200).json(response);
         
     } catch (error) {

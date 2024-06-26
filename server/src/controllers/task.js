@@ -51,12 +51,12 @@ export const updateTaskStatus = async (req, res) => {
     }
 }
 
-// phía engineer
-export const getTaskEngineer = async (req, res) => {
+// phía mechanic
+export const getTaskMechanic = async (req, res) => {
     try {
-        const engineerId = req.params.engineerId
-        console.log(engineerId)
-        const response = await TaskServices.getTaskEngineerServices(engineerId)
+        const mechanicId = req.params.mechanicId
+        console.log(mechanicId)
+        const response = await TaskServices.getTaskMechanicServices(mechanicId)
         res.status(200).json(response)
     } catch (error) {
         console.log(error)
@@ -67,7 +67,7 @@ export const getTaskEngineer = async (req, res) => {
     }
 }
 
-export const updateTaskEngineer = async (req, res) => {
+export const updateTaskMechanic = async (req, res) => {
     try {
         const taskId = req.params.taskId
         const { task_status, start_date, start_time, end_date, end_time} = req.body
@@ -81,7 +81,7 @@ export const updateTaskEngineer = async (req, res) => {
         //     })
         // }
 
-        const response = await TaskServices.updateTaskEngineerServices(taskId, task_status, start_date, start_time, end_date, end_time)
+        const response = await TaskServices.updateTaskMechanicServices(taskId, task_status, start_date, start_time, end_date, end_time)
         res.status(200).json(response)
     } catch (error) {
         console.log(error)

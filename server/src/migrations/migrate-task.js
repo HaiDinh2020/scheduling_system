@@ -33,7 +33,7 @@ module.exports = {
             assign_to: {
                 type: Sequelize.STRING,
                 // references: {
-                //     model: 'Engineers',
+                //     model: 'Mechanics',
                 //     key: 'id'
                 // },
                 // onUpdate: 'CASCADE',

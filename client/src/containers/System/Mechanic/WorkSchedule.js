@@ -4,7 +4,7 @@ import moment from 'moment'
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Button, Form, Input, Modal, message, notification } from 'antd';
 import { useSelector } from 'react-redux';
-import { apiCreateAppointment, apiGetAppointment } from '../../../services/Engineer/appointment';
+import { apiCreateAppointment, apiGetAppointment } from '../../../services/Mechanic/appointment';
 
 const localizer = momentLocalizer(moment)
 
@@ -18,16 +18,16 @@ const WorkSchedule = () => {
     const [form] = Form.useForm();
 
     useEffect(() => {
-        const getAppointment = async (engineer_id) => {
-            if (engineer_id) {
-                const response = await apiGetAppointment(engineer_id);
+        const getAppointment = async (mechanic_id) => {
+            if (mechanic_id) {
+                const response = await apiGetAppointment(mechanic_id);
                 console.log(response)
                 if (response?.data.err === 0) {
                     setEvents(response.data?.response)
                 }
             }
         }
-        getAppointment(userCurentProfile.engineer?.id)
+        getAppointment(userCurentProfile.mechanic?.id)
     }, [])
 
     const handleSelectSlot = ({ start, end }) => {
@@ -76,7 +76,7 @@ const WorkSchedule = () => {
     };
 
     const handleAddEvent = async (values) => {
-        const dataAppointment = { ...values, startTime: new Date(selectedEvent.start), endTime: new Date(selectedEvent.end), engineer_id: userCurentProfile.engineer.id }
+        const dataAppointment = { ...values, startTime: new Date(selectedEvent.start), endTime: new Date(selectedEvent.end), mechanic_id: userCurentProfile.mechanic.id }
         console.log(dataAppointment)
         const response = await apiCreateAppointment(dataAppointment)
         console.log(response)

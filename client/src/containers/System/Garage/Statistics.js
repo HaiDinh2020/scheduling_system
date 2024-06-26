@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { Bar } from 'react-chartjs-2';
 import Chart from 'chart.js/auto';      // can't delete
-import { apiStatTask, apiGetRankingEngineer } from '../../../services/Garage/statistics';
+import { apiStatTask, apiGetRankingMechanic } from '../../../services/Garage/statistics';
 import icons from '../../../ultils/icons'
 import { taskStatusColors } from '../../../ultils/constants';
 
@@ -14,10 +14,10 @@ const { FaRegStar } = icons
 const Statistics = () => {
 
     const garageId = useSelector((state) => state.garage.garageInfor.id);
-    const engineers = useSelector((state) => state.engineers.engineers)
+    const mechanics = useSelector((state) => state.mechanics.mechanics)
 
     const [dateRange, setDateRange] = useState(null);
-    const [filterEngineer, setFilterEngineer] = useState("")
+    const [filterMechanic, setFilterMechanic] = useState("")
     const [dataRanking, setDataRanking] = useState([])
     const [tasks, setTasks] = useState({
         "pending": 0,
@@ -30,7 +30,7 @@ const Statistics = () => {
             try {
 
                 const optionsFilter = {}
-                if (filterEngineer) optionsFilter.engineerId = filterEngineer
+                if (filterMechanic) optionsFilter.mechanicId = filterMechanic
                 if (dateRange) {
                     const startDate = dateRange[0].startOf('day').format('YYYY-MM-DD');
                     const endDate = dateRange[1].endOf('day').format('YYYY-MM-DD');
@@ -51,12 +51,12 @@ const Statistics = () => {
             }
         }
         getStatTask(garageId)
-    }, [garageId, filterEngineer, dateRange])
+    }, [garageId, filterMechanic, dateRange])
 
     useEffect(() => {
         const getRanking = async (garageId) => {
             try {
-                const rank = await apiGetRankingEngineer(garageId)
+                const rank = await apiGetRankingMechanic(garageId)
 
                 if (rank?.data?.err === 0) {
                     setDataRanking(rank?.data?.response)
@@ -97,10 +97,10 @@ const Statistics = () => {
                     <div className=' flex p-4 gap-2 '>
                         <div>Thống kê theo:</div>
                         <RangePicker onChange={handleDateChange} />
-                        <Select onChange={(value => setFilterEngineer(value))} placeholder="Thợ sửa chữa">
+                        <Select onChange={(value => setFilterMechanic(value))} placeholder="Thợ sửa chữa">
                             <Select.Option value={""} >Tất cả</Select.Option>
-                            {engineers && engineers.map((engineer, index) => (
-                                <Select.Option key={index} value={engineer.id} >{engineer.user.name}</Select.Option>
+                            {mechanics && mechanics.map((mechanic, index) => (
+                                <Select.Option key={index} value={mechanic.id} >{mechanic.user.name}</Select.Option>
                             ))}
                         </Select>
                     </div>
@@ -122,7 +122,7 @@ const Statistics = () => {
                         <Table.Column title="Hạng" key="index" render={(text, record, index) => index + 1} />
                         <Table.Column title="Thợ" dataIndex={"id"} key={"id"} render={(id) => (
                             <>{
-                                engineers.find((engineer) => engineer.id === id)?.user?.name
+                                mechanics.find((mechanic) => mechanic.id === id)?.user?.name
                             }</>
                         )} />
                         <Table.Column

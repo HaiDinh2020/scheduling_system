@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
 
       Garage.hasMany(models.Booking, { foreignKey: 'garage_id', as: 'bookings' });
       Garage.hasOne(models.GaragePaymentConfig, { foreignKey: 'garage_id', as: 'garage_payment' })
-      Garage.hasMany(models.Engineer, { foreignKey: 'garage_id', as: 'engineers'})
+      Garage.hasMany(models.Mechanic, { foreignKey: 'garage_id', as: 'mechanics'})
       Garage.hasMany(models.Invoice, { foreignKey: 'garage_id', as: 'invoices'})
     }
   }

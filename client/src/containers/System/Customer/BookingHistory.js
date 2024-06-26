@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as actions from '../../../store/actions'
 import icons from '../../../ultils/icons'
 import { apiGetPaymentUrl } from '../../../services/Customer/vnpay';
-import PaymentModal from '../../../components/CustomerComponents/PaymentModal';
+import PaymentModal from '../../../components/Customer/PaymentModal';
 import { bookingStatusColors } from '../../../ultils/constants';
 
 const { FiTrash2, FaMinus } = icons
@@ -74,7 +74,8 @@ const BookingHistory = () => {
             title: 'Trạng thái',
             dataIndex: 'status',
             key: 'status',
-            render: (status) => {
+            render: (status, record) => {
+                console.log(record)
                 return (
                     <span>
                         <Tag color={bookingStatusColors[status]} key={status}>{status}</Tag>
@@ -103,7 +104,7 @@ const BookingHistory = () => {
                                 </Popconfirm>
                             </Space>
                             :
-                            record?.invoice?.amount !== 0 ?
+                            record?.invoice?.amount !== "0.00" ?
                                 record?.invoice?.status === "unpaid"
                                     ?
 
@@ -165,44 +166,38 @@ const BookingHistory = () => {
             }
         },
         {
-            title: "Action",
+            title: "Hóa đơn",
             dataIndex: 'invoice',
-            key: "invoice",
-            align: 'center',
-            render: (invoice, record) => {
-
-                let color = '#FFD700';
-                if (invoice.status === "paid") {
-                    color = '#32CD32';
-                } else if (invoice.status === "unpaid") {
-                    color = '#6495ED';
-                } else if (invoice.status === 'failed') {
-                    color = '#FF6347';
-                }
+            key: 'invoice',
+            render: (invoice) => {
                 return (
-
-                    <Space className='items-center' size="large">
+                    <>
 
                         {
-                            record.status === "complete" ?
-                                invoice?.status === "unpaid"
-                                    ?
-
-                                    <Button type="primary" size='small' className='bg-red-600' onClick={() => handlePayment(invoice)}>
-                                        Thanh toán ngay!
-                                    </Button>
-
-
-                                    :
-                                    <Tag color={color} key={invoice.status}>{invoice.status}</Tag>
-                                :
-                                <><FaMinus color={color} /></>
+                            invoice?.status === "paid" &&
+                            <><FaMinus color={"red"} /></>
                         }
-
-                    </Space>
+                    </>
                 )
             }
         },
+        {
+            title: "Lịch bảo dưỡng",
+            dataIndex: 'maintenance',
+            key: 'maintenance',
+            render: (maintenance) => {
+                return (
+                    <>
+
+                        {
+                            maintenance?.id !== null ?
+                            <><FaMinus color={"red"} /></>
+                            :"chưa có"
+                        }
+                    </>
+                )
+            }
+        }
     ]
 
     const confirmDelete = (booking) => {

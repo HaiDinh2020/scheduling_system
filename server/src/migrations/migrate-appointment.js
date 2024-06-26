@@ -8,14 +8,8 @@ module.exports = {
                 primaryKey: true,
                 type: Sequelize.STRING
             },
-            engineer_id: {
+            mechanic_id: {
                 type: Sequelize.STRING,
-                references: {
-                    model: 'Engineers',
-                    key: 'id'
-                  },
-                  onUpdate: 'CASCADE',
-                  onDelete: 'CASCADE'
             },
             title: {
                 type: Sequelize.STRING,
@@ -37,8 +31,8 @@ module.exports = {
                 defaultValue: 'scheduled'
             },
             createBy: {
-                type: Sequelize.ENUM('engineer', 'customer', 'garage'),
-                defaultValue: 'engineer'
+                type: Sequelize.ENUM('mechanic', 'customer', 'garage'),
+                defaultValue: 'mechanic'
             },
             createdAt: {
                 allowNull: false,

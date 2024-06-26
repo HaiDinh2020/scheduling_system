@@ -1,20 +1,20 @@
 import { actionTypes } from "../actions/actionTypes";
 
 const initState = {
-    engineers: []
+    mechanics: []
 }
 
-const engineerReducer = (state = initState, action) => {
+const mechanicReducer = (state = initState, action) => {
     switch (action.type) {
-        case actionTypes.GET_ENGINEERS:
+        case actionTypes.GET_MECHANICS:
             return {
                 ...state,
-                engineers: action.data || []
+                mechanics: action.data || []
             }
         case actionTypes.LOGOUT:
             return {
                 ...state,
-                engineers: []
+                mechanics: []
             }
             
         
@@ -23,4 +23,4 @@ const engineerReducer = (state = initState, action) => {
     }
 }
 
-export default engineerReducer;
+export default mechanicReducer;
