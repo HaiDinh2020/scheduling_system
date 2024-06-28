@@ -5,13 +5,13 @@ const { ImPencil2, FaCalendarAlt, BsListUl, PiGarageBold, IoBarChartOutline } = 
 const memuSidebarGarage = [
     {
         id: 1,
-        text: 'Thông tin cá nhân',
+        text: 'Thông tin người sở hữu',
         path: '/garage/profile',
         icon: <ImPencil2 />
     },
     {
         id: 2,
-        text: 'Garage',
+        text: 'Thông tin garage',
         path: '/garage/infor',
         icon: <PiGarageBold />
     },

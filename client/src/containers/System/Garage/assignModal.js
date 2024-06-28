@@ -44,7 +44,7 @@ const AssignModal = ({ isModalOpen, setIsModalOpen, bookingId, socket }) => {
     }, [availableMechanic])
 
     const onFinish = async (value) => {
-        dispatch(actions.updateBookingGarage(garage_id, bookingId, value.level, value.estimated_time))
+        dispatch(actions.respondToBooking(garage_id, bookingId, value.level, value.estimated_time))
         setIsModalOpen(false);
     }
 

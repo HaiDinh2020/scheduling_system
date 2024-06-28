@@ -161,8 +161,9 @@ export const updateTaskMechanicServices = (taskId, task_status, start_date, star
                 try {
                     const startTime = new Date(start_date + "T" + start_time)
                     const endTime = new Date(startTime.getTime() + task.estimated_time * 60000)
-                    console.log(123)
-                    console.log(task.assign_to, task.task_name, startTime, endTime)
+                    // console.log(123)
+                    // console.log(task.assign_to, task.task_name, startTime, endTime)
+                    
                     await createAppointmentServices(task.assign_to, "Sua chua", task.task_name, startTime, endTime, "mechanic")
                 } catch (error) {
                     return resolve({

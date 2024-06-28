@@ -6,15 +6,19 @@ import icons from '../../../ultils/icons'
 import { apiGetPaymentUrl } from '../../../services/Customer/vnpay';
 import PaymentModal from '../../../components/Customer/PaymentModal';
 import { bookingStatusColors } from '../../../ultils/constants';
+import InvoiceModal from '../../../components/Customer/InvoiceModal';
+import { useNavigate } from 'react-router-dom';
 
-const { FiTrash2, FaMinus } = icons
+const { FiTrash2, FaMinus, FaFileInvoiceDollar, IoChatboxEllipsesOutline } = icons
 const BookingHistory = () => {
 
     const dispatch = useDispatch();
+    const navigate = useNavigate()
     const { customerBookingData } = useSelector(state => state.booking)
 
     const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
-    const [invoiceSelect, setInvoiceSelect] = useState({})
+    const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false)
+    const [bookingSelect, setBookingSelect] = useState({})
     const [currentBooking, setCurrentBooking] = useState([])
     const [historyBooking, setHistoryBooking] = useState([])
 
@@ -24,17 +28,29 @@ const BookingHistory = () => {
 
     useEffect(() => {
         if (customerBookingData?.length > 0) {
-            setCurrentBooking(customerBookingData.filter((booking) => booking.status === "request" || booking.status === "in-progress"))
-            setHistoryBooking(customerBookingData.filter((booking) => booking.status !== "request" && booking.status !== "in-progress"))
+            setCurrentBooking(customerBookingData.filter((booking) => booking.status === "request" || booking.status === "in-progress" || booking.status === "schedule"))
+            setHistoryBooking(customerBookingData.filter((booking) => booking.status !== "request" && booking.status !== "in-progress" && booking.status !== "schedule"))
         }
     }, [customerBookingData])
+
+    const handleChat = (garage) => {
+        navigate('/system/message', { state: { id: garage?.owner_id, name: garage?.user.name, avatar: garage?.user.avatar } })
+    }
 
     const columns2 = [
         {
             title: "Garage", dataIndex: 'garage', key: 'garage',
             render: (garage) => {
                 return (
-                    <>{garage?.garage_name}</>
+                    <div >
+                        {
+                            garage?.garage_name && 
+                            <div>
+                                {garage?.garage_name } <IoChatboxEllipsesOutline className='cursor-pointer' onClick={() => handleChat(garage)} size={20}  />   
+                            </div>
+                        }
+                           
+                    </div>
                 )
             }
         },
@@ -108,7 +124,7 @@ const BookingHistory = () => {
                                 record?.invoice?.status === "unpaid"
                                     ?
 
-                                    <Button type="primary" size='small' className='bg-red-600' onClick={() => handlePayment(record?.invoice)}>
+                                    <Button type="primary" size='small' className='bg-red-600' onClick={() => handlePayment(record)}>
                                         Thanh toán ngay!
                                     </Button>
 
@@ -127,7 +143,15 @@ const BookingHistory = () => {
             title: "Garage", dataIndex: 'garage', key: 'garage',
             render: (garage) => {
                 return (
-                    <>{garage?.garage_name}</>
+                    <div >
+                        {
+                            garage?.garage_name && 
+                            <div>
+                                {garage?.garage_name } <IoChatboxEllipsesOutline className='cursor-pointer' onClick={() => handleChat(garage)} size={20}  />   
+                            </div>
+                        }
+                           
+                    </div>
                 )
             }
         },
@@ -169,15 +193,15 @@ const BookingHistory = () => {
             title: "Hóa đơn",
             dataIndex: 'invoice',
             key: 'invoice',
-            render: (invoice) => {
+            render: (invoice, booking) => {
                 return (
-                    <>
+                    <div className=' flex justify-center items-center cursor-pointer' >
 
                         {
                             invoice?.status === "paid" &&
-                            <><FaMinus color={"red"} /></>
+                            <><FaFileInvoiceDollar color={"green"} size={20} onClick={() => handleViewInvoice(booking)} /></>
                         }
-                    </>
+                    </div>
                 )
             }
         },
@@ -204,9 +228,13 @@ const BookingHistory = () => {
         dispatch(actions.cancelBooking(booking.id))
     }
 
-    const handlePayment = async (invoiceSelect) => {
-        console.log(invoiceSelect)
-        setInvoiceSelect(invoiceSelect)
+    const handleViewInvoice = (booking) => {
+        setBookingSelect(booking)
+        setIsInvoiceModalOpen(true)
+    }
+
+    const handlePayment = (booking) => {
+        setBookingSelect(booking)
         setIsPaymentModalOpen(true)
     }
 
@@ -226,9 +254,11 @@ const BookingHistory = () => {
                     </div>
                 </div>
             </div>
-            <PaymentModal isModalOpen={isPaymentModalOpen} setIsModalOpen={setIsPaymentModalOpen} invoice={invoiceSelect} />
+            <InvoiceModal isModalOpen={isInvoiceModalOpen} setIsModalOpen={setIsInvoiceModalOpen} booking={bookingSelect} />
+            <PaymentModal isModalOpen={isPaymentModalOpen} setIsModalOpen={setIsPaymentModalOpen} booking={bookingSelect} />
             <div className='container flex flex-col items-center'>
                 <div className='bg-white  rounded-xl border-2 shadow-md w-[95%] px-4 mb-2'>
+                <div className='font-bold text-lg'>Lịch sử đặt lịch</div>
                     <div className=' w-full pt-2'>
                         <Table
                             className='w-full'

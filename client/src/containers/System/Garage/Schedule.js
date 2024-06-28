@@ -10,11 +10,13 @@ import * as actions from '../../../store/actions'
 import InvoiceModal from '../../../components/Garage/InvoiceModal';
 import AssignModal from './assignModal';
 import MaintenanceScheduleModal from '../../../components/Garage/MaintenanceScheduleModal';
+import { useNavigate } from 'react-router-dom';
 
 const { LuFlagTriangleRight, FcOvertime, MdOutlinePhone } = icons
 const Schedule = ({ socket }) => {
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const garageId = useSelector((state) => state.garage.garageInfor.id);
     const { garageBookingData } = useSelector((state) => state.booking);
@@ -22,58 +24,49 @@ const Schedule = ({ socket }) => {
     const [displayStatus, setDisplayStatus] = useState(menuScheduleStatus[0].status);
     const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false)
     const [isMaintenanceScheduleModalOpen, setIsMaintenanceScheduleModalOpen] = useState(false)
-    const [isAssignModalOpen, setIsAssignModalOpen] = useState(false)
+    // const [isAssignModalOpen, setIsAssignModalOpen] = useState(false)
 
-    const [bookingRequest, setBookingRequest] = useState({})
+    // const [bookingRequest, setBookingRequest] = useState({})
     const [booking, setBooking] = useState({})                              // booking sẽ hiển thị trên hóa đơn
     const [listBooking, setListBooking] = useState([])
 
-    useEffect(() => {
-        if (socket) {
-            socket.on("booking_request", (bookingDetail) => {
-                console.log(111111);
-                console.log(bookingDetail);
-            });
 
-            return () => {
-                socket.off("booking_request"); // Ngừng lắng nghe sự kiện khi component unmount
-            };
+
+
+    useEffect(() => {
+        if(displayStatus !== "request") {
+            dispatch(actions.getBookingStatus(garageId, displayStatus))
+        } else {
+            dispatch(actions.getBookingRequest(garageId)) 
         }
-        else {
-            console.log("no")
-        }
-    }, [socket]);
-
-
-    useEffect(() => {
-        dispatch(actions.getAllBooking(garageId))
-    }, [])
-
-    useEffect(() => {
-        dispatch(actions.getBookingStatus(garageId, displayStatus))
     }, [displayStatus])
 
     useEffect(() => {
-        if (displayStatus !== "all") {
-            const updateList = garageBookingData.filter((item) => item.status === displayStatus)
-            setListBooking(updateList)
-        } else {
-            setListBooking(garageBookingData)
-        }
+        setListBooking(garageBookingData)
     }, [displayStatus, garageBookingData])
 
     const handleChangeStatus = (bookingId, newStatus) => {
+        console.log("change status")
         dispatch(actions.updateBookingStatus(bookingId, newStatus))
     }
 
-    const handleAcceptRequest = (bookingId) => {
-        setBookingRequest(bookingId)
-        setIsAssignModalOpen(true)
-        // dispatch(actions.updateBookingGarage(garageId, bookingId))
+    const handleAcceptRequest = (bookingId, bookingGarageId) => {
+        // setBookingRequest(bookingId)
+        // setIsAssignModalOpen(true)
+        console.log(bookingGarageId)
+        if(bookingGarageId) {
+            dispatch(actions.respondToBooking(bookingId,  bookingGarageId, "accepted"))
+        } else {
+            message.error("something error")
+        }
     }
 
-    const handleRejectRequest = (bookingId) => {
-        dispatch(actions.updateBookingGarage(garageId, bookingId))
+    const handleRejectRequest = (bookingId, bookingGarageId) => {
+        if(bookingGarageId) {
+            dispatch(actions.respondToBooking(bookingId,  bookingGarageId, "rejected"))
+        } else {
+            message.error("something error")
+        }
     }
 
     const showConfirm = () => {
@@ -112,6 +105,10 @@ const Schedule = ({ socket }) => {
         setIsMaintenanceScheduleModalOpen(true)
     }
 
+    const handleChat = (customer) => {
+        navigate('/system/message', { state: { id: customer?.id, name: customer?.name, avatar: customer?.avatar } })
+    }
+
     const renderBookingTime = (booking_date) => {
         const time = booking_date.split("T")[1].slice(0, 5)
         const day = booking_date.split("T")[0]
@@ -127,8 +124,8 @@ const Schedule = ({ socket }) => {
         if (status === 'request') {
             return (
                 <div className='flex justify-end gap-2'>
-                    <Button text={"Chấp nhận"} bgcolor={"bg-green-400"} textcolor={'text-white'} onClick={(e) => handleAcceptRequest(bookingId)} />
-                    <Button text={"Từ chối"} bgcolor={"bg-red-400"} textcolor={'text-white'} onClick={(e) => handleChangeStatus(bookingId, "reject")} />
+                    <Button text={"Chấp nhận"} bgcolor={"bg-green-400"} textcolor={'text-white'} onClick={(e) => handleAcceptRequest(bookingId, booking?.booking_garage_id)} />
+                    <Button text={"Từ chối"} bgcolor={"bg-red-400"} textcolor={'text-white'} onClick={(e) => handleRejectRequest(bookingId, booking?.booking_garage_id)} />
                 </div>
             )
         } else if (status === "schedule") {
@@ -242,7 +239,7 @@ const Schedule = ({ socket }) => {
                 </div>
                 <InvoiceModal isModalOpen={isInvoiceModalOpen} setIsModalOpen={setIsInvoiceModalOpen} booking={booking} socket={socket} />
                 <MaintenanceScheduleModal isModalOpen={isMaintenanceScheduleModalOpen} setIsModalOpen={setIsMaintenanceScheduleModalOpen} booking={booking} />
-                <AssignModal isModalOpen={isAssignModalOpen} setIsModalOpen={setIsAssignModalOpen} bookingId={bookingRequest} socket={socket} />
+                {/* <AssignModal isModalOpen={isAssignModalOpen} setIsModalOpen={setIsAssignModalOpen} bookingId={bookingRequest} socket={socket} /> */}
             </div>
 
             <div className='w-full h-fit flex flex-col items-center '>
@@ -255,7 +252,7 @@ const Schedule = ({ socket }) => {
                                         <div className='flex items-center gap-2 mb-3'>
                                             <img src={item.customer.avatar || avatarDefault} alt='avatar' className='w-16 rounded-full bg-slate-200 p-1'></img>
                                             <div>
-                                                <div className='text-xl font-bold'>
+                                                <div className='text-xl font-bold cursor-pointer' onClick={() => handleChat(item.customer)}>
                                                     {item.customer.name}
                                                 </div>
                                                 <div className='flex gap-1 items-center'>
@@ -289,7 +286,7 @@ const Schedule = ({ socket }) => {
                                     <div className='w-1/3'>
                                         <div className='font-bold mb-1'>Hình ảnh</div>
                                         {
-                                            item.booking_images && <img src={item.booking_images} alt="booking_image" className='w-[300px]' />
+                                            item.booking_images && <img src={item.booking_images} alt="booking_image" className=' max-h-36 w-[250] object-contain' />
                                         }
 
                                     </div>

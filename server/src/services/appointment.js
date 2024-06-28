@@ -6,41 +6,41 @@ require('dotenv').config()
 export const createAppointmentServices = (mechanic_id, title, description, startTime, endTime, createBy) => new Promise(async (resolve, reject) => {
     try {
         console.log(mechanic_id, title, description, startTime, endTime, createBy)
-        const overlappingAppointments = await db.Appointment.findOne({
-            where: {
-                mechanic_id,
-                [Op.or]: [
-                    { startTime: { [Op.between]: [startTime, endTime] } },
-                    {
-                        endTime: {
-                            [Op.between]: [startTime, endTime]
-                        }
-                    },
-                    {
-                        [Op.and]: [
-                            {
-                                startTime: {
-                                    [Op.lte]: startTime
-                                }
-                            },
-                            {
-                                endTime: {
-                                    [Op.gte]: endTime
-                                }
-                            }
-                        ]
-                    }
-                ]
+        // const overlappingAppointments = await db.Appointment.findOne({
+        //     where: {
+        //         mechanic_id,
+        //         [Op.or]: [
+        //             { startTime: { [Op.between]: [startTime, endTime] } },
+        //             {
+        //                 endTime: {
+        //                     [Op.between]: [startTime, endTime]
+        //                 }
+        //             },
+        //             {
+        //                 [Op.and]: [
+        //                     {
+        //                         startTime: {
+        //                             [Op.lte]: startTime
+        //                         }
+        //                     },
+        //                     {
+        //                         endTime: {
+        //                             [Op.gte]: endTime
+        //                         }
+        //                     }
+        //                 ]
+        //             }
+        //         ]
 
-            }
-        })
+        //     }
+        // })
 
-        if (overlappingAppointments) {
-            return resolve({
-                err: 1,
-                msg: "There is overlapping time with existing appointments."
-            });
-        }
+        // if (overlappingAppointments) {
+        //     return resolve({
+        //         err: 1,
+        //         msg: "There is overlapping time with existing appointments."
+        //     });
+        // }
 
         const appointment = await db.Appointment.create({
             id: v4(),

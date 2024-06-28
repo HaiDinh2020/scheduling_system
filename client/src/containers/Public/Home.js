@@ -11,7 +11,7 @@ const Home = () => {
     <>
       <Header />
       <Navigation />
-      <div className='flex gap-6 flex-col items-center h-full'>
+      <div className='flex gap-6 flex-col items-center h-full mt-6'>
         <Outlet />
       </div>
     </>

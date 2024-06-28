@@ -25,7 +25,7 @@ const Header = (props) => {
 
     return (
         <div className='w-full p-2 flex items-center justify-between bg-primary'>
-            <Link to={"/"} >
+            <Link to={userCurentProfile?.role === "customer" ? "/" : userCurentProfile?.role === "garage" ? "/garage" : "/mechanic"} >
                 <img src={logo} alt='logo' className='w-[140px] h-70 object-fit'></img>
             </Link>
 

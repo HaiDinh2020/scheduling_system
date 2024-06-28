@@ -39,8 +39,14 @@ export const getChatPartnersServices = (userId) => new Promise(async (resolve, r
                 ],
             },
             include: [
-                { model: db.User, as: 'sender', attributes: ['id', 'name', 'avatar'] },
-                { model: db.User, as: 'receiver', attributes: ['id', 'name', 'avatar'] },
+                { 
+                    model: db.User, as: 'sender', attributes: ['id', 'name', 'avatar'], 
+                    include: [{model: db.Garage, as: "garage", attributes: ['garage_name']}] 
+                },
+                { 
+                    model: db.User, as: 'receiver', attributes: ['id', 'name', 'avatar'], 
+                    include: [{model: db.Garage, as: "garage", attributes: ['garage_name']}] 
+                },
             ],
         })
 

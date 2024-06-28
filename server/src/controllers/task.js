@@ -71,8 +71,7 @@ export const updateTaskMechanic = async (req, res) => {
     try {
         const taskId = req.params.taskId
         const { task_status, start_date, start_time, end_date, end_time} = req.body
-        console.log(req.body)
-
+        
         // need updated: check missing input
         // if(task_status !== "completed" || !end_date || !end_time) {
         //     return res.status(400).json({

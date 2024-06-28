@@ -12,12 +12,13 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       BookingGarage.belongsTo(models.Garage, { foreignKey: 'garage_id', targetKey: 'id', as: 'garage' });
+      BookingGarage.belongsTo(models.Booking, { foreignKey: 'booking_id', targetKey: 'id', as: 'booking' });
     }
   }
   BookingGarage.init({
     booking_id: DataTypes.STRING,
     garage_id: DataTypes.STRING,
-    status: DataTypes.ENUM(["accepted", "reject", "pending"])
+    status: DataTypes.ENUM("accepted", "rejected", "pending")
   }, {
     sequelize,
     modelName: 'BookingGarage',

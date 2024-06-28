@@ -7,19 +7,10 @@ import { useNavigate } from 'react-router-dom';
 const Booking = ({ socket }) => {
 
     const navigate = useNavigate()
-    // const [serviceType, setServiceType] = useState('repair');
-    // const handleServiceChange = (e) => {
-    //     setServiceType(e.target.value);
-    // };
 
 
     return (
         <div className="w-full p-2 ">
-            {/* <div className='text-xl font-bold'>Chọn dịch vụ</div>
-            <Radio.Group defaultValue="repair" buttonStyle="solid" onChange={handleServiceChange}>
-                <Radio.Button value="repair">Sửa chữa</Radio.Button>
-                <Radio.Button value="maintenance">Bảo dưỡng</Radio.Button>
-            </Radio.Group> */}
 
             <div className='flex flex-col justify-center items-center gap-4' >
                 <div
@@ -46,10 +37,6 @@ const Booking = ({ socket }) => {
 
                 </div>
             </div>
-            {/* <div>
-
-                {serviceType === 'maintenance' ? <BookingMaintenance socket={socket} /> : <BookingRepair/>}
-            </div> */}
 
         </div>
     );

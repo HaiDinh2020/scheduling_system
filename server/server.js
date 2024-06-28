@@ -60,6 +60,7 @@ initRoutes(app)
 connectDatabase()
 
 scheduleService.scheduleNotiBookingMaintence();
+scheduleService.reminder2WeeksInAdvance()
 
 // xử lý kết nói từ namespace '\chat'
 const chatNamespace = io.of('/chat');

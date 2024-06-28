@@ -5,7 +5,7 @@ import { validateStartTimeEndTime } from '../validators/Validator';
 export const createAppointment = async (req, res) => {
     try {
         const createBy = req.user.role
-        const { mechanic_id, booking_id, title, description, startTime, endTime } = req.body;
+        const { mechanic_id, title, description, startTime, endTime } = req.body;
         if (createBy === "customer") {
             const startTimeDate = new Date(startTime);
             startTimeDate.setHours(startTimeDate.getHours() + 1);
@@ -36,7 +36,7 @@ export const createAppointment = async (req, res) => {
                 msg: "Mechanic not found"
             })
 
-        const response = await AppointmentServices.createAppointmentServices(mechanic_id, booking_id, title, description, startTime, endTime, createBy)
+        const response = await AppointmentServices.createAppointmentServices(mechanic_id, title, description, startTime, endTime, createBy)
         res.status(200).json(response)
     } catch (error) {
         console.log(error)

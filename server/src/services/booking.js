@@ -50,7 +50,7 @@ export const createBookingServices = (customer_id, car_id, status, services, des
         let garages = [];
 
         while (garages.length === 0) {
-            garages = await findNearestGarages(latitude, longitude, limit, radius);
+            garages = await findNearestGarages(exactAddress, limit, radius);
 
             if (garages.length === 0) {
                 radius += 5; // Tăng bán kính tìm kiếm nếu không tìm thấy garage
@@ -70,6 +70,8 @@ export const createBookingServices = (customer_id, car_id, status, services, des
             } catch (error) {
                 console.log("gửi thông báo tới garage thất bại")
             }
+
+            await db.BookingGarage.create({ id: v4(), garage_id: garage.id, booking_id: booking.id, status: 'pending' })
             const garage_socketId_receive = global.onlineUsers2.find((user) => user.userId === garage.owner_id)
             console.log(111111)
             console.log(garage_socketId_receive)
@@ -147,7 +149,8 @@ export const createBookingMaintenanceServices = (
     }
 })
 
-const findNearestGarages = async (latitude, longitude, numGarage, maxDistance) => {
+const findNearestGarages = async (exactAddress, numGarage, maxDistance) => {
+    const [latitude, longitude] = exactAddress.split(", ").map(coord => parseFloat(coord));
     const haversineFormula = `
             6371 * acos(
             cos(radians(${latitude})) * cos(radians(cast(substring_index(exactAddress, ', ', 1) as DECIMAL(10, 6))))
@@ -201,9 +204,13 @@ export const getAllBookingCustomerServices = (customerId) => new Promise(async (
             nest: true,
             include: [
                 { model: db.Car, as: 'car', attributes: ['make', 'model', 'number_plate'] },
-                { model: db.Garage, as: 'garage', attributes: ['garage_name', 'garageAddress', 'exactAddress'] },
+                { 
+                    model: db.Garage, as: 'garage', 
+                    attributes: ['garage_name', 'garageAddress', 'exactAddress', 'owner_id'],
+                    include: [ { model: db.User, as: 'user', attributes: ['name', 'phone', 'avatar'] },]
+                },
                 { model: db.Invoice, as: 'invoice', attributes: ['id', 'amount', 'status', 'invoice_image'] },
-                { model: db.MaintenanceSchedule, as: 'maintenance', attributes: ['id', 'maintenanceTime', 'note']}
+                { model: db.MaintenanceSchedule, as: 'maintenance', attributes: ['id', 'maintenanceTime', 'note'] }
             ],
             attributes: ['id', 'status', 'services', 'description', 'booking_images', 'booking_date']
         })
@@ -229,7 +236,7 @@ export const getAllBookingServices = (garageId) => new Promise(async (resolve, r
             raw: true,
             nest: true,
             include: [
-                { model: db.User, as: 'customer', attributes: ['name', 'phone', 'avatar'] },
+                { model: db.User, as: 'customer', attributes: ['id', 'name', 'phone', 'avatar'] },
                 { model: db.Car, as: 'car', attributes: ['make', 'model', 'number_plate'] }
             ],
             attributes: ['id', 'status', 'services', 'description', 'booking_images', 'booking_date']
@@ -257,10 +264,10 @@ export const getBookingStatusServices = (garageId, status) => new Promise(async 
             raw: true,
             nest: true,
             include: [
-                { model: db.User, as: 'customer', attributes: ['name', 'phone', 'avatar'] },
+                { model: db.User, as: 'customer', attributes: ['id', 'name', 'phone', 'avatar'] },
                 { model: db.Car, as: 'car', attributes: ['make', 'model', 'number_plate'] },
                 { model: db.Invoice, as: 'invoice', attributes: ['id', 'amount', 'status', 'invoice_image'] },
-                { model: db.MaintenanceSchedule, as: 'maintenance', attributes: ['id', 'maintenanceTime', 'note']}
+                { model: db.MaintenanceSchedule, as: 'maintenance', attributes: ['id', 'maintenanceTime', 'note'] }
             ],
             attributes: ['id', 'status', 'services', 'description', 'booking_images', 'booking_date']
         })
@@ -277,6 +284,77 @@ export const getBookingStatusServices = (garageId, status) => new Promise(async 
     }
 })
 
+export const getBookingRequestServices = (garageId) => new Promise(async (resolve, reject) => {
+    try {
+
+        const response = await db.BookingGarage.findAll({
+            where: {
+                garage_id: garageId,
+                status: 'pending'
+            },
+            raw: true,
+            nest: true,
+            include: [
+                {
+                    model: db.Booking,
+                    as: 'booking',
+                    where: { status: 'request' },
+                    include: [
+                        { model: db.User, as: 'customer', attributes: ['id', 'name', 'phone', 'avatar'] },
+                        { model: db.Car, as: 'car', attributes: ['make', 'model', 'number_plate'] },
+                        { model: db.Invoice, as: 'invoice', attributes: ['id', 'amount', 'status', 'invoice_image'] },
+                        { model: db.MaintenanceSchedule, as: 'maintenance', attributes: ['id', 'maintenanceTime', 'note'] }
+                    ],
+                    attributes: ['id', 'status', 'services', 'description', 'booking_images', 'booking_date']
+                }
+            ],
+            attributes: ['id', 'status']
+        })
+
+        if (!response) {
+            reject("Booking not found")
+        }
+
+        const formattedResponse = response.map(booking => ({
+            id: booking.booking.id,
+            booking_garage_id: booking.id,
+            status: booking.booking.status,
+            services: booking.booking.services,
+            description: booking.booking.description,
+            booking_images: booking.booking.booking_images,
+            booking_date: booking.booking.booking_date,
+            customer: {
+                id: booking.booking.customer.id,
+                name: booking.booking.customer.name,
+                phone: booking.booking.customer.phone,
+                avatar: booking.booking.customer.avatar
+            },
+            car: {
+                make: booking.booking.car.make,
+                model: booking.booking.car.model,
+                number_plate: booking.booking.car.number_plate
+            },
+            invoice: {
+                id: booking.booking.invoice ? booking.booking.invoice.id : null,
+                amount: booking.booking.invoice ? booking.booking.invoice.amount : null,
+                status: booking.booking.invoice ? booking.booking.invoice.status : null,
+                invoice_image: booking.booking.invoice ? booking.booking.invoice.invoice_image : null
+            },
+            maintenance: {
+                id: booking.booking.maintenance ? booking.booking.maintenance.id : null,
+                maintenanceTime: booking.booking.maintenance ? booking.booking.maintenance.maintenanceTime : null,
+                note: booking.booking.maintenance ? booking.booking.maintenance.note : null
+            }
+        }));
+        resolve({
+            err: 0,
+            msg: "success to find all schedule",
+            response: formattedResponse
+        })
+    } catch (error) {
+        reject(error)
+    }
+})
 
 export const updateStatusBookingServices = (bookingId, newStatus) => new Promise(async (resolve, reject) => {
     try {
@@ -335,6 +413,91 @@ export const updateBookingGarageServices = (garageId, bookingId, level, estimate
                 });
             }
         }
+    } catch (error) {
+        reject(error)
+    }
+})
+
+export const respondToBookingService = (bookingGarageId, status) => new Promise(async (resolve, reject) => {
+
+    try {
+        const transaction = await db.sequelize.transaction();
+
+        const garageBooking = await db.BookingGarage.findOne({ where: { id: bookingGarageId } });
+
+        if (!garageBooking) {
+            return reject(new Error("Garage booking not found."))
+        }
+
+        if (garageBooking.status !== 'pending') {
+            return reject(new Error("Booking already processed."))
+        }
+
+        const booking = await db.Booking.findOne({ where: { id: garageBooking.booking_id } });
+
+        if (!booking) {
+            return reject(new Error("Booking not found."))
+        }
+
+
+        if (status === 'accepted') {
+            
+            await booking.update({ status: 'in-progress', garage_id: garageBooking.garage_id }, { transaction });
+
+            await db.BookingGarage.update({ status: 'rejected' }, {
+                where: { booking_id: booking.id, id: { [Op.ne]: garageBooking.id } },
+                transaction
+            });
+
+            await garageBooking.update({ status }, { transaction });
+
+            await transaction.commit();
+
+            // Gửi thông báo tới khách hàng về việc booking đã được chấp nhận
+            try {
+                const titleNoti = "Đặt lịch sửa chữa thành công!";
+                const bodyNoti = "Garage đã chấp nhận lịch sửa chữa của bạn.";
+                await sendNotiServices(booking.customer_id, titleNoti, bodyNoti);
+            } catch (error) {
+                console.log("sent noti failed")
+            }
+            
+            return resolve({ err: 0, msg: "Booking accepted and updated successfully." })
+        } else if (status === 'rejected') {
+            await garageBooking.update({ status }, { transaction });
+            await transaction.commit();
+
+
+            // Logic để gửi yêu cầu đến garage khác nếu cần thiết
+            const otherGarageBookings = await db.BookingGarage.findAll({
+                where: {
+                    booking_id: booking.id,
+                    status: 'pending',
+                    id: { [Op.ne]: garageBooking.id }
+                }
+            });
+
+            if (otherGarageBookings.length === 0) {
+                const nearestGarages = await findNearestGarages(booking.exactAddress, 2, 5);
+                const otherGarages = nearestGarages.filter(garage => garage.id !== garageBooking.garage_id);
+
+                for (const garage of otherGarages) {
+                    await db.BookingGarage.create({ id: v4(), garage_id: garage.id, booking_id: booking.id, status: 'pending' })
+                    try {
+                        const titleNoti = "Yêu cầu đặt lịch sửa chữa";
+                        const bodyNoti = "Có yêu cầu đặt lịch sửa chữa mới từ khách hàng.";
+                        await sendNotiServices(garage.owner_id, titleNoti, bodyNoti);
+                    } catch (error) {
+                        console.log("gửi thông báo tới garage thất bại")
+                    }
+                   
+                }
+            }
+
+            return resolve({ err: 0, msg: "Booking rejected and notified other garages." });
+        }
+
+
     } catch (error) {
         reject(error)
     }

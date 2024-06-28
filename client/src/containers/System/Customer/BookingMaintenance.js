@@ -10,6 +10,7 @@ import { apiGetAppointment } from '../../../services/Mechanic/appointment';
 import icons from '../../../ultils/icons'
 import * as actions from "../../../store/actions"
 import { useNavigate } from 'react-router-dom';
+import { apiGetAllGarage } from '../../../services/Customer/customer';
 
 const { Option } = Select;
 const { FaMapMarkerAlt } = icons
@@ -54,7 +55,6 @@ const BookingMaintenance = ({ socket }) => {
 
     const [selectedGarage, setSelectedGarage] = useState(null);
     const [selectedCar, setSelectedCar] = useState(null)
-    const [selectedParts, setSelectedParts] = useState([]);
     const [selectedMechanic, setSelectedMechanic] = useState()
     const [selectedTime, setSelectedTime] = useState({ startTime: null, endTime: null })
     const [address, setAddress] = useState("")
@@ -63,7 +63,7 @@ const BookingMaintenance = ({ socket }) => {
 
     useEffect(() => {
         const getAllGarages = async () => {
-            const garages = await apiGetGarageHaveBeenRepaired()
+            const garages = await apiGetAllGarage()
             if (garages?.data?.err === 0) {
                 setListGarage(garages?.data?.response)
             }
@@ -145,7 +145,7 @@ const BookingMaintenance = ({ socket }) => {
             exactAddress: exactAddress,
             pickupOption: pickupOption,
             mechanic_id: selectedMechanic,
-            title: "bao duong " + selectedParts.join(", "),
+            title: "bao duong " ,
             description: "bao duong cho khach hang ",
             startTime: startTime,
             endTime: endTime
@@ -245,17 +245,6 @@ const BookingMaintenance = ({ socket }) => {
             ),
         },
         {
-            title: 'Chọn Parts',
-            content: selectedGarage && (
-                <Card title={`Parts at ${selectedGarage.garage_name}`}>
-                    <Checkbox.Group
-                        options={selectedGarage.parts?.map(part => ({ label: part.name, value: part.id }))}
-                        onChange={setSelectedParts}
-                    />
-                </Card>
-            ),
-        },
-        {
             title: 'Chọn Mechanic',
             content: selectedGarage && (
                 <Select value={selectedMechanic} onChange={value => setSelectedMechanic(value)} style={{ width: '100%' }} placeholder="Chọn thợ sửa chữa">
@@ -306,7 +295,7 @@ const BookingMaintenance = ({ socket }) => {
     ];
 
     return (
-        <div className="w-full px-2">
+        <div className="w-[90%] bg-white rounded-md shadow-sm p-4">
             <Steps current={currentStep}>
                 {steps.map(item => (
                     <Step key={item.title} title={item.title} />

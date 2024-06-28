@@ -1,6 +1,6 @@
 import { message } from "antd";
 import { apiCancelBooking, apiCreateBookingMaintenance } from "../../services/Customer/booking";
-import { apiCreateBooking, apiGetAllBooking, apiGetAllBookingCustomer, apiGetBookingStatus, apiUpdateBookingGarage, apiUpdateBookingStatus } from "../../services/Garage/booking";
+import { apiCreateBooking, apiGetAllBooking, apiGetAllBookingCustomer, apiGetBookingRequest, apiGetBookingStatus, apiRespondToBooking, apiUpdateBookingStatus } from "../../services/Garage/booking";
 import { actionTypes } from "./actionTypes";
 import { toast } from 'react-toastify';
 import { apiCreateInvoice } from "../../services/Garage/invoice";
@@ -130,6 +130,28 @@ export const getAllBooking = (garageId) => async (dispatch) => {
     }
 }
 
+export const getBookingRequest = (garageId) => async (dispatch) => {
+    try {
+        const response = await apiGetBookingRequest(garageId)
+        if (response?.data.err === 0) {
+            dispatch({
+                type: actionTypes.GET_ALL_BOOKING_GARAGE,
+                data: response.data.response
+            })
+        } else {
+            dispatch({
+                type: actionTypes.GET_ALL_BOOKING_GARAGE,
+                data: []
+            })
+        }
+    } catch (error) {
+        dispatch({
+            type: actionTypes.GET_ALL_BOOKING_GARAGE,
+            data: []
+        })
+    }
+}
+
 export const getBookingStatus = (garageId, status) => async (dispatch) => {
     try {
         const response = await apiGetBookingStatus(garageId, status)
@@ -188,9 +210,9 @@ export const updateBookingStatus = (bookingId, newStatus) => async (dispatch) =>
     }
 }
 
-export const updateBookingGarage = (garage_id, bookingId, level, estimated_time) => async (dispatch) => {
+export const respondToBooking = (bookingId, bookingGarageId, status) => async (dispatch) => {
     try {
-        const response = await apiUpdateBookingGarage(garage_id, bookingId, level, estimated_time)
+        const response = await apiRespondToBooking(bookingGarageId, status)
         if (response?.data.err === 0) {
             dispatch({
                 type: actionTypes.DELETE_GARAGE_BOOKING,

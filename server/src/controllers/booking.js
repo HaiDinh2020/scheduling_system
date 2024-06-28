@@ -153,6 +153,28 @@ export const getBookingStatus = async (req, res) => {
     }
 }
 
+export const getBookingRequest = async (req, res) => {
+    try {
+        const garageId = req.params.garageId
+        
+        if(!garageId ) {
+            return res.status(401).json({
+                err: 1,
+                msg: "Missing id"
+            })
+        }
+        
+        const response = await BookingServices.getBookingRequestServices(garageId)
+        return res.status(200).json(response)
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            err: -1,
+            msg: "Server error"
+        })
+    }
+}
+
 export const updateStatusBooking = async (req, res) => {
     try {
         const bookingId = req.params.bookingId;
@@ -175,29 +197,22 @@ export const updateStatusBooking = async (req, res) => {
     }
 }
 
-export const updateBookingGarage = async (req, res) => {
+export const respondToBooking = async (req, res) => {
     try {
-        const bookingId = req.params.bookingId;
-        const garageId = req.params.garageId;
-        console.log(req.body)
-        const level = req.body.level
-        const estimated_time = req.body.estimated_time
-        if (!garageId ) {
+        const bookingGarageId = req.params.bookingGarageId;
+        const status = req.body.status
+        
+        if (!bookingGarageId ) {
             return res.status(400).json({
                 err: 1,
-                msg: "Missing garageId!"
+                msg: "Missing id!"
             })
         }
 
-        if (!level || !estimated_time ) {
-            return res.status(400).json({
-                err: 1,
-                msg: "Missing input!"
-            })
-        }
+        console.log(bookingGarageId)
 
 
-        const response = await BookingServices.updateBookingGarageServices(garageId, bookingId, level, estimated_time)
+        const response = await BookingServices.respondToBookingService(bookingGarageId, status)
         res.status(200).json(response)
     } catch (error) {
         console.log(error)

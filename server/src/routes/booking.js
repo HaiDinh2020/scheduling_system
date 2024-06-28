@@ -11,8 +11,10 @@ router.post('/customer/maintenance', bookingController.createBookingMaintenance)
 router.get('/customer', bookingController.getAllBookingCustomer)
 router.put('/customer/:bookingId', bookingController.cancelBooking)
 
-router.put("/garage/:garageId/:bookingId", bookingController.updateBookingGarage)
+router.put("/garage/request/:bookingGarageId", bookingController.respondToBooking)
 router.put('/garage/:bookingId', bookingController.updateStatusBooking)
+
+router.get('/garage/request/:garageId', bookingController.getBookingRequest)
 router.get('/garage/:garageId', (req, res, next) => {
     if (req.query.status && req.query.status != "all") {
         return bookingController.getBookingStatus(req, res);

@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import socketIOClient from "socket.io-client";
 
-const URL = process.env.NODE_ENV === 'production' ? undefined : 'http://localhost:5000/chat';
+const URL = process.env.NODE_ENV === 'production' ? undefined : `${process.env.REACT_APP_SERVER_URL}/chat`;
 
 const { Content } = Layout
 
@@ -122,7 +122,7 @@ const Message = ({ currentContent }) => {
           <div className='flex items-center gap-2'>
             <Avatar src={currentContent?.avatar} size={64} className='min-w-16 min-h-16' />
             <div>
-              <div className='leading-tight font-bold line-clamp-1'>{currentContent?.name}</div>
+              <div className='leading-tight font-bold line-clamp-1'>{currentContent?.garage?.garage_name || currentContent?.name}</div>
             </div>
           </div>
           <PiInfoDuotone size={32} className='mr-2 cursor-pointer' />

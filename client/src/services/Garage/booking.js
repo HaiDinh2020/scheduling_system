@@ -40,6 +40,19 @@ export const apiGetAllBooking = (garageId) => new Promise(async(resolve, reject)
     }
 })
 
+export const apiGetBookingRequest = (garageId) => new Promise(async(resolve, reject) => {
+    try {
+        const response = await axiosConfig({
+            method: 'get',
+            url: `/api/v1/booking/garage/request/${garageId}`,
+        })
+        resolve(response)
+    
+    } catch (error) {
+        reject(error)
+    }
+})
+
 export const apiGetBookingStatus = (garageId, status) => new Promise(async(resolve, reject) => {
     try {
         const response = await axiosConfig({
@@ -65,14 +78,13 @@ export const apiUpdateBookingStatus = (garageId, newStatus) => new Promise(async
     }
 })
 
-export const apiUpdateBookingGarage = (garageId, bookingId, level, estimated_time) => new Promise(async(resolve, reject) => {
+export const apiRespondToBooking = (bookingGarageId, status) => new Promise(async(resolve, reject) => {
     try {
         const response = await axiosConfig({
             method: 'put',
-            url: `/api/v1/booking/garage/${garageId}/${bookingId}`,
+            url: `/api/v1/booking/garage/request/${bookingGarageId}`,
             data: {
-                "level": level,
-                "estimated_time": estimated_time
+                "status": status
             }
         })
         resolve(response)

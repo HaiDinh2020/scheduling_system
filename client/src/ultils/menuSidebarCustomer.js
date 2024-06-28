@@ -1,6 +1,6 @@
 import icons from './icons'
 
-const { ImPencil2, BsClockHistory, BsListUl } = icons
+const { ImPencil2, RiListSettingsLine, BsListUl } = icons
 
 const memuSidebarCustomer = [
     {
@@ -17,9 +17,9 @@ const memuSidebarCustomer = [
     },
     {
         id: 3,
-        text: 'Lịch sử đặt lịch',
+        text: 'Quản lý lịch đặt',
         path: '/customer/booking-history',
-        icon: <BsClockHistory />
+        icon: <RiListSettingsLine />
     },
 ]
 

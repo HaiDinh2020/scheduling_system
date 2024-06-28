@@ -29,7 +29,7 @@ const Sidebar = ({ onMenuItemClick, chatUsers, indexActive }) => {
                                         <div className='flex items-center gap-2 my-2 p-1 '>
                                             <Avatar src={item?.avatar} size={64} className='min-w-16 min-h-16' />
                                             <div>
-                                                <div className='leading-tight font-bold line-clamp-1'>{item?.name}</div>
+                                                <div className='leading-tight font-bold line-clamp-1'>{item?.garage?.garage_name ||  item?.name}</div>
                                                 {/* <div className='leading-tight line-clamp-1'>{item.recent_mes.isYou && <span>Bạn: </span>}{item.recent_mes.content}</div> */}
                                             </div>
                                         </div>

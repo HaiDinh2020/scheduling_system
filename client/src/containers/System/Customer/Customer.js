@@ -22,7 +22,7 @@ const Customer = () => {
         <div className='w-full h-screen flex flex-col items-center'>
             <Header />
             <Navigation />
-            <div className='flex w-full flex-auto pt-2'>
+            <div className='flex w-full flex-auto pt-2 mt-4'>
                 <div className='w-1/4 '>
                     <Sidebar />
                 </div>

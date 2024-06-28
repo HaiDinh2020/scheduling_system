@@ -135,7 +135,7 @@ const UpdateTaskModal = ({ isModalOpen, setIsModalOpen, socket, taskData, setTas
                         rules={[{ required: true, message: 'Vui lòng đặt trạng thái!' }]}
                     >
                         <Select defaultValue={"select"} onChange={handleStatusChange}>
-                            <Select.Option value='pending'>Pending</Select.Option>
+                            <Select.Option value='assigned'>Assigned</Select.Option>
                             <Select.Option value='in_progress'>In progress</Select.Option>
                             <Select.Option value='completed'>Completed</Select.Option>
                         </Select>

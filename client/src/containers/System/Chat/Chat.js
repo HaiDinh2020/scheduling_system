@@ -7,11 +7,12 @@ import Sidebar from './Sidebar'
 import Message from './Message'
 import { apigetChatPartners } from '../../../services/message'
 import { ToastContainer, toast } from 'react-toastify'
+import { message } from 'antd'
 
 
 const Chat = () => {
 
-  const {state} = useLocation()
+  const { state } = useLocation()
   const chatUser = state;
 
 
@@ -29,12 +30,24 @@ const Chat = () => {
 
   useEffect(() => {
     const getChatPartners = async () => {
-      const response = await apigetChatPartners();
-      if (response.data?.err === 0) {
-        setChatPartners(response.data?.response)
-      } else {
-        toast(response.data?.msg)
+      try {
+        const response = await apigetChatPartners();
+        console.log(response)
+        if (response.data?.err === 0) {
+          setChatPartners(response.data?.response)
+        } else {
+          toast(response.data?.msg)
+        }
+      } catch (error) {
+        if (error.response) {
+          message.error(error.response.data.msg || "Server error");
+        } else if (error.request) {
+          message.error("Network error");
+        } else {
+          message.error("Unexpected error");
+        }
       }
+
     }
     if (isLoggedIn) {
       getChatPartners()
@@ -43,16 +56,16 @@ const Chat = () => {
 
   useEffect(() => {
     // nếu có chat user (từ homepage click vào)
-    if(chatUser) {
+    if (chatUser) {
       // check xem có phải là người mới không
-      const isNewChat =  chatPartners.find((user, index) => {
+      const isNewChat = chatPartners.find((user, index) => {
         if (user.id === chatUser?.id) {
           setIndexActive(index)
           return true;
         }
         return false;
       })
-  
+
       // nếu là người mới
       if (!isNewChat) {
         setIndexActive(0)
