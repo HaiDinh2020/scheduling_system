@@ -55,6 +55,9 @@ export const createBookingServices = (customer_id, car_id, status, services, des
             if (garages.length === 0) {
                 radius += 5; // Tăng bán kính tìm kiếm nếu không tìm thấy garage
             }
+            if(radius > 15) {
+                return reject("Không tìm thấy chi nhánh nào xung quanh bạn")
+            }
         }
         console.log(garages)
 
@@ -376,7 +379,7 @@ export const updateStatusBookingServices = (bookingId, newStatus) => new Promise
     }
 })
 
-// update garage for booking
+// update garage for booking==> use below function
 export const updateBookingGarageServices = (garageId, bookingId, level, estimated_time) => new Promise(async (resolve, reject) => {
     try {
         const booking = await db.Booking.findOne({ where: { id: bookingId } });

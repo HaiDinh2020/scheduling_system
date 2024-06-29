@@ -16,6 +16,14 @@ const { Option } = Select;
 const { FaMapMarkerAlt } = icons
 const { Step } = Steps;
 
+const listDevicesMaintenance = [
+    "BẢO DƯỠNG NHANH CẤP 1 (MỐC 5.000 KM)",
+    "BẢO DƯỠNG NHANH CẤP 2 (MỐC 10.000 KM)",
+    "BẢO DƯỠNG NHANH CẤP 3 (MỐC 15.000 KM)",
+    "BẢO DƯỠNG NHANH CẤP 4 (MỐC 30.000 KM)",
+    "BẢO DƯỠNG SAU SỬA CHỮA",
+]
+
 const generateTimeSlots = (start, end) => {
     const slots = [];
     let currentTime = new Date(start.getTime());
@@ -55,6 +63,7 @@ const BookingMaintenance = ({ socket }) => {
 
     const [selectedGarage, setSelectedGarage] = useState(null);
     const [selectedCar, setSelectedCar] = useState(null)
+    const [selectedDevices, setSelectedDevices] = useState(null)
     const [selectedMechanic, setSelectedMechanic] = useState()
     const [selectedTime, setSelectedTime] = useState({ startTime: null, endTime: null })
     const [address, setAddress] = useState("")
@@ -145,8 +154,8 @@ const BookingMaintenance = ({ socket }) => {
             exactAddress: exactAddress,
             pickupOption: pickupOption,
             mechanic_id: selectedMechanic,
-            title: "bao duong " ,
-            description: "bao duong cho khach hang ",
+            title: "bao duong ",
+            description: selectedDevices,
             startTime: startTime,
             endTime: endTime
         }
@@ -216,6 +225,32 @@ const BookingMaintenance = ({ socket }) => {
             ),
         },
         {
+            title: 'Chọn Xe',
+            content: (
+                <Select placeholder="Chọn xe" style={{ minWidth: "130px" }} onSelect={(value) => { setSelectedCar(value) }}>
+                    {cars.length > 0 && cars.map((item, index) => {
+                        return (
+                            <Option key={index} value={item.id}>{item.number_plate}</Option>
+                        )
+                    })}
+                </Select>
+            ),
+        },
+
+        {
+            title: 'Chọn loại dịch vụ',
+            content: (
+                <Select placeholder="Chọn dịch vụ" style={{ minWidth: "300px" }} onSelect={(value) => { setSelectedDevices(value) }}>
+                    {listDevicesMaintenance.map((device, index) => {
+                        return (
+                            <Option key={index} value={device} >{device}</Option>
+                        )
+                    })}
+                </Select>
+            ),
+        },
+
+        {
             title: 'Chọn Garage',
             content: (
                 <Radio.Group onChange={e => setSelectedGarage(e.target.value)} value={selectedGarage}>
@@ -230,18 +265,6 @@ const BookingMaintenance = ({ socket }) => {
                         )}
                     />
                 </Radio.Group>
-            ),
-        },
-        {
-            title: 'Chọn Xe',
-            content: (
-                <Select placeholder="Chọn xe" style={{ minWidth: "130px" }} onSelect={(value) => { setSelectedCar(value) }}>
-                    {cars.length > 0 && cars.map((item, index) => {
-                        return (
-                            <Option key={index} value={item.id}>{item.number_plate}</Option>
-                        )
-                    })}
-                </Select>
             ),
         },
         {
@@ -295,33 +318,69 @@ const BookingMaintenance = ({ socket }) => {
     ];
 
     return (
-        <div className="w-[90%] bg-white rounded-md shadow-sm p-4">
-            <Steps current={currentStep}>
-                {steps.map(item => (
-                    <Step key={item.title} title={item.title} />
-                ))}
-            </Steps>
-            <div className="steps-content">
-                <div className='justify-center flex my-3'>
-                    {steps[currentStep].content}
+        <div className='w-full flex flex-col items-center'>
+            <div className="w-[90%] bg-white rounded-md shadow-sm p-4 min-h-96  flex flex-col justify-between">
+                <Steps current={currentStep}>
+                    {steps.map(item => (
+                        <Step key={item.title} title={item.title} />
+                    ))}
+                </Steps>
+                <div className="steps-content">
+                    <div className='justify-center flex my-3'>
+                        {steps[currentStep].content}
+                    </div>
+                </div>
+                <div className="steps-action ">
+                    {currentStep < steps.length - 1 && (
+                        <Button type="primary" onClick={() => next()}>
+                            Next
+                        </Button>
+                    )}
+                    {currentStep === steps.length - 1 && (
+                        <Button type="primary" onClick={handleBookingMaintenance}>
+                            Đặt lịch
+                        </Button>
+                    )}
+                    {currentStep > 0 && (
+                        <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
+                            Previous
+                        </Button>
+                    )}
                 </div>
             </div>
-            <div className="steps-action ">
-                {currentStep < steps.length - 1 && (
-                    <Button type="primary" onClick={() => next()}>
-                        Next
-                    </Button>
-                )}
-                {currentStep === steps.length - 1 && (
-                    <Button type="primary" onClick={handleBookingMaintenance}>
-                        Đặt lịch
-                    </Button>
-                )}
-                {currentStep > 0 && (
-                    <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
-                        Previous
-                    </Button>
-                )}
+            <div className='w-[90%] my-3 p-4 bg-white flex flex-col items-center rounded-md shadow-sm'>
+                <div className='font-bold text-black text-lg'>
+                    LỊCH TRÌNH BẢO DƯỠNG NHANH DÀNH CHO XE Ô TÔ
+                </div>
+                <div className='flex flex-col gap-3'>
+                    <div>
+                        <div className='font-semibold'>BẢO DƯỠNG NHANH CẤP 1 (MỐC 5.000 KM)  </div>
+                        <div className='ml-3'> Vệ sinh thổi bụi khoang máy, lọc gió động cơ và điều hòa, thay nhớt máy, khung gầm, hệ thống đèn, phanh. </div>
+                    </div>
+
+                    <div>
+                        <div className='font-semibold'> BẢO DƯỠNG NHANH CẤP 2 (MỐC 10.000 KM)  </div>
+                        <div className='ml-3'>
+                            Vệ sinh thổi bụi khoang máy, lọc gió động cơ và điều hòa, thay nhớt máy,
+                            khung gầm, hệ thống đèn, phanh, thay lọc nhớt, đảo lốp, kiểm tra góc bánh xe, hệ thống bôi trơn.
+                        </div>
+                    </div>
+                    <div>
+                        <div className='font-semibold'> BẢO DƯỠNG NHANH CẤP 3 (MỐC 15.000 KM)  </div>
+                        <div className='ml-3'>
+                            Vệ sinh thổi bụi khoang máy, lọc gió động cơ và điều hòa, thay nhớt máy, khung gầm,
+                            hệ thống đèn, phanh, thay lọc nhớt, đảo lốp, kiểm tra góc bánh xe, hệ thống bôi trơn, vệ sinh họng hút bướm ga, can không tải.
+                        </div>
+                    </div>
+
+                    <div >
+                        <div className='font-semibold'> BẢO DƯỠNG NHANH CẤP 4 (MỐC 30.000 KM)  </div>
+                        <div className='ml-3'>
+                        Vệ sinh thổi bụi khoang máy, lọc gió động cơ và điều hòa, thay nhớt máy, khung gầm, hệ thống đèn, phanh, thay lọc nhớt, đảo lốp, kiểm tra góc bánh xe, 
+                        hệ thống bôi trơn, vệ sinh họng hút bướm ga, can không tải, thay dầu hộp số, trợ lực, dầu phanh, lọc nhiên liệu, hệ thống động cơ, nước làm mát, kim phun buồng đốt, máy đề.
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );

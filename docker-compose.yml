@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: m@tKhaumysql
+      MYSQL_DATABASE: datn2
+    ports:
+      - "3309:3306"
+    networks:
+      - mynetwork
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    environment:
+      PORT: 5000
+      CLIENT_URL: http://localhost:3000
+      CLIENT_URL_FORWARD: https://zv440rvb-3000.asse.devtunnels.ms
+      SECRET_KEY: taladinhhuuhai
+      REFRESH_TOKEN_SECRET: refreshdinhhuuhai
+      DB_HOST: mysql
+      DB_NAME: datn2
+      DB_USER: root
+      DB_PASS: m@tKhaumysql
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mysql
+    networks:
+      - mynetwork
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    environment:
+      REACT_APP_SERVER_URL: "https://zv440rvb-5000.asse.devtunnels.ms"
+      REACT_APP_UPLOAD_IMAGES_NAME: "ibauvlf4"
+      REACT_APP_UPLOAD_AVATAR_NAME: "mdztmacc"
+      REACT_APP_CLOUD_NAME: "dmrsdkvzl"
+    ports:
+      - "3000:3000"
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge

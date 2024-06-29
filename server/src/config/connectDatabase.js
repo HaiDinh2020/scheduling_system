@@ -1,20 +1,29 @@
 const { Sequelize } = require('sequelize');
-
-
-const sequelize = new Sequelize('datn2', 'root', 'm@tKhaumysql', {
-  host: 'localhost',
-  dialect: 'mysql',
-  logging:false,
-  timezone: '+07:00'
-});
+const sequelize = new Sequelize(
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASS,
+  {
+    dialect: 'mysql',
+    host: 'localhost',
+    logging: false,
+    timezone: '+07:00',
+    dialectOptions: {
+      requestTimeout: 30000,
+      encrypt: true
+    }
+  },
+  
+);
 
 const connectDatabase = async () => {
-    try {
-        await sequelize.authenticate();
-        console.log('Connection has been established successfully.');
-      } catch (error) {
-        console.error('Unable to connect to the database:', error);
-      }
-}
+  try {
+    await sequelize.authenticate();
+    
+    console.log('Connection has been established successfully.');
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+  }
+};
 
-export default connectDatabase;
+module.exports = connectDatabase;
