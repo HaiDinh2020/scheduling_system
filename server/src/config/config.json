@@ -3,9 +3,8 @@
     "username": "root",
     "password": "m@tKhaumysql",
     "database": "datn2",
-    "host": "127.0.0.1",
-    "dialect": "mysql",
-    "port": 3306
+    "host": "mysql",
+    "dialect": "mysql"
   },
   "test": {
     "username": "root",
