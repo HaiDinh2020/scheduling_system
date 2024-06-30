@@ -12,4 +12,6 @@ chạy lệnh npm i
 
 Chạy ứng dụng:
 
-chạy lệnh docker-compose up --build
+cách 1:chạy lệnh docker-compose up --build
+
+cách 2: vào config trong folder config của server. Sửa host thành 127.0.0.1 sau đó chạy npm start để chạy local cho server và client
