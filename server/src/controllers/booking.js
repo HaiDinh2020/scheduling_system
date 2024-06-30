@@ -1,3 +1,5 @@
+import { Op } from 'sequelize';
+import db, { sequelize } from '../models';
 import * as BookingServices from '../services/booking';
 import { validateExactAdrress } from "../validators/Validator"
 
@@ -223,6 +225,103 @@ export const respondToBooking = async (req, res) => {
     }
 }
 
-// booking maintenance
+// test
 
+export const testFindNearestGarages = async (req, res) => {
+    try {
+        let garages = [];
+        let radius = 10; // Bán kính ban đầu
+        const limit = 2;
+        while (garages.length === 0) {
+            garages = await findNearestGarages("21.0308, 105.8014", 2, radius);
 
+            if (garages.length === 0) {
+                radius += 5; // Tăng bán kính tìm kiếm nếu không tìm thấy garage
+            }
+            if(radius > 15) {
+                return reject("Không tìm thấy chi nhánh nào xung quanh bạn")
+            }
+        }
+        return res.status(200).json({
+            response: garages
+        })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({err: error})
+    }
+}
+
+const findNearestGarages = async (exactAddress, numGarage, maxDistance) => {
+    const [latitude, longitude] = exactAddress.split(", ").map(coord => parseFloat(coord));
+
+    const boundingBox = (latitude, longitude, distance) => {
+        const earthRadius = 6371;
+    
+        // Convert từ độ sang radian
+        const radLat = (latitude * Math.PI) / 180;
+        const radLon = (longitude * Math.PI) / 180;
+        const radDist = distance / earthRadius;
+    
+        // Tính toán vĩ độ tối thiểu và tối đa
+        const minLat = radLat - radDist;
+        const maxLat = radLat + radDist;
+    
+        // Tính toán kinh độ tối thiểu và tối đa
+        const deltaLon = Math.asin(Math.sin(radDist) / Math.cos(radLat));
+        const minLon = radLon - deltaLon;
+        const maxLon = radLon + deltaLon;
+    
+        // Convert từ radian sang độ
+        const minLatDeg = (minLat * 180) / Math.PI;
+        const maxLatDeg = (maxLat * 180) / Math.PI;
+        const minLonDeg = (minLon * 180) / Math.PI;
+        const maxLonDeg = (maxLon * 180) / Math.PI;
+    
+        return {
+            minLat: minLatDeg,
+            maxLat: maxLatDeg,
+            minLon: minLonDeg,
+            maxLon: maxLonDeg,
+        };
+    };
+
+    const { minLat, maxLat, minLon, maxLon } = boundingBox(latitude, longitude, maxDistance);
+
+    const haversineFormula = `
+            6371 * acos(
+            cos(radians(${latitude})) * cos(radians(latitude))
+            * cos(radians(longitude) - radians(${longitude}))
+            + sin(radians(${latitude})) * sin(radians(latitude))
+            )
+        `;
+
+    try {
+        const nearGarage = await db.Garage.findAll({
+            attributes: {
+                include: [
+                    [sequelize.literal(haversineFormula), 'distance'],
+                ]
+            },
+            where: {
+                latitude: {
+                    [Op.between]: [minLat, maxLat]
+                },
+                longitude: {
+                    [Op.between]: [minLon, maxLon]
+                }
+            },
+            order: [
+                sequelize.col('distance')
+            ],
+            having: sequelize.where(
+                sequelize.col('distance'),
+                { [Op.lte]: maxDistance } // 5 km
+            ),
+            limit: numGarage
+        });
+        return nearGarage;
+    } catch (error) {
+        console.log(error)
+        return []
+    }
+}

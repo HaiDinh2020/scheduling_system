@@ -152,13 +152,47 @@ export const createBookingMaintenanceServices = (
     }
 })
 
-const findNearestGarages = async (exactAddress, numGarage, maxDistance) => {
+const findNearestGarages = async (exactAddress, numGarage, maxDistance, excludedGarageIds = []) => {
     const [latitude, longitude] = exactAddress.split(", ").map(coord => parseFloat(coord));
+
+    const boundingBox = (latitude, longitude, distance) => {
+        const earthRadius = 6371;
+    
+        // Convert từ độ sang radian
+        const radLat = (latitude * Math.PI) / 180;
+        const radLon = (longitude * Math.PI) / 180;
+        const radDist = distance / earthRadius;
+    
+        // Tính toán vĩ độ tối thiểu và tối đa
+        const minLat = radLat - radDist;
+        const maxLat = radLat + radDist;
+    
+        // Tính toán kinh độ tối thiểu và tối đa
+        const deltaLon = Math.asin(Math.sin(radDist) / Math.cos(radLat));
+        const minLon = radLon - deltaLon;
+        const maxLon = radLon + deltaLon;
+    
+        // Convert từ radian sang độ
+        const minLatDeg = (minLat * 180) / Math.PI;
+        const maxLatDeg = (maxLat * 180) / Math.PI;
+        const minLonDeg = (minLon * 180) / Math.PI;
+        const maxLonDeg = (maxLon * 180) / Math.PI;
+    
+        return {
+            minLat: minLatDeg,
+            maxLat: maxLatDeg,
+            minLon: minLonDeg,
+            maxLon: maxLonDeg,
+        };
+    };
+
+    const { minLat, maxLat, minLon, maxLon } = boundingBox(latitude, longitude, maxDistance);
+
     const haversineFormula = `
             6371 * acos(
-            cos(radians(${latitude})) * cos(radians(cast(substring_index(exactAddress, ', ', 1) as DECIMAL(10, 6))))
-            * cos(radians(cast(substring_index(exactAddress, ', ', -1) as DECIMAL(10, 6))) - radians(${longitude}))
-            + sin(radians(${latitude})) * sin(radians(cast(substring_index(exactAddress, ', ', 1) as DECIMAL(10, 6))))
+            cos(radians(${latitude})) * cos(radians(latitude))
+            * cos(radians(longitude) - radians(${longitude}))
+            + sin(radians(${latitude})) * sin(radians(latitude))
             )
         `;
 
@@ -183,18 +217,30 @@ const findNearestGarages = async (exactAddress, numGarage, maxDistance) => {
                     ]
                 }
             ],
+            where: {
+                latitude: {
+                    [Op.between]: [minLat, maxLat]
+                },
+                longitude: {
+                    [Op.between]: [minLon, maxLon]
+                },
+                id: {
+                    [Op.notIn]: excludedGarageIds
+                }
+            },
+            order: [
+                ['score', 'DESC'], 
+                sequelize.col('distance')
+            ],
             having: sequelize.where(
-                sequelize.literal(haversineFormula),
+                sequelize.col('distance'),
                 { [Op.lte]: maxDistance } // 5 km
             ),
-            order: [
-                ['score', 'DESC'], // Order by score descending
-                sequelize.col('distance') // Then order by distance
-            ],
             limit: numGarage
         });
         return nearGarage;
     } catch (error) {
+        console.log(error)
         return []
     }
 }
@@ -481,8 +527,10 @@ export const respondToBookingService = (bookingGarageId, status) => new Promise(
             });
 
             if (otherGarageBookings.length === 0) {
-                const nearestGarages = await findNearestGarages(booking.exactAddress, 2, 5);
-                const otherGarages = nearestGarages.filter(garage => garage.id !== garageBooking.garage_id);
+                const beforeGarageBookings = await db.BookingGarage.findAll({ where: {booking_id: booking.id, status: 'rejected', id: { [Op.ne]: garageBooking.id }}})
+                const beforeGarageIds = beforeGarageBookings.map(bookingGarage => bookingGarage.garage_id);
+                const otherGarages = await findNearestGarages(booking.exactAddress, 2, 10, beforeGarageIds);
+                // const otherGarages = nearestGarages.filter(garage => garage.id !== garageBooking.garage_id);
 
                 for (const garage of otherGarages) {
                     await db.BookingGarage.create({ id: v4(), garage_id: garage.id, booking_id: booking.id, status: 'pending' })
@@ -506,53 +554,4 @@ export const respondToBookingService = (bookingGarageId, status) => new Promise(
     }
 })
 
-
-const findAvailableMechanic = async (garageId) => {
-    const currentTime = new Date();
-
-    console.log("currentTime")
-    console.log(currentTime)
-
-    const mechanic = await db.Mechanic.findOne({
-        where: {
-            garage_id: garageId,
-            id: {
-                [Op.notIn]: Sequelize.literal(
-                    `(SELECT mechanic_id FROM appointments WHERE startTime <= NOW() AND endTime >= NOW())`
-                )
-            }
-        },
-
-    });
-
-    return mechanic;
-};
-
-// sẽ gọi lại 2 garage khác khi cả 2 garage kia đều từ chối
-export const handleRejectRequestBookingServices = (garageId, bookingId) => new Promise(async (resolve, reject) => {
-    try {
-        const booking = await db.Booking.findOne({ where: { id: bookingId } });
-
-        if (!booking) {
-            reject("booking not found")
-        } else {
-            if (booking.garage_id !== null) {
-                const response = await booking.update({ garage_id: garageId })
-
-                resolve({
-                    err: 0,
-                    msg: "update garage booking success",
-                    response
-                })
-            } else {
-                resolve({
-                    err: 1,
-                    msg: "Booking has already been accepted"
-                });
-            }
-        }
-    } catch (error) {
-        reject(error)
-    }
-})
 

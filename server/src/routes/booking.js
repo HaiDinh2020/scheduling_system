@@ -23,5 +23,6 @@ router.get('/garage/:garageId', (req, res, next) => {
     }
 })
 
+router.get("/test", bookingController.testFindNearestGarages)
 
 export default router;

@@ -198,7 +198,7 @@ const Schedule = ({ socket }) => {
                         :
                         <Button text={"lịch bảo dưỡng"} bgcolor={"bg-green-400"} textcolor={'text-white'} onClick={(e) => handleScheduleMaintenance(booking)} />
                     }
-                    <Popconfirm
+                    {/*<Popconfirm
                         placement="topLeft"
                         title={"Xác nhận xóa lịch hẹn"}
                         description={"Lý do xóa"}
@@ -206,7 +206,7 @@ const Schedule = ({ socket }) => {
                         cancelText="No"
                     >
                         <Button text={"Xóa"} bgcolor={"bg-red-400"} textcolor={'text-white'} onClick={(e) => handleChangeStatus(bookingId, "reject")} />
-                    </Popconfirm>
+                    </Popconfirm>*/}
 
                 </div>
             )

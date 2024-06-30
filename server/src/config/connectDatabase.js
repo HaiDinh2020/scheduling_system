@@ -8,10 +8,6 @@ const sequelize = new Sequelize(
     host: 'localhost',
     logging: false,
     timezone: '+07:00',
-    dialectOptions: {
-      requestTimeout: 30000,
-      encrypt: true
-    }
   },
   
 );
