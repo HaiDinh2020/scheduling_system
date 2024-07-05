@@ -107,7 +107,7 @@ const BookingHistory = () => {
             render: (_, record) => (
                 <div>
                     {
-                        record.status === "request"
+                        record.status === "request" || record.status === "schedule"
                             ?
                             <Space className='items-center' size="large">
                                 <Popconfirm

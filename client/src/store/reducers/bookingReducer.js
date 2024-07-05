@@ -34,13 +34,8 @@ const bookingReducer = (state = initState, action) => {
 
         case actionTypes.CANCEL_BOOKING:
             if (action.data.err === 0) {
-                const { bookingId, newStatus } = action.data;
-                const updatedBookings = state.customerBookingData?.map(booking => {
-                    if (booking.id === bookingId) {
-                        return { ...booking, status: newStatus };
-                    }
-                    return booking;
-                });
+                const { bookingId } = action.data;
+                const updatedBookings = state.customerBookingData?.filter(booking => booking.id !== bookingId)
                 return {
                     ...state,
                     customerBookingData: updatedBookings
@@ -50,6 +45,7 @@ const bookingReducer = (state = initState, action) => {
                     ...state,
                 }
             }
+
         case actionTypes.GET_ALL_BOOKING_CUSTOMER:
             return {
                 ...state,
@@ -63,7 +59,7 @@ const bookingReducer = (state = initState, action) => {
                 garageBookingData: newBookingRequest
             }
 
-        case actionTypes.DELETE_GARAGE_BOOKING:
+        case actionTypes.GARAGE_DELETE_BOOKING:
             return {
                 ...state,
                 garageBookingData: state.garageBookingData.filter(booking => booking.id !== action.data.bookingId)

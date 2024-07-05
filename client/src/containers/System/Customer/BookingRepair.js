@@ -68,6 +68,8 @@ const BookingRepair = ({socket}) => {
 
             navigate("/customer/booking-history")
             
+        } else {
+            console.log(booking)
         }
     };
 

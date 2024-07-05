@@ -6,10 +6,10 @@ import checkIsGarage from '../middlewares/checkIsGarage'
 const router = express.Router()
 
 router.use(verifyToken)
-router.post('/customer', checkIsGarage,  bookingController.createBooking)
+router.post('/customer', checkIsGarage, bookingController.createBooking)
 router.post('/customer/maintenance', bookingController.createBookingMaintenance)
 router.get('/customer', bookingController.getAllBookingCustomer)
-router.put('/customer/:bookingId', bookingController.cancelBooking)
+router.delete('/customer/:bookingId', bookingController.cancelBooking)
 
 router.put("/garage/request/:bookingGarageId", bookingController.respondToBooking)
 router.put('/garage/:bookingId', bookingController.updateStatusBooking)

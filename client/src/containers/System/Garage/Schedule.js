@@ -69,6 +69,14 @@ const Schedule = ({ socket }) => {
         }
     }
 
+    const handleDeleteBookingMaintenance = (bookingId) => {
+        if(bookingId) {
+            dispatch(actions.garageDeleteBookingMaintenance(bookingId))
+        } else {
+            message.info("Something eror, please reload page")
+        }
+    }
+
     const showConfirm = () => {
 
     }
@@ -153,7 +161,7 @@ const Schedule = ({ socket }) => {
                         bgcolor={"bg-red-400"}
                         textcolor={'text-white'}
                         onClick={(e) => {
-                            handleChangeStatus(bookingId, "reject")
+                            handleDeleteBookingMaintenance(bookingId)
                         }} />
                 </div>
             )
@@ -186,17 +194,17 @@ const Schedule = ({ socket }) => {
             return (
                 <div className='flex justify-end gap-2'>
                     {
+                        booking?.maintenance?.id === null 
+                        ?
+                        <Button text={"Lên lịch bảo dưỡng"} bgcolor={"bg-gray-400"} textcolor={'text-white'} onClick={(e) => handleScheduleMaintenance(booking)} />
+                        :
+                        <Button text={"lịch bảo dưỡng"} bgcolor={"bg-green-400"} textcolor={'text-white'} onClick={(e) => handleScheduleMaintenance(booking)} />
+                    }
+                    {
                         booking?.invoice?.id !== null &&
                         (<>
                             <Button text={"Hóa đơn"} bgcolor={"bg-blue-400"} textcolor={'text-white'} onClick={(e) => handleViewInvoice(booking)} />
                         </>)
-                    }
-                    {
-                        booking?.maintenance?.id === null 
-                        ?
-                        <Button text={"Lên lịch bảo dưỡng"} bgcolor={"bg-green-400"} textcolor={'text-white'} onClick={(e) => handleScheduleMaintenance(booking)} />
-                        :
-                        <Button text={"lịch bảo dưỡng"} bgcolor={"bg-green-400"} textcolor={'text-white'} onClick={(e) => handleScheduleMaintenance(booking)} />
                     }
                     {/*<Popconfirm
                         placement="topLeft"
@@ -210,13 +218,7 @@ const Schedule = ({ socket }) => {
 
                 </div>
             )
-        } else {
-            return (
-                <div className='flex justify-end gap-2'>
-                    <Button text={"Xóa"} bgcolor={"bg-red-400"} textcolor={'text-white'} onClick={showConfirm} />
-                </div>
-            )
-        }
+        } 
     }
 
     return (

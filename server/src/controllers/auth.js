@@ -53,7 +53,7 @@ export const register = async (req, res) => {
                     msg: "Missing input!"
                 })
             }
-
+            console.log(exactAddress, exactAddress.split(", "))
             // validate garage 
             if(!validateExactAdrress(exactAddress)) {
                 return res.status(400).json({
@@ -62,6 +62,14 @@ export const register = async (req, res) => {
                 });
             }
 
+        } else if (role === 'mechanic') {
+            const {garage_id, major} = req.body
+            if(!garage_id ||  !major) {
+                return res.status(400).json({
+                    err: 1,
+                    msg: "Missing input"
+                })
+            }
         }
 
         const response = await registerService(req.body)

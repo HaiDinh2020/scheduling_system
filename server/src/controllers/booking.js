@@ -39,7 +39,7 @@ export const createBooking = async (req, res) => {
         console.log(error)
         res.status(500).json({
             err: -1,
-            msg: 'Fail to create schedule' + error,
+            msg: 'Fail to create schedule ' + error,
         })
     }
 }
@@ -120,7 +120,8 @@ export const getAllBooking = async (req, res) => {
 export const cancelBooking = async (req, res) => {
     try {
         const bookingId = req.params.bookingId
-        const response = await BookingServices.updateStatusBookingServices(bookingId, "cancelled")
+        const whoDelete = req.user.role;
+        const response = await BookingServices.cancelBookingServices(bookingId, whoDelete)
         res.status(200).json(response)
     } catch (error) {
         console.log(error)

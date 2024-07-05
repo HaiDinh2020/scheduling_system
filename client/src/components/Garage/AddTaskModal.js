@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import { apiGetAllMechanic } from '../../services/Mechanic/mechanic';
 import { apiCreateTask } from '../../services/Garage/task';
 import moment from 'moment/moment';
-import { apiGetAllBooking } from '../../services/Garage/booking';
+import { getBookingStatus } from '../../store/actions';
 
 const AddTaskModal = ({ isModalOpen, setIsModalOpen, socket, setTasks }) => {
 
@@ -23,7 +23,7 @@ const AddTaskModal = ({ isModalOpen, setIsModalOpen, socket, setTasks }) => {
 
     const getAllBooking = async (garageId) => {
         try {
-            const response = await apiGetAllBooking(garageId)
+            const response = await getBookingStatus(garageId, "in-progress")
 
             if (response?.data?.err === 0) {
                 setAllBooking(response?.data?.response)
@@ -109,7 +109,7 @@ const AddTaskModal = ({ isModalOpen, setIsModalOpen, socket, setTasks }) => {
                         rules={[{ required: true, message: 'Vui lòng chọn nhiệm vụ cho xe!' }]}
                     >
                         <Select  onChange={handleBookingIdChange}>
-                            {allBooking.length > 0 && allBooking.filter((booking) => booking.status === "in-progress").map((booking, index) => {
+                            {allBooking.length > 0 && allBooking.map((booking, index) => {
                                 const value=booking?.car.make + " " + booking?.car.model + " " + booking?.car.number_plate
                                 return (
                                     <Select.Option key={index} value={booking.id} >{value}</Select.Option>

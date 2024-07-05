@@ -89,6 +89,11 @@ const Task = () => {
         setIsUpdateTaskModalOpen(true)
     }
 
+    // if (booking of task not in-progress) thì not change
+    const updateAssignTask = (task) => {
+        console.log()
+    }
+
     const filteredTasks = tasks.filter(task => {
         let matchCar = true;
         let matchStatus = true;
@@ -240,7 +245,7 @@ const Task = () => {
                                             )
                                             : status === "assigned" ?
                                                 (
-                                                    <Button type='text' icon={<MdOutlineAssignmentInd color={taskStatusColors[status]} size={20} onClick={() => updateTask(task)} />} />
+                                                    <Button type='text' icon={<MdOutlineAssignmentInd color={taskStatusColors[status]} size={20} onClick={() => updateAssignTask(task)} />} />
                                                 )
                                                 : status === "in_progress" ?
                                                     (

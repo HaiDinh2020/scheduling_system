@@ -36,7 +36,7 @@ export const createAppointment = async (req, res) => {
                 msg: "Mechanic not found"
             })
 
-        const response = await AppointmentServices.createAppointmentServices(mechanic_id, title, description, startTime, endTime, createBy)
+        const response = await AppointmentServices.createAppointmentServices(mechanic_id, null, title, description, startTime, endTime, 'todo', createBy)
         res.status(200).json(response)
     } catch (error) {
         console.log(error)
@@ -59,6 +59,53 @@ export const getAppointment = async (req, res) => {
             })
 
         const response = await AppointmentServices.GetAppointmentServices(mechanic_id)
+        return res.status(200).json(response)
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            err: -1,
+            msg: 'Fail to get appointment ' + error,
+        })
+    }
+}
+
+export const updateAppointment = async (req, res) => {
+    try {
+        const { appointmentId } = req.params
+        const { title, description } = req.body
+
+        const response = await AppointmentServices.UpdateAppointmentServices(appointmentId, title, description)
+        return res.status(200).json(response)
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            err: -1,
+            msg: 'Fail to get appointment ' + error,
+        })
+    }
+}
+
+export const changeStatusAppointment = async (req, res) => {
+    try {
+        const { appointmentId } = req.params
+        const { status } = req.body
+
+        const response = await AppointmentServices.changeStatusAppointmentServices(appointmentId, status)
+        return res.status(200).json(response)
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            err: -1,
+            msg: 'Fail to get appointment ' + error,
+        })
+    }
+}
+
+export const deleteAppointment = async (req, res) => {
+    try {
+        const { appointmentId } = req.params
+    
+        const response = await AppointmentServices.deleteAppointmentServices(appointmentId)
         return res.status(200).json(response)
     } catch (error) {
         console.log(error)

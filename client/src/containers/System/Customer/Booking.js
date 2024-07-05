@@ -1,13 +1,15 @@
-import { Image, Radio } from 'antd';
-import React, { useState } from 'react'
-import BookingMaintenance from './BookingMaintenance';
-import BookingRepair from './BookingRepair';
-import { useNavigate } from 'react-router-dom';
+import React from 'react'
+import { Navigate, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { path } from '../../../ultils/constants';
 
 const Booking = ({ socket }) => {
 
+    const { isLoggedIn } = useSelector(state => state.auth)
+
     const navigate = useNavigate()
 
+    if (!isLoggedIn) return <Navigate to={`/${path.LOGIN}`} replace={true} />
 
     return (
         <div className="w-full p-2 ">
