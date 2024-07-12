@@ -71,7 +71,7 @@ export const getTaskServices = (garage_id) => new Promise(async (resolve, reject
             where: { garage_id: garage_id },
             include: [
                 { 
-                    model: db.Booking, as: 'belong_booking', attributes: ['status'],
+                    model: db.Booking, as: 'belong_booking', attributes: ['status', 'booking_date'],
                     include: [
                         { model: db.Car, as: 'car', attributes: ['make', 'model', 'number_plate'] },
                     ]

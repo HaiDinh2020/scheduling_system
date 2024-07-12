@@ -89,3 +89,43 @@ export const deleteMaintenaceScheduleServices = (maintenance_id) => new Promise(
         reject(error)
     }
 })
+
+export const checkMaintenanceScheduleServices = (garage_id, number_plate) => new Promise(async (resolve, reject) => {
+    try {
+        const car = await db.Car.findOne({where: {number_plate: number_plate }})
+
+        if(!car) {
+            return reject("Không tìm thấy thông tin")
+        } else {
+
+            const booking = await db.Booking.findAll({
+                where: {car_id: car.id, garage_id: garage_id},
+                include: [{
+                    model: db.MaintenanceSchedule,
+                    required: true,
+                    as: 'maintenance'
+                }],
+                attributes: ['id', 'status', 'booking_date'],
+                order: [
+                    [{ model: db.MaintenanceSchedule, as: 'maintenance' }, 'maintenanceTime', 'ASC']
+                ]
+            })
+            
+            if(!booking.length) {
+                return reject("Không tìm thấy thông tin")
+            } else {
+
+                return resolve({
+                    err: 0,
+                    msg: "success to find maintenance schedule",
+                    response: booking
+                });
+            }
+        }
+
+        
+    } catch (error) {
+        console.log(error)
+        reject(error)
+    }
+})

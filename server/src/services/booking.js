@@ -66,7 +66,7 @@ export const createBookingServices = (customer_id, car_id, status, services, des
             if (garages.length === 0) {
                 radius += 5; // Tăng bán kính tìm kiếm nếu không tìm thấy garage
             }
-            if (radius > 15) {
+            if (radius > 1500) {
                 return reject("Không tìm thấy chi nhánh nào xung quanh bạn")
             }
         }
@@ -129,16 +129,6 @@ export const createBookingMaintenanceServices = (
             return;
         }
 
-        // thêm vào task của mechanic, thời gian từ 90p-3h
-        const task = await createTaskBookingServices(description, garage_id, booking.id, mechanic_id, "medium", "assigned", startTime, 120)
-        const titleNoti = "Đặt lịch";
-        const bodyNoti = "Có lịch đặt bảo dưỡng từ khách hàng"
-        try {
-            const responseSend = await sendNotiServices(garage_id, titleNoti, bodyNoti)
-        } catch (error) {
-            console.log("gửi thông báo tới garage thất bại")
-        }
-
         // trả về data để customer hiển thị ui đặt lịch
         const bookingCreated = await db.Booking.findOne({
             where: { id: booking.id },
@@ -146,11 +136,21 @@ export const createBookingMaintenanceServices = (
             nest: true,
             include: [
                 { model: db.Car, as: 'car', attributes: ['make', 'model', 'number_plate'] },
-                { model: db.Garage, as: 'garage', attributes: ['garage_name', 'garageAddress', 'exactAddress'] },
+                { model: db.Garage, as: 'garage', attributes: ['garage_name', 'garageAddress', 'exactAddress', 'owner_id'] },
                 { model: db.User, as: 'customer', attributes: ['name', 'phone', 'avatar'] }
             ],
             attributes: ['id', 'status', 'services', 'description', 'booking_images', 'booking_date']
         });
+
+        // thêm vào task của mechanic, thời gian từ 90p-3h
+        const task = await createTaskBookingServices(description, garage_id, booking.id, mechanic_id, "medium", "assigned", startTime, 120)
+        const titleNoti = "Đặt lịch";
+        const bodyNoti = "Có lịch đặt bảo dưỡng từ khách hàng"
+        try {
+            const responseSend = await sendNotiServices(bookingCreated?.garage?.owner_id, titleNoti, bodyNoti)
+        } catch (error) {
+            console.log("gửi thông báo tới garage thất bại")
+        }
 
         resolve({
             err: 0,
@@ -296,7 +296,7 @@ export const cancelBookingServices = async (bookingId, whoDelete) => new Promise
                 { model: db.Garage, as: 'garage', attributes: ['owner_id'] },
                 { model: db.Task, as: 'task', attributes: ['id'] }
             ],
-            attributes: ['id', 'status']
+            attributes: ['id', 'status', 'customer_id']
         });
 
         if (!booking) {
@@ -312,7 +312,7 @@ export const cancelBookingServices = async (bookingId, whoDelete) => new Promise
                 const deleteBooking = await booking.destroy({ transaction })
 
                 // nếu người hủy là khách hàng thì báo đến garage, nếu là garage từ chối thì báo đến khách hàng
-                if (whoDelete === 'garage') {
+                if (whoDelete !== 'garage') {
                     let titleNoti = "Hủy Đặt lịch";
                     let bodyNoti = "Khách hàng đã hủy lịch đặt";
                     try {
@@ -401,7 +401,7 @@ export const getBookingStatusServices = (garageId, status) => new Promise(async 
                 { model: db.Invoice, as: 'invoice', attributes: ['id', 'amount', 'status', 'invoice_image'] },
                 { model: db.MaintenanceSchedule, as: 'maintenance', attributes: ['id', 'maintenanceTime', 'note'] }
             ],
-            attributes: ['id', 'status', 'services', 'description', 'booking_images', 'booking_date']
+            attributes: ['id', 'status', 'services', 'description', 'booking_images', 'booking_date', 'pickupOption', 'address']
         })
         if (!response) {
             reject("Booking not found")
@@ -612,10 +612,25 @@ export const respondToBookingService = (bookingGarageId, status) => new Promise(
             if (otherGarageBookings.length === 0) {
                 const beforeGarageBookings = await db.BookingGarage.findAll({ where: { booking_id: booking.id, status: 'rejected', id: { [Op.ne]: garageBooking.id } } })
                 const beforeGarageIds = beforeGarageBookings.map(bookingGarage => bookingGarage.garage_id);
-                const otherGarages = await findNearestGarages(booking.exactAddress, 2, 10, beforeGarageIds);
-                // const otherGarages = nearestGarages.filter(garage => garage.id !== garageBooking.garage_id);
 
-                for (const garage of otherGarages) {
+                let garages = [];
+                let limit = 2;
+                let radius = 10;
+
+                while (garages.length === 0) {
+                    garages = await findNearestGarages(booking.exactAddress, limit, radius, beforeGarageIds);
+        
+                    if (garages.length === 0) {
+                        radius += 5; // Tăng bán kính tìm kiếm nếu không tìm thấy garage
+                    }
+                    if (radius > 1500) {
+                        return reject("Không tìm thấy chi nhánh nào xung quanh bạn")
+                    }
+                }
+                // const otherGarages = await findNearestGarages(booking.exactAddress, 2, 10, beforeGarageIds);
+                // const otherGarages = nearestGarages.filter(garage => garage.id !== garageBooking.garage_id);
+                
+                for (const garage of garages) {
                     await db.BookingGarage.create({ id: v4(), garage_id: garage.id, booking_id: booking.id, status: 'pending' })
                     try {
                         const titleNoti = "Yêu cầu đặt lịch sửa chữa";
@@ -626,6 +641,7 @@ export const respondToBookingService = (bookingGarageId, status) => new Promise(
                     }
 
                 }
+            
             }
 
             return resolve({ err: 0, msg: "Booking rejected and notified other garages." });

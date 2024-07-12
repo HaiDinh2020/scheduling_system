@@ -10,7 +10,6 @@ const noAcitiveStyle = 'flex items-center justify-start gap-2 hover:bg-gray-200 
 const Sidebar = () => {
     const { garageInfor } = useSelector(state => state.garage)
     const { userCurentProfile } = useSelector(state => state.user)
-    console.log(userCurentProfile)
     return (
         <div className='w-full flex justify-center pl-2'>
             <div className='w-full justify-center rounded-xl border-2 shadow-md bg-white'>

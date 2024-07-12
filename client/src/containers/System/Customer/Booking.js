@@ -34,7 +34,7 @@ const Booking = ({ socket }) => {
                     <img color='red' src='https://png.pngtree.com/png-clipart/20210307/ourmid/pngtree-car-repair-service-vignette-png-image_3014260.jpg' alt='image_maintain' className='rounded-full w-20 h-20 bg-yellow-400' />
                     <div>
                         <div className='text-lg font-bold'>Bảo dưỡng</div>
-                        <div>Dịch vụ dành cho xe đã sửa chữa trên hệ thống</div>
+                        <div>Dịch vụ dành cho xe cần được bảo dưỡng định kỳ</div>
                     </div>
 
                 </div>

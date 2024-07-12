@@ -3,10 +3,9 @@ import { Button, DatePicker, Form, Image, Input, InputNumber, Modal, Radio, Sele
 import icons from '../../ultils/icons';
 import { Option } from 'antd/es/mentions';
 import { useSelector } from 'react-redux';
-import { apiGetAllMechanic } from '../../services/Mechanic/mechanic';
 import { apiCreateTask } from '../../services/Garage/task';
 import moment from 'moment/moment';
-import { getBookingStatus } from '../../store/actions';
+import { apiGetBookingStatus } from '../../services/Garage/booking';
 
 const AddTaskModal = ({ isModalOpen, setIsModalOpen, socket, setTasks }) => {
 
@@ -23,8 +22,7 @@ const AddTaskModal = ({ isModalOpen, setIsModalOpen, socket, setTasks }) => {
 
     const getAllBooking = async (garageId) => {
         try {
-            const response = await getBookingStatus(garageId, "in-progress")
-
+            const response = await apiGetBookingStatus(garageId, "in-progress")
             if (response?.data?.err === 0) {
                 setAllBooking(response?.data?.response)
             } else {

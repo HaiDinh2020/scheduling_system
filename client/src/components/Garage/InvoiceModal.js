@@ -22,14 +22,7 @@ const InvoiceModal = ({ isModalOpen, setIsModalOpen, booking, socket }) => {
     const [fileList, setFileList] = useState([])
     const [amount, setAmount] = useState(0)
 
-    useEffect(() => {
-        if (booking) {
-            setInitialValues({
-                customerName: booking?.customer?.name,
-                phone: booking?.customer?.phone
-            })
-        }
-    }, [booking])
+   
 
     useEffect(() => {
         if (booking?.invoice?.id) {
@@ -44,6 +37,10 @@ const InvoiceModal = ({ isModalOpen, setIsModalOpen, booking, socket }) => {
                     url: booking?.invoice?.invoice_image,
                 }
             ])
+        } 
+
+        return () => {
+            setFileList([])
         }
     }, [booking])
 

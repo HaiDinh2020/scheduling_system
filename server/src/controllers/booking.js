@@ -39,7 +39,7 @@ export const createBooking = async (req, res) => {
         console.log(error)
         res.status(500).json({
             err: -1,
-            msg: 'Fail to create schedule ' + error,
+            msg:  error,
         })
     }
 }

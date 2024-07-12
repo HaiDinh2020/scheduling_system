@@ -21,7 +21,7 @@ const listDevicesMaintenance = [
     "BẢO DƯỠNG NHANH CẤP 2 (MỐC 10.000 KM)",
     "BẢO DƯỠNG NHANH CẤP 3 (MỐC 15.000 KM)",
     "BẢO DƯỠNG NHANH CẤP 4 (MỐC 30.000 KM)",
-    "BẢO DƯỠNG SAU SỬA CHỮA",
+    "BẢO DƯỠNG THEO LỊCH HẸN",
 ]
 
 const generateTimeSlots = (start, end) => {

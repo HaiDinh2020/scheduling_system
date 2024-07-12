@@ -91,7 +91,17 @@ const Task = () => {
 
     // if (booking of task not in-progress) thì not change
     const updateAssignTask = (task) => {
-        console.log()
+        // console.log(task)
+        // const today = new Date();
+        // const year = today.getFullYear();
+        // const month = String(today.getMonth() + 1).padStart(2, '0');
+        // const day = String(today.getDate()).padStart(2, '0');
+        // if ((new Date(booking.booking_date.split("T")[0])).getTime() === (new Date(`${year}-${month}-${day}`)).getTime()) {
+        //     handleChangeStatus(bookingId, "in-progress")
+        // } else {
+        //     message.error("Hôm nay không phải lịch hẹn")
+        // }
+        // if (task?.belong_booking?.)
     }
 
     const filteredTasks = tasks.filter(task => {
@@ -109,7 +119,6 @@ const Task = () => {
         return matchCar && matchStatus;
     });
 
-    console.log(filteredTasks)
     return (
         <div >
             <div className="flex-1 ml-2 ">
@@ -215,7 +224,7 @@ const Task = () => {
 
                                 <Table
                                     className="custom-table"
-                                    dataSource={filteredTasks} pagination={{ current: 1, pageSize: 10 }}
+                                    dataSource={filteredTasks} pagination={{ pageSize: 10 }}
                                 >
                                     <Table.Column title="Sr.no." dataIndex="id" key="id" render={(text, record, index) => index + 1} />
 
@@ -245,7 +254,7 @@ const Task = () => {
                                             )
                                             : status === "assigned" ?
                                                 (
-                                                    <Button type='text' icon={<MdOutlineAssignmentInd color={taskStatusColors[status]} size={20} onClick={() => updateAssignTask(task)} />} />
+                                                    <Button type='text' icon={<MdOutlineAssignmentInd color={taskStatusColors[status]} size={20} onClick={() => updateTask(task)} />} />
                                                 )
                                                 : status === "in_progress" ?
                                                     (

@@ -12,5 +12,5 @@ router.get('/:maintenanceId', maintenanceScheduleController.getMaintenaceSchedul
 router.put('/:maintenanceId', checkGarage, maintenanceScheduleController.updateMaintenaceSchedule)
 router.delete('/:maintenanceId', checkGarage, maintenanceScheduleController.deleteMaintenaceSchedule)
 
-
+router.get('/check/:garageId', maintenanceScheduleController.checkMaintenanceSchedule)
 export default router;

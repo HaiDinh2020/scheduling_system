@@ -15,13 +15,13 @@ export const getAllGarage = () => async (dispatch) => {
                 type: actionTypes.GET_POST,
                 data: []
             })
-            toast(response?.data.msg || "Có lỗi xảy ra", {type: 'error'})
+            // toast(response?.data.msg || "Có lỗi xảy ra", {type: 'error'})
         }
     } catch (error) {
         dispatch({
             type: actionTypes.GET_POST,
             data: []
         })
-        toast("Có lỗi xảy ra", {type: 'error'})
+        // toast("Có lỗi xảy ra", {type: 'error'})
     }
 }

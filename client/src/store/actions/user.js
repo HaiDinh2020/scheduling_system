@@ -35,11 +35,11 @@ export const updateProfile = (payload) => async (dispatch) => {
                 data: payload
             })
         } else {
-            toast("fail to update profile")
-            dispatch({
-                type: actionTypes.UPDATE_PROFILE,
-                data: response.data.msg
-            })
+            toast(response?.data?.msg)
+            // dispatch({
+            //     type: actionTypes.UPDATE_PROFILE,
+            //     data: response.data.msg
+            // })
         }
 
     } catch (error) {
