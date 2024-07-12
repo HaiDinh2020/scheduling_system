@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { DayPicker } from 'react-day-picker';
 import "react-day-picker/dist/style.css";
-import { apiGetMechanicOfGarage, apiGetGarageHaveBeenRepaired } from '../../../services/Customer/booking';
+import { apiGetMechanicOfGarage } from '../../../services/Customer/booking';
 import { apiGetAppointment } from '../../../services/Mechanic/appointment';
 import icons from '../../../ultils/icons'
 import * as actions from "../../../store/actions"

@@ -47,18 +47,30 @@ export const updateProfileServices = async (id, name, phone, email, avatar) => {
           msg: "Email invalid",
         });
       }
-      const sql = `UPDATE users SET name = '${name}', phone = '${phone}', email = '${email}', avatar = '${avatar}' WHERE id = '${id}'`;
-      pool.execute(sql, (err, result) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve({
-            err: 0,
-            msg: "Success to update profile",
-            response: result
-          });
-        }
-      });
+      const user = await db.User.findOne({where: {id: id}})
+      if(!user) {
+        return reject("User không tồn tại")
+      } else {
+        await user.update({name, phone, email, avatar})
+        resolve({
+          err: 0,
+          msg: "Success to update profile",
+          response: user
+        });
+
+      }
+      // const sql = `UPDATE users SET name = '${name}', phone = '${phone}', email = '${email}', avatar = '${avatar}' WHERE id = '${id}'`;
+      // pool.execute(sql, (err, result) => {
+      //   if (err) {
+      //     reject(err);
+      //   } else {
+      //     resolve({
+      //       err: 0,
+      //       msg: "Success to update profile",
+      //       response: result
+      //     });
+      //   }
+      // });
     } catch (error) {
       reject(error)
     }
