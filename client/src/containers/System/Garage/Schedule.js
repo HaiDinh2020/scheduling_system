@@ -333,7 +333,7 @@ const Schedule = ({ socket }) => {
                                 <div className='w-full flex gap-3 mb-1'>
                                     <div className='w-1/3'>
                                         <div className='flex items-center gap-2 mb-3'>
-                                            <img src={item.customer.avatar || avatarDefault} alt='avatar' className='w-16 rounded-full bg-slate-200 p-1'></img>
+                                            <img src={item.customer.avatar || avatarDefault} alt='avatar' className='w-16 h-16 object-cover rounded-full bg-slate-200 p-1'></img>
                                             <div>
                                                 <div className='text-xl font-bold cursor-pointer' onClick={() => handleChat(item.customer)}>
                                                     {item.customer.name}

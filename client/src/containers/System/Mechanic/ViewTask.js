@@ -40,7 +40,6 @@ const ViewTask = () => {
 
 
     useEffect(() => {
-        console.log(mechanicId)
         const getTasksOfGarage = async (mechanicId) => {
             try {
                 const response = await apiGetTasksOfMechanic(mechanicId)
@@ -117,6 +116,14 @@ const ViewTask = () => {
                             >
                                 <Table.Column title="Sr.no." dataIndex="id" key="id" render={(text, record, index) => index + 1} />
                                 <Table.Column title="Task Name" dataIndex="task_name" key="task_name" width={300} />
+                                <Table.Column title="Ô tô" dataIndex="belong_booking" key="belong_booking"
+                                    render={(belong_booking) => {
+                                        console.log()
+                                        return (
+                                            <div>{belong_booking?.car?.number_plate}</div>
+                                        )
+                                    }}
+                                />
                                 <Table.Column title="Level" dataIndex="level" key="level"
                                     render={(text) => (
                                         <Tag color={text === "easy" ? "green" : text === "medium" ? "blue" : "red"}>{text.toUpperCase()}</Tag>
