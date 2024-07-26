@@ -48,6 +48,29 @@ const sendEmailMaintenance = (to, scheduleDate) => {
     sendEmail(to, subject, content)
 }
 
+const sendEmailMaintenanceToday = (to, scheduleDate) => {
+    const subject = "Today is Your Maintenance Appointment";
+    const content = `
+        Hello,
+
+        This is a reminder that your maintenance appointment is scheduled for today (${scheduleDate}). Please confirm or prepare accordingly.
+
+        Thank you for choosing our service.
+
+        Best regards,
+        Otocare.com
+    `;
+    sendEmail(to, subject, content)
+}
+
+const getEmailFromCustomerId = async (customer_id) => {
+    const customer = await db.User.findOne({
+        where: { id: customer_id }
+    })
+    return customer?.email;
+};
+
+// gửi mail khi đến ngày bảo dưỡng đã đặt lịch
 const scheduleNotiBookingMaintence = () => {
     console.log("ready check")
     const checkAndSendReminders = async () => {
@@ -70,22 +93,16 @@ const scheduleNotiBookingMaintence = () => {
        for(const booking of bookings) {
             
             const customerEmail = await getEmailFromCustomerId(booking.customer_id);
-            
-            sendEmail(customerEmail, 'Booking Reminder', `Your booking is scheduled for today. Details:`);
+            console.log(`Sending reminder to ${customerEmail}`);
+            sendEmailMaintenanceToday(customerEmail, today)
         }
 
-    };
-
-    const getEmailFromCustomerId = async (customer_id) => {
-        const customer = await db.User.findOne({
-            where: { id: customer_id }
-        })
-        return customer?.email;
     };
 
     schedule.scheduleJob('0 0 0 * * *', checkAndSendReminders);
 };
 
+// mail nhắc nhở trước 2 tuần có lịch bảo dưỡng
 const reminder2WeeksInAdvance = () => {
     const checkAndSendReminders = async () => {
 
@@ -116,15 +133,9 @@ const reminder2WeeksInAdvance = () => {
         }
     };
 
-    const getEmailFromCustomerId = async (customer_id) => {
-        const customer = await db.User.findOne({
-            where: { id: customer_id }
-        })
-        return customer?.email;
-    };
-
     schedule.scheduleJob('0 0 0 * * *', checkAndSendReminders);
 }
+
 
 module.exports = {
     scheduleNotiBookingMaintence, reminder2WeeksInAdvance

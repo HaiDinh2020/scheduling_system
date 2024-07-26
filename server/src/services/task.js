@@ -1,4 +1,4 @@
-import { Op } from "sequelize"
+import { Op, where } from "sequelize"
 import db, { sequelize } from "../models"
 import { v4 } from "uuid"
 import { createAppointmentServices } from "./appointment"
@@ -71,7 +71,7 @@ export const getTaskServices = (garage_id) => new Promise(async (resolve, reject
             where: { garage_id: garage_id },
             include: [
                 { 
-                    model: db.Booking, as: 'belong_booking', attributes: ['status'],
+                    model: db.Booking, as: 'belong_booking', attributes: ['status', 'booking_date'],
                     include: [
                         { model: db.Car, as: 'car', attributes: ['make', 'model', 'number_plate'] },
                     ]
@@ -164,7 +164,7 @@ export const updateTaskMechanicServices = (taskId, task_status, start_date, star
                     // console.log(123)
                     // console.log(task.assign_to, task.task_name, startTime, endTime)
                     
-                    await createAppointmentServices(task.assign_to, "Sua chua", task.task_name, startTime, endTime, "mechanic")
+                    await createAppointmentServices(task.assign_to,taskId,  "Sua chua", task.task_name, startTime, endTime, 'in-progress', "mechanic")
                 } catch (error) {
                     return resolve({
                         err: 0,
@@ -177,8 +177,18 @@ export const updateTaskMechanicServices = (taskId, task_status, start_date, star
             if (task_status === "completed") {
                 try {
                     // gửi thông báo tới garage
+                    // cập nhật appointment
+                    const endTime = new Date(end_date + "T" + end_time)
+                    const appointment = await db.Appointment.findOne({where: {task_id: taskId}})
+                    if(appointment) {
+                        appointment.update({status: 'done', endTime: endTime})
+                    }
                 } catch (error) {
-                    
+                    return resolve({
+                        err: 0,
+                        msg: "Error to add to your appointmet",
+                        response: updatedTask || {}
+                    });
                 }
             }
 
@@ -190,6 +200,25 @@ export const updateTaskMechanicServices = (taskId, task_status, start_date, star
 
         }
 
+    } catch (error) {
+        reject(error)
+    }
+})
+
+export const deleteTaskServices = (taskId) => new Promise(async (resolve, reject) => {
+    try {
+        const task = await db.Task.findOne({where: {id: taskId}})
+
+        if(!task) {
+            return reject("Task not found")
+        } else {
+            await task.destroy()
+
+            return resolve({
+                err: 0,
+                msg: "Delete task success"
+            })
+        }
     } catch (error) {
         reject(error)
     }

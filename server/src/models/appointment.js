@@ -12,15 +12,17 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Appointment.belongsTo(models.Mechanic, { foreignKey: 'mechanic_id', targetKey: 'id', as: 'mechanic' });
+      Appointment.belongsTo(models.Task, { foreignKey: 'task_id', targetKey: 'id', as: 'task' });
     }
   }
   Appointment.init({
     mechanic_id: DataTypes.STRING,
+    task_id: DataTypes.STRING,
     title: DataTypes.STRING,
     description: DataTypes.STRING,
     startTime: DataTypes.DATE,
     endTime: DataTypes.DATE,
-    status: DataTypes.ENUM('require','scheduled', 'completed', 'canceled'),
+    status: DataTypes.ENUM('todo','in-progress', 'done'),
     createBy: DataTypes.ENUM('mechanic', 'customer', 'garage')
   }, {
     sequelize,

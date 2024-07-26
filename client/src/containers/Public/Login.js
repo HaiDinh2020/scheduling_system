@@ -6,10 +6,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ToastContainer, toast } from 'react-toastify';
 import icons from '../../ultils/icons';
 import TextArea from 'antd/es/input/TextArea';
-import { Checkbox, Form, Input } from 'antd';
+import { Checkbox, Input, message, Button as ButtonAnt } from 'antd';
 import { servicesOptions } from '../../ultils/constants'
+import { apiGetAllGarage } from '../../services/Customer/customer';
 
-const { BsChevronDown } = icons;
+const { BsChevronDown, FaMapMarkerAlt } = icons;
 const Login = () => {
 
   const location = useLocation()
@@ -19,8 +20,10 @@ const Login = () => {
   const { isLoggedIn, msg, update, role } = useSelector(state => state.auth)
 
   const [isRegister, setIsRegister] = useState(location.state?.flag);
+  const [listGarage, setListGarage] = useState([])
   const [invalidFields, setInvalidFields] = useState([])
   const [isGarage, setIsGarage] = useState(false);
+  // const [exactAddress, setExactAddress] = useState('');
   const [payload, setPayload] = useState({
     name: "",
     email: "",
@@ -35,7 +38,38 @@ const Login = () => {
     services: "",
     businessHours: "",
     linkWebsite: "",
+    exactAddress: ""
   })
+
+  const [mechanicInfo, setMechanicInfo] = useState({
+    garage_id: "",
+    major: ''
+  })
+
+  const [errors, setErrors] = useState({
+    garageName: '',
+    introduce: '',
+    linkWebsite: '',
+    address: '',
+    businessHours: '',
+    services: '',
+    exactAddress: '',
+    garage_id: '',
+    major: ''
+  });
+
+  useEffect(() => {
+    const getAllGarages = async () => {
+      const garages = await apiGetAllGarage()
+      if (garages?.data?.err === 0) {
+        setListGarage(garages?.data?.response)
+      }
+    }
+
+    if (isRegister && payload.role === "mechanic") {
+      getAllGarages()
+    }
+  }, [isRegister, payload.role])
 
   const notify = (msg) => toast(msg, { type: 'error' });
 
@@ -74,14 +108,110 @@ const Login = () => {
   }
 
   const handleSubmit = async () => {
+    // đăng ký garage
+    if (isRegister && isGarage) {
+      let formValid = true;
+      const newErrors = {
+        garageName: '',
+        introduce: '',
+        linkWebsite: '',
+        address: '',
+        businessHours: '',
+        services: '',
+        exactAddress: ''
+      };
 
-    let finalPayload = isRegister ? isGarage ? { ...payload, ...garageInfo } : payload : {
-      email: payload.email,
-      password: payload.password
+      if (!garageInfo.garageName.trim()) {
+        newErrors.garageName = 'Vui lòng nhập tên garage';
+        formValid = false;
+      }
+      if (!garageInfo.introduce.trim()) {
+        newErrors.introduce = 'Vui lòng nhập giới thiệu về garage';
+        formValid = false;
+      }
+      if (!garageInfo.linkWebsite.trim()) {
+        newErrors.linkWebsite = 'Vui lòng nhập link website';
+        formValid = false;
+      }
+      if (!garageInfo.address.trim()) {
+        newErrors.address = 'Vui lòng nhập địa chỉ';
+        formValid = false;
+      }
+      if (!garageInfo.exactAddress.trim()) {
+        newErrors.exactAddress = 'Vui lòng nhập tọa độ chính xác';
+        formValid = false;
+      } else {
+        const addressRegex = /^-?\d+(\.\d+)?,\s*-?\d+(\.\d+)?$/;
+        console.log(addressRegex.test(21.002964, 105.853954))
+        if (!addressRegex.test(garageInfo.exactAddress.trim())) {
+          newErrors.exactAddress = 'Vui lòng nhập đúng định dạng tọa độ';
+          formValid = false;
+        }
+      }
+
+      if (!garageInfo.businessHours.trim()) {
+        newErrors.businessHours = 'Vui lòng nhập giờ làm việc';
+        formValid = false;
+      }
+      if (!garageInfo.services.trim()) {
+        newErrors.services = 'Vui lòng chọn ít nhất một loại dịch vụ';
+        formValid = false;
+      }
+      let invalids = validate(payload);
+
+      setErrors(newErrors);
+
+      if (formValid && invalids === 0) {
+        let finalPayload = { ...payload, ...garageInfo }
+
+        dispatch(actions.register(finalPayload))
+        console.log('Form submitted successfully!');
+        console.log(finalPayload);
+      } else {
+        console.log('Form has errors. Please check again.');
+      }
+    } else if (isRegister && payload.role === 'mechanic') {
+      console.log("đăng ký thợ")
+      let formValid = true
+      const newErrors = {
+        garage_id: '',
+        major: ''
+      };
+
+      if (!mechanicInfo.garage_id) {
+        newErrors.garage_id = 'Vui lòng chọn chi nhánh garage';
+        formValid = false;
+      }
+
+      if (!mechanicInfo.major.trim()) {
+        newErrors.major = "Vui lòng nhập chuyên ngành";
+        formValid = false
+      }
+      
+      setErrors(newErrors)
+
+      let invalids = validate(payload);
+
+      if (formValid && invalids === 0) {
+        let finalPayload = { ...payload, ...mechanicInfo }
+
+        dispatch(actions.register(finalPayload))
+      }
+
+    } else if (isRegister) {
+      let finalPayload = { ...payload }
+      let invalids = validate(finalPayload);
+      if (invalids === 0) {
+        dispatch(actions.register(finalPayload))
+      }
+    } else {
+      let finalPayload = {
+        email: payload.email,
+        password: payload.password
+      }
+      let invalids = validate(finalPayload);
+      if (invalids === 0) dispatch(actions.login(finalPayload))
     }
-    let invalids = validate(finalPayload);
-    console.log(finalPayload)
-    if (invalids === 0) isRegister ? dispatch(actions.register(finalPayload)) : dispatch(actions.login(finalPayload))
   }
 
   const validate = (payload) => {
@@ -127,6 +257,39 @@ const Login = () => {
     })
     return invalids
   }
+
+  const getLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        console.log(position.coords)
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        const newLocation = `${latitude}, ${longitude}`;
+
+        setGarageInfo(prev => ({ ...prev, exactAddress: newLocation }));
+        setErrors(prev => ({ ...prev, exactAddress: "" }))
+      }, () => {
+        message.error('Không thể lấy vị trí của bạn.');
+      });
+    } else {
+      message.error('Trình duyệt của bạn không hỗ trợ định vị.');
+    }
+  }
+
+  const handleChooseGarage = (e) => {
+    setMechanicInfo(prev => ({ ...prev, garage_id: e.target.value }))
+    setErrors(prev => ({ ...prev, garage_id: "" }))
+  }
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setGarageInfo(prev => ({ ...prev, [name]: value }));
+    setErrors(prev => ({ ...prev, [name]: "" }))
+  };
+
+  const handleCheckboxChange = (checkedValues) => {
+    setGarageInfo(prev => ({ ...prev, services: checkedValues.join(', ') }));
+  };
 
   return (
     <div className='bg-white w-[600px] p-[30px] m-2  pb-[100px] rounded-md shadow-sm'>
@@ -191,8 +354,11 @@ const Login = () => {
               placeholder="Tên garage"
               autoSize
               name='garageName'
-              onChange={(e) => setGarageInfo(prev => ({ ...prev, [e.target.name]: e.target.value }))}
+              value={garageInfo.garageName}
+              onChange={handleInputChange}
             />
+            {errors.garageName && <span className="text-red-500">{errors.garageName}</span>}
+
             <h3 className='font-medium py-4'>Giới thiệu về garage</h3>
             <TextArea
               placeholder="Thông tin giới thiệu về garage"
@@ -200,8 +366,10 @@ const Login = () => {
                 minRows: 4
               }}
               name='introduce'
-              onChange={(e) => setGarageInfo(prev => ({ ...prev, [e.target.name]: e.target.value }))}
+              value={garageInfo.introduce}
+              onChange={handleInputChange}
             />
+            {errors.introduce && <span className="text-red-500">{errors.introduce}</span>}
 
             <h3 fo className='font-medium py-4'>Link website</h3>
             <Input
@@ -209,35 +377,85 @@ const Login = () => {
               addonAfter=".com"
               placeholder="mygarage"
               name='linkWebsite'
-              onChange={(e) => setGarageInfo(pre => ({ ...pre, [e.target.name]: e.target.value }))}
+              value={garageInfo.linkWebsite}
+              onChange={handleInputChange}
             />
+            {errors.linkWebsite && <span className="text-red-500">{errors.linkWebsite}</span>}
+
             <h3 fo className='font-medium py-4'>Địa chỉ</h3>
             <Input
               placeholder="Nhập địa chỉ"
               name='address'
-              onChange={(e) => setGarageInfo(prev => ({ ...prev, [e.target.name]: e.target.value }))}
+              onChange={handleInputChange}
             />
+            {errors.address && <span className="text-red-500">{errors.address}</span>}
+
+            <h3 fo className='font-medium py-4'>Tọa độ</h3>
+            <div className='flex border border-gray-300 rounded p-2 gap-2 justify-between'>
+              <Input
+                placeholder="ví dụ: 21.004526, 105.860134"
+                name='exactAddress'
+                value={garageInfo.exactAddress}
+                onChange={handleInputChange}
+              />
+              <ButtonAnt onClick={getLocation}><FaMapMarkerAlt /></ButtonAnt>
+            </div>
+            {errors.exactAddress && <span className="text-red-500">{errors.exactAddress}</span>}
+
             <h3 fo className='font-medium py-4'>Giờ làm việc</h3>
             <Input
               placeholder="8-20"
               name='businessHours'
-              onChange={(e) => setGarageInfo(prev => ({ ...prev, [e.target.name]: e.target.value }))}
+              onChange={handleInputChange}
             />
+            {errors.businessHours && <span className="text-red-500">{errors.businessHours}</span>}
+
             <h3 fo className='font-medium py-4'>Các loại dịch vụ</h3>
             <Checkbox.Group
               options={servicesOptions}
               defaultValue={['Sửa chữa']}
               name='services'
-              onChange={(checkedValues) => setGarageInfo(prev => ({ ...prev, "services": checkedValues.join(', ') }))}
+              onChange={handleCheckboxChange}
             />
+            {errors.services && <span className="text-red-500">{errors.services}</span>}
           </div >
+        }
+        {
+          isRegister && payload.role === 'mechanic' &&
+          <div className="w-full px-3 mb-6 md:mb-0">
+            <h2 className='font-bold py-2'>Đăng ký thông tin thợ sửa chữa</h2>
+            <h3 className='font-medium py-4'>Chọn chi nhánh</h3>
+            <select
+              id="garage_id"
+              value={mechanicInfo.garage_id}
+              onChange={(e) => handleChooseGarage(e)}
+              className="w-full  border border-gray-200  p-2 rounded-md leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+            >
+              {listGarage.length > 0 && listGarage.map((garage, index) => {
+                return (
+                  <option key={index} value={garage.id}>{garage.garage_name}</option>
+                )
+              })}
+            </select>
+            {errors.garage_id && <span className="text-red-500">{errors.garage_id}</span>}
+
+            <h3 fo className='font-medium py-4'>Chuyên về</h3>
+            <Input
+              placeholder="Ex: Xe điện, xe bán tải,..."
+              name='major'
+              value={mechanicInfo.major}
+              onChange={(e) => setMechanicInfo(prev => ({ ...prev, major: e.target.value }))}
+            />
+            {errors.major && <span className="text-red-500">{errors.major}</span>}
+          </div>
+
         }
         <Button
           text={isRegister ? "Đăng ký" : "Đăng nhập"}
           bgcolor={'bg-secondary1'}
           textColor={'text-white'}
           fullWidth
-          onClick={handleSubmit}
+          onClick={() => handleSubmit()}
         />
       </div >
       <div className='mt-7 flex items-center justify-between'>

@@ -16,23 +16,27 @@ const Profile = () => {
   const [imageSrc, setImageSrc] = useState(useData.avatar);
   const [imageFile, setImageFile] = useState(null)
   const [isSubmiting, setIsSubmiting] = useState(false)
-
+  const [errorForm, setErrorForm] = useState({
+    name: '',
+    email: '',
+    phone: ''
+  })
 
   // check avatar đã upload xong chưa và đang submit thì call dispatch update profile
   useEffect(() => {
-    if(isSubmiting === true) {
+    if (isSubmiting === true) {
       dispatch(actions.updateProfile(useData))
-    } 
+    }
     return (
       setIsSubmiting(false)
     )
   }, [useData.avatar])
 
   const uploadAvatar = async (file) => {
-    if(file) {
+    if (file) {
       const formData = new FormData();
       formData.append("file", file)
-      formData.append("upload_preset", process.env.REACT_APP_UPLOAD_AVATAR_NAME )
+      formData.append("upload_preset", process.env.REACT_APP_UPLOAD_AVATAR_NAME)
       const response = await apiUploadAvatar(formData)
       if (response.status === 200) {
         setUserData(prev => ({ ...prev, "avatar": response.data.secure_url }))
@@ -40,7 +44,7 @@ const Profile = () => {
         toast("error to upload avatar")
       }
     }
-    
+
   }
 
   // hiển thị preview avatar
@@ -56,15 +60,49 @@ const Profile = () => {
     }
   }
 
+  const checkEmail = (email) => {
+    const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
+    return emailPattern.test(email)
+  }
+
   // nếu thay đổi avatar thì gọi uploadAvatar, không thì call dispatch luôn
   const handleSubmit = () => {
-    setIsSubmiting(true)
-    if(imageFile) {
-      uploadAvatar(imageFile)
-    } else {
-      dispatch(actions.updateProfile(useData))
+    let formValid = true;
+    const newErrors = {
+      name: '',
+      email: '',
+      phone: '',
+    };
+    if (!useData?.name?.trim()) {
+      newErrors.name = "Vui lòng nhập tên";
+      formValid = false;
     }
-    
+
+    if (!useData?.email?.trim()) {
+      newErrors.email = "Email không được bỏ trống";
+      formValid = false;
+    } else {
+      if (!checkEmail(useData?.email)) {
+        newErrors.email = "Email không đúng định dạng";
+        formValid = false;
+      }
+    }
+
+    if (!useData?.phone?.trim()) {
+      newErrors.phone = "Cần cập nhật số điện thoại";
+      formValid = false;
+    }
+
+    setErrorForm(newErrors)
+
+    if (formValid) {
+      setIsSubmiting(true)
+      if (imageFile) {
+        uploadAvatar(imageFile)
+      } else {
+        dispatch(actions.updateProfile(useData))
+      }
+    }
   }
 
   return (
@@ -75,6 +113,8 @@ const Profile = () => {
           label={"Tên hiển thị"}
           value={useData.name}
           setValue={setUserData}
+          errorForm={errorForm}
+          setErrorForm={setErrorForm}
         />
         <InputForm
           keyValue={"email"}
@@ -82,6 +122,8 @@ const Profile = () => {
           label={"Email"}
           value={useData.email}
           setValue={setUserData}
+          errorForm={errorForm}
+          setErrorForm={setErrorForm}
         />
         <InputForm
           keyValue={"phone"}
@@ -89,12 +131,8 @@ const Profile = () => {
           value={useData.phone || ""}
           type={"number"}
           setValue={setUserData}
-        />
-        <InputForm
-          keyValue={"address"}
-          label={"Địa chỉ"}
-          value={"124 hàng bài hà nội"}
-          setValue={setUserData}
+          errorForm={errorForm}
+          setErrorForm={setErrorForm}
         />
 
         <div className="w-full flex justify-center p-3 mb-6 md:mb-0">

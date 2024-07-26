@@ -1,13 +1,15 @@
-import { Image, Radio } from 'antd';
-import React, { useState } from 'react'
-import BookingMaintenance from './BookingMaintenance';
-import BookingRepair from './BookingRepair';
-import { useNavigate } from 'react-router-dom';
+import React from 'react'
+import { Navigate, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { path } from '../../../ultils/constants';
 
 const Booking = ({ socket }) => {
 
+    const { isLoggedIn } = useSelector(state => state.auth)
+
     const navigate = useNavigate()
 
+    if (!isLoggedIn) return <Navigate to={`/${path.LOGIN}`} replace={true} />
 
     return (
         <div className="w-full p-2 ">
@@ -32,7 +34,7 @@ const Booking = ({ socket }) => {
                     <img color='red' src='https://png.pngtree.com/png-clipart/20210307/ourmid/pngtree-car-repair-service-vignette-png-image_3014260.jpg' alt='image_maintain' className='rounded-full w-20 h-20 bg-yellow-400' />
                     <div>
                         <div className='text-lg font-bold'>Bảo dưỡng</div>
-                        <div>Dịch vụ dành cho xe đã sửa chữa trên hệ thống</div>
+                        <div>Dịch vụ dành cho xe cần được bảo dưỡng định kỳ</div>
                     </div>
 
                 </div>

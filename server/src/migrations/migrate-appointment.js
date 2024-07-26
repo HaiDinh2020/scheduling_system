@@ -11,6 +11,9 @@ module.exports = {
             mechanic_id: {
                 type: Sequelize.STRING,
             },
+            task_id: {
+                type: Sequelize.STRING
+            },
             title: {
                 type: Sequelize.STRING,
                 allowNull: false
@@ -27,8 +30,8 @@ module.exports = {
                 allowNull: false
             },
             status: {
-                type: Sequelize.ENUM('require', 'scheduled', 'completed', 'canceled'),
-                defaultValue: 'scheduled'
+                type: Sequelize.ENUM('todo', 'in-progress', 'done'),
+                defaultValue: 'todo'
             },
             createBy: {
                 type: Sequelize.ENUM('mechanic', 'customer', 'garage'),

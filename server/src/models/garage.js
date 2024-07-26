@@ -35,7 +35,9 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: 10
     },
     images: DataTypes.STRING,
-    owner_id: DataTypes.STRING
+    owner_id: DataTypes.STRING,
+    latitude: DataTypes.DECIMAL(8,6),
+    longitude: DataTypes.DECIMAL(9,6)
   }, {
     sequelize,
     modelName: 'Garage',

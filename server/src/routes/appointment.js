@@ -11,7 +11,9 @@ router.use(verifyToken)
 // tạo appointment
 router.post('/',  appointmentController.createAppointment)
 router.get('/:mechanic_id', appointmentController.getAppointment)
-// router.post('/mechanic', checkGarage, invoiceController.getInvoice)
+router.put('/status/:appointmentId', appointmentController.changeStatusAppointment)
+router.put('/:appointmentId', appointmentController.updateAppointment)
+router.delete('/:appointmentId', appointmentController.deleteAppointment)
 
 
 

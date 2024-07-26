@@ -26,13 +26,7 @@ const menuScheduleStatus = [
         text: 'Hoàn thành',
         status: 'complete',
         icon: <FaCheckCircle />
-    },
-    {
-        id: 5,
-        text: 'Từ chối',
-        status: 'reject',
-        icon: <MdCancel />
-    },
+    }
 ]
 
 export default menuScheduleStatus;

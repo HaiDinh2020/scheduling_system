@@ -58,6 +58,7 @@ const Profile = () => {
 
   // nếu thay đổi avatar thì gọi uploadAvatar, không thì call dispatch luôn
   const handleSubmit = () => {
+
     setIsSubmiting(true)
     if(imageFile) {
       uploadAvatar(imageFile)
@@ -88,12 +89,6 @@ const Profile = () => {
           label={"Số điện thoại"}
           value={useData.phone || ""}
           type={"number"}
-          setValue={setUserData}
-        />
-        <InputForm
-          keyValue={"address"}
-          label={"Địa chỉ"}
-          value={"124 hàng bài hà nội"}
           setValue={setUserData}
         />
 

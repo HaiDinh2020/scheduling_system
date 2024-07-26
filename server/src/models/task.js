@@ -14,6 +14,8 @@ module.exports = (sequelize, DataTypes) => {
       Task.belongsTo(models.Garage, { foreignKey: 'garage_id', targetKey: 'id', as: 'garage' });
       Task.belongsTo(models.Mechanic, { foreignKey: 'assign_to', targetKey: 'id', as: 'assignto'} )
       Task.belongsTo(models.Booking, { foreignKey: 'booking_id', targetKey: 'id', as: 'belong_booking' })
+
+      Task.hasOne(models.Appointment, { foreignKey: 'task_id', as: 'appointment'})
     }
   }
   Task.init({   // thêm trường booking_id để xem là task từ customer booking

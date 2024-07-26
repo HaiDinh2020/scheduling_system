@@ -14,6 +14,29 @@ const UpdateTaskModal = ({ isModalOpen, setIsModalOpen, socket, taskData, setTas
     useEffect(() => {
         if (taskData) {
             setTaskStatus(taskData.task_status);
+            form.setFieldsValue({
+                task_name: taskData.task_name,
+                level: taskData.level,
+                task_status: taskData.task_status,
+                estimated_time: taskData.estimated_time
+            });
+            if (taskData.task_status === "in_progress") {
+
+                form.setFieldValue({
+                    assign_to: taskData.assign_to,
+                    allocation_date: taskData.allocation_date ? moment(taskData.allocation_date) : null,
+                    start_date: taskData.start_date ? moment(taskData.start_date) : null,
+                    start_time: taskData.start_time ? moment(taskData.start_time, 'HH:mm:ss') : null,
+                })
+            }
+
+            if (taskData.task_status === "completed") {
+                form.setFieldValue({
+                    end_date: taskData.end_date ? moment(taskData.end_date) : null,
+                    end_time: taskData.end_time ? moment(taskData.end_time, 'HH:mm:ss') : null,
+                })
+            }
+
             setInitialValues({
                 task_name: taskData.task_name,
                 allocation_date: moment(taskData.allocation_date),

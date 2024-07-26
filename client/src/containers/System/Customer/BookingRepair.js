@@ -66,9 +66,12 @@ const BookingRepair = ({socket}) => {
             socketBookingData.senderId = userId;
             socket?.emit("booking", socketBookingData)
 
-            navigate("/customer/booking-history")
             
+            
+        } else {
+            console.log(booking)
         }
+        navigate("/customer/booking-history")
     };
 
     const getLocation = () => {
@@ -99,7 +102,7 @@ const BookingRepair = ({socket}) => {
             <Form
                 form={form}
                 labelCol={{
-                    span: 5,
+                    span: 7,
                 }}
                 labelWrap
                 wrapperCol={{
@@ -181,8 +184,8 @@ const BookingRepair = ({socket}) => {
                     </Upload>
                 </Form.Item>
 
-                <Form.Item label="Chọn phương thức lấy xe">
-                    <Select value={pickupOption} onChange={handlePickupOptionChange}>
+                <Form.Item label="Chọn phương thức giao xe" name={"pickupOption"} rules={[{ required: true, message: "chọn phương thức giao xe"}]}>
+                    <Select value={pickupOption} onChange={handlePickupOptionChange} defaultActiveFirstOption>
                         <Option value="0">Garage tự đến lấy</Option>
                         <Option value="1">Khách hàng đưa đến</Option>
                     </Select>

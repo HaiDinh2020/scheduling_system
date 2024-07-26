@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Space, Table, Button, message, Popconfirm, Tag } from 'antd';
+import { Space, Table, Button, message, Popconfirm, Tag, Modal } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import * as actions from '../../../store/actions'
 import icons from '../../../ultils/icons'
@@ -8,6 +8,7 @@ import PaymentModal from '../../../components/Customer/PaymentModal';
 import { bookingStatusColors } from '../../../ultils/constants';
 import InvoiceModal from '../../../components/Customer/InvoiceModal';
 import { useNavigate } from 'react-router-dom';
+import MaintenanceScheduleModal from '../../../components/Customer/MaintenanceScheduleModal';
 
 const { FiTrash2, FaMinus, FaFileInvoiceDollar, IoChatboxEllipsesOutline } = icons
 const BookingHistory = () => {
@@ -18,6 +19,7 @@ const BookingHistory = () => {
 
     const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false)
     const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false)
+    const [isModalMaintenanceScheOpen, setIsMaintenanceScheduleModalOpen] = useState(false)
     const [bookingSelect, setBookingSelect] = useState({})
     const [currentBooking, setCurrentBooking] = useState([])
     const [historyBooking, setHistoryBooking] = useState([])
@@ -44,12 +46,12 @@ const BookingHistory = () => {
                 return (
                     <div >
                         {
-                            garage?.garage_name && 
+                            garage?.garage_name &&
                             <div>
-                                {garage?.garage_name } <IoChatboxEllipsesOutline className='cursor-pointer' onClick={() => handleChat(garage)} size={20}  />   
+                                {garage?.garage_name} <IoChatboxEllipsesOutline className='cursor-pointer' onClick={() => handleChat(garage)} size={20} />
                             </div>
                         }
-                           
+
                     </div>
                 )
             }
@@ -91,7 +93,6 @@ const BookingHistory = () => {
             dataIndex: 'status',
             key: 'status',
             render: (status, record) => {
-                console.log(record)
                 return (
                     <span>
                         <Tag color={bookingStatusColors[status]} key={status}>{status}</Tag>
@@ -106,7 +107,7 @@ const BookingHistory = () => {
             render: (_, record) => (
                 <div>
                     {
-                        record.status === "request"
+                        record.status === "request" || record.status === "schedule"
                             ?
                             <Space className='items-center' size="large">
                                 <Popconfirm
@@ -145,12 +146,12 @@ const BookingHistory = () => {
                 return (
                     <div >
                         {
-                            garage?.garage_name && 
+                            garage?.garage_name &&
                             <div>
-                                {garage?.garage_name } <IoChatboxEllipsesOutline className='cursor-pointer' onClick={() => handleChat(garage)} size={20}  />   
+                                {garage?.garage_name} <IoChatboxEllipsesOutline className='cursor-pointer' onClick={() => handleChat(garage)} size={20} />
                             </div>
                         }
-                           
+
                     </div>
                 )
             }
@@ -209,16 +210,24 @@ const BookingHistory = () => {
             title: "Lịch bảo dưỡng",
             dataIndex: 'maintenance',
             key: 'maintenance',
-            render: (maintenance) => {
+            render: (maintenance, booking) => {
                 return (
-                    <>
-
+                    <div>
                         {
-                            maintenance?.id !== null ?
-                            <><FaMinus color={"red"} /></>
-                            :"chưa có"
+                            maintenance?.id !== null &&
+                            <Button
+                                type="primary"
+                                size='small'
+                                onClick={() => {
+                                    setBookingSelect(booking)
+                                    setIsMaintenanceScheduleModalOpen(true)
+                                }}
+                            >
+                                Xem
+                            </Button>
+
                         }
-                    </>
+                    </div>
                 )
             }
         }
@@ -256,9 +265,10 @@ const BookingHistory = () => {
             </div>
             <InvoiceModal isModalOpen={isInvoiceModalOpen} setIsModalOpen={setIsInvoiceModalOpen} booking={bookingSelect} />
             <PaymentModal isModalOpen={isPaymentModalOpen} setIsModalOpen={setIsPaymentModalOpen} booking={bookingSelect} />
+            <MaintenanceScheduleModal isModalOpen={isModalMaintenanceScheOpen} setIsModalOpen={setIsMaintenanceScheduleModalOpen} booking={bookingSelect} />
             <div className='container flex flex-col items-center'>
                 <div className='bg-white  rounded-xl border-2 shadow-md w-[95%] px-4 mb-2'>
-                <div className='font-bold text-lg'>Lịch sử đặt lịch</div>
+                    <div className='font-bold text-lg'>Lịch sử đặt lịch</div>
                     <div className=' w-full pt-2'>
                         <Table
                             className='w-full'

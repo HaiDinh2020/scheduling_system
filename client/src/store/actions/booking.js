@@ -25,11 +25,17 @@ export const createBooking = (payload) => async (dispatch) => {
         }
     } catch (error) {
         console.log(error)
+        if (error.response) {
+            message.error(error.response.data.msg || "Server error");
+        } else if (error.request) {
+            message.error("Network error");
+        } else {
+            message.error("Unexpected error");
+        }
         dispatch({
             type: actionTypes.CREATE_BOOKING,
             msg: "Create booking fail!"
         })
-        toast("Server Error!")
     }
 }
 
@@ -94,7 +100,6 @@ export const cancelBooking = (bookingId) => async (dispatch) => {
                 data: {
                     err: 0,
                     bookingId,
-                    newStatus: "cancelled"
                 }
             })
             message.success("Hủy bỏ thành công", 2)
@@ -108,6 +113,8 @@ export const cancelBooking = (bookingId) => async (dispatch) => {
 }
 
 // garage
+
+// dont use
 export const getAllBooking = (garageId) => async (dispatch) => {
     try {
         const response = await apiGetAllBooking(garageId)
@@ -215,7 +222,7 @@ export const respondToBooking = (bookingId, bookingGarageId, status) => async (d
         const response = await apiRespondToBooking(bookingGarageId, status)
         if (response?.data.err === 0) {
             dispatch({
-                type: actionTypes.DELETE_GARAGE_BOOKING,
+                type: actionTypes.GARAGE_DELETE_BOOKING,
                 data: {
                     bookingId
                 }
@@ -223,7 +230,7 @@ export const respondToBooking = (bookingId, bookingGarageId, status) => async (d
             toast(response?.data?.msg)
         } else {
             dispatch({
-                type: actionTypes.DELETE_GARAGE_BOOKING,
+                type: actionTypes.GARAGE_DELETE_BOOKING,
                 data: {
                     bookingId
                 }
@@ -240,6 +247,32 @@ export const respondToBooking = (bookingId, bookingGarageId, status) => async (d
     }
 }
 
+export const garageDeleteBookingMaintenance = (bookingId) => async (dispatch) => {
+    try {
+        const response = await apiCancelBooking(bookingId)
+        if (response?.data.err === 0) {
+            dispatch({
+                type: actionTypes.GARAGE_DELETE_BOOKING,
+                data: {
+                    bookingId
+                }
+            })
+            message.success("Hủy bỏ thành công", 2)
+        } else {
+            console.log(response?.data)
+            message.error(response.data?.msg, 2)
+        }
+    } catch (error) {
+        console.log(error)
+        if (error.response) {
+            message.error(error.response.data.msg || "Server error");
+        } else if (error.request) {
+            message.error("Network error");
+        } else {
+            message.error("Unexpected error");
+        }
+    }
+}
 
 export const addBooking = (bookingRequest) => async (dispatch) => {
     dispatch({

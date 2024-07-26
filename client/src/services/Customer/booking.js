@@ -43,7 +43,7 @@ export const apiCreateBookingMaintenance = (payload) => new Promise(async(resolv
 export const apiCancelBooking = (bookingId) => new Promise(async(resolve, reject) => {
     try {
         const response = await axiosConfig({
-            method: 'put',
+            method: 'delete',
             url: `/api/v1/booking/customer/${bookingId}`,
         })
 

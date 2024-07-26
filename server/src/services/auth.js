@@ -14,7 +14,7 @@ export const loginService = ({ email, password }) => new Promise(async (resolve,
         })
         const isCorrectPassword = response && bcrypt.compareSync(password, response.password)
 
-        const token = isCorrectPassword && jwt.sign({ id: response.id, email: response.email, role: response.role }, process.env.SECRET_KEY, { expiresIn: '2d' })
+        const token = isCorrectPassword && jwt.sign({ id: response.id, email: response.email, role: response.role }, process.env.SECRET_KEY, { expiresIn: '7d' })
         // const refreshToken = jwt.sign({ id: response.id, email: response.email, role: response.role }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: _CONF.refreshTokenLife})
         resolve({
             err: token ? 0 : 2,
@@ -43,7 +43,7 @@ export const registerService = ({ name, phone, password, email, role, garageName
             }
         })
 
-        const token = response[1] && jwt.sign({ id: response[0].id, email: response[0].email }, process.env.SECRET_KEY, { expiresIn: '2d' })
+        const token = response[1] && jwt.sign({ id: response[0].id, email: response[0].email }, process.env.SECRET_KEY, { expiresIn: '7d' })
 
         if (response[1] && role === 'garage') {
             const create_garage = await db.Garage.findOrCreate({
@@ -58,6 +58,8 @@ export const registerService = ({ name, phone, password, email, role, garageName
                     website: linkWebsite,
                     business_hours: businessHours,
                     services,
+                    latitude: exactAddress.split(", ")[0],
+                    longitude: exactAddress.split(", ")[1]
                 }
             })
 
@@ -94,7 +96,6 @@ export const registerService = ({ name, phone, password, email, role, garageName
 
 
             if (!create_mechanic[1]) {
-                // Xử lý trường hợp tạo garage không thành công
                 await db.User.destroy({ where: { id: response[0].id } }); // Xóa user đã tạo
                 return resolve({
                     err: 2,
