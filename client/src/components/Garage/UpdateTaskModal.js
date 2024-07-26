@@ -22,16 +22,20 @@ const UpdateTaskModal = ({ isModalOpen, setIsModalOpen, socket, taskData, setTas
                 task_name: taskData.task_name,
                 level: taskData.level,
                 task_status: taskData.task_status,
-                estimated_time: taskData.estimated_time
+                estimated_time: taskData.estimated_time,
+                assign_to: taskData?.assign_to,
+                allocation_date: taskData?.allocation_date ? moment(taskData?.allocation_date) : null,
+                start_date: taskData?.start_date ? moment(taskData?.start_date) : null,
+                start_time: taskData?.start_time ? moment(taskData?.start_time, 'HH:mm:ss') : null,
             });
 
             if (taskData.task_status === "in_progress") {
 
                 form.setFieldValue({
-                    assign_to: taskData.assign_to,
-                    allocation_date: taskData.allocation_date ? moment(taskData.allocation_date) : null,
-                    start_date: taskData.start_date ? moment(taskData.start_date) : null,
-                    start_time: taskData.start_time ? moment(taskData.start_time, 'HH:mm:ss') : null,
+                    // assign_to: taskData.assign_to,
+                    // allocation_date: taskData.allocation_date ? moment(taskData.allocation_date) : null,
+                    // start_date: taskData.start_date ? moment(taskData.start_date) : null,
+                    // start_time: taskData.start_time ? moment(taskData.start_time, 'HH:mm:ss') : null,
                 })
             }
 

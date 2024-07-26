@@ -9,24 +9,29 @@ const UpdateTaskModal = ({ isModalOpen, setIsModalOpen, socket, taskData, setTas
 
     const [taskStatus, setTaskStatus] = useState("");
     const [initialValues, setInitialValues] = useState({})
-  
+
 
     useEffect(() => {
+        form.resetFields();
         if (taskData) {
             setTaskStatus(taskData.task_status);
             form.setFieldsValue({
                 task_name: taskData.task_name,
                 level: taskData.level,
                 task_status: taskData.task_status,
-                estimated_time: taskData.estimated_time
+                estimated_time: taskData.estimated_time,
+                allocation_date: taskData?.allocation_date ? moment(taskData?.allocation_date) : null,
+                assign_to: taskData?.assign_to,
+                start_date: taskData?.start_date ? moment(taskData?.start_date) : null,
+                start_time: taskData?.start_time ? moment(taskData?.start_time, 'HH:mm:ss') : null,
             });
             if (taskData.task_status === "in_progress") {
 
                 form.setFieldValue({
-                    assign_to: taskData.assign_to,
-                    allocation_date: taskData.allocation_date ? moment(taskData.allocation_date) : null,
-                    start_date: taskData.start_date ? moment(taskData.start_date) : null,
-                    start_time: taskData.start_time ? moment(taskData.start_time, 'HH:mm:ss') : null,
+                    // assign_to: taskData.assign_to,
+                    // allocation_date: taskData.allocation_date ? moment(taskData.allocation_date) : null,
+                    // start_date: taskData.start_date ? moment(taskData.start_date) : null,
+                    // start_time: taskData.start_time ? moment(taskData.start_time, 'HH:mm:ss') : null,
                 })
             }
 
@@ -48,7 +53,10 @@ const UpdateTaskModal = ({ isModalOpen, setIsModalOpen, socket, taskData, setTas
                 end_time: taskData.end_time ? moment(taskData.end_time, 'HH:mm:ss') : null,
             })
         }
-    }, [taskData]);
+        return () => {
+
+        }
+    }, [form, taskData]);
 
     const onFinish = async (values) => {
         try {
@@ -65,9 +73,9 @@ const UpdateTaskModal = ({ isModalOpen, setIsModalOpen, socket, taskData, setTas
                 console.log(response);
                 if (response.status === 200) {
                     message.success(response?.data.msg);
-                    
+
                     setTasks(prevTasks => {
-                        
+
                         const updatedTasks = prevTasks.map(task => {
                             if (task.id === taskData.id) {
                                 return response?.data?.response;
