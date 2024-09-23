@@ -2,11 +2,13 @@ import express from 'express'
 import verifyToken from '../middlewares/verifyToken'
 import * as bookingController from '../controllers/booking'
 import checkIsGarage from '../middlewares/checkIsGarage'
+import { authorizeRoles } from '../middlewares/auth/authorizeRoles'
+import { Role } from '../utils/role.enum'
 
 const router = express.Router()
 
 router.use(verifyToken)
-router.post('/customer', checkIsGarage, bookingController.createBooking)
+router.post('/customer', authorizeRoles(Role.Garage), bookingController.createBooking)
 router.post('/customer/maintenance', bookingController.createBookingMaintenance)
 router.get('/customer', bookingController.getAllBookingCustomer)
 router.delete('/customer/:bookingId', bookingController.cancelBooking)
